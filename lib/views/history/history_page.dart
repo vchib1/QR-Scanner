@@ -7,18 +7,22 @@ class HistoryPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final historyVM = ref.watch(historyViewModel);
+    final history = ref.watch(historyViewModel);
+    final historyVM = ref.watch(historyViewModel.notifier);
 
     return Scaffold(
       appBar: AppBar(title: Text("History")),
-      body: historyVM.when(
+      body: history.when(
         data: (historyItems) {
           return ListView.builder(
             itemCount: historyItems.length,
             itemBuilder: (context, index) {
               final item = historyItems[index];
 
-              return ListTile(title: Text(item.data));
+              return ListTile(
+                title: Text(item.data),
+                onLongPress: () => historyVM.removeItem(item),
+              );
             },
           );
         },

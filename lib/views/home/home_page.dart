@@ -26,6 +26,10 @@ class HomePage extends StatelessWidget {
                         Navigator.pushNamed(context, "/scanner");
                       }
 
+                      if (text == "Generate a QR") {
+                        Navigator.pushNamed(context, "/generate");
+                      }
+
                       if (text == "History") {
                         Navigator.pushNamed(context, "/history");
                       }
