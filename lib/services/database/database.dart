@@ -1,18 +1,17 @@
-import 'package:ez_qr/model/scanned_item_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:uuid/uuid.dart';
+
+final databaseProvider = Provider<LocalDatabase>((ref) {
+  return LocalDatabase();
+});
 
 const history = "history";
 
-const _uuid = Uuid();
-
 class LocalDatabase {
-  static final LocalDatabase instance = LocalDatabase._init();
+  LocalDatabase();
 
-  static Database? _database;
-
-  LocalDatabase._init();
+  Database? _database;
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -26,20 +25,11 @@ class LocalDatabase {
     return await openDatabase(path, version: 1, onCreate: _onCreateDB);
   }
 
-  Future _onCreateDB(Database db, int version) async {
-    const textType = 'TEXT NOT NULL';
-    const intType = 'INTEGER NOT NULL';
-
+  Future<void> _onCreateDB(Database db, int version) async {
     await db.execute('''CREATE TABLE $history(
         id TEXT PRIMARY KEY,
-        data $textType,
-        createdAt $intType
+        data TEXT NOT NULL,
+        createdAt INTEGER NOT NULL
     )''');
-  }
-
-  static Future<void> insertScannedItem(ScannedItem item) async {
-    final db = await instance.database;
-
-    await db.insert(history, item.copyWith(id: _uuid.v4()).toMap());
   }
 }

@@ -1,4 +1,3 @@
-import 'package:ez_qr/views/qr_scanner/qr_scanner_page.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -24,14 +23,11 @@ class HomePage extends StatelessWidget {
                   (text) => InkWell(
                     onTap: () {
                       if (text == "Scan a QR") {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return const QrScannerPage();
-                            },
-                          ),
-                        );
+                        Navigator.pushNamed(context, "/scanner");
+                      }
+
+                      if (text == "History") {
+                        Navigator.pushNamed(context, "/history");
                       }
                     },
                     child: Container(

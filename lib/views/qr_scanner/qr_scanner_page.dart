@@ -1,16 +1,17 @@
 import 'package:ez_qr/model/scanned_item_model.dart';
-import 'package:ez_qr/services/database/database.dart';
+import 'package:ez_qr/views/history/viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-class QrScannerPage extends StatefulWidget {
+class QrScannerPage extends ConsumerStatefulWidget {
   const QrScannerPage({super.key});
 
   @override
-  State<QrScannerPage> createState() => _QrScannerPageState();
+  ConsumerState<QrScannerPage> createState() => _QrScannerPageState();
 }
 
-class _QrScannerPageState extends State<QrScannerPage>
+class _QrScannerPageState extends ConsumerState<QrScannerPage>
     with SingleTickerProviderStateMixin {
   late final MobileScannerController controller;
   late final AnimationController animationController;
@@ -54,21 +55,23 @@ class _QrScannerPageState extends State<QrScannerPage>
       animationController.stop();
       await controller.pause();
 
-      final data = capture.barcodes.first.rawValue!;
+      final data = capture.barcodes.first.rawValue;
 
-      await LocalDatabase.insertScannedItem(ScannedItem(data: data));
+      if (data != null) {
+        final scannedItem = ScannedItem(data: data);
 
-      if (mounted) {
-        await showDialog(
-          context: context,
-          builder: (context) {
-            return Dialog(child: Text(data));
-          },
-        );
+        await ref.read(historyViewModel.notifier).addItem(scannedItem);
 
-        foundResult = false;
-        animationController.repeat(reverse: true);
-        await controller.start();
+        if (mounted) {
+          await showDialog(
+            context: context,
+            builder: (context) {
+              return Dialog(child: Text(data));
+            },
+          );
+        }
+
+        if (mounted) Navigator.popUntil(context, (ModalRoute.withName('/')));
       }
     } catch (e, s) {
       debugPrintStack(label: e.toString(), stackTrace: s);
