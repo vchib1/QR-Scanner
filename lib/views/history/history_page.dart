@@ -1,3 +1,4 @@
+import 'package:ez_qr/utils/enums/qr_type.dart';
 import 'package:ez_qr/views/history/viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,8 +21,14 @@ class HistoryPage extends ConsumerWidget {
               final item = historyItems[index];
 
               return ListTile(
-                title: Text(item.data),
                 onLongPress: () => historyVM.removeItem(item),
+                leading: CircleAvatar(
+                  child: Text(
+                    QrType.getQrType(item.data).getName,
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                ),
+                title: Text(item.data),
               );
             },
           );

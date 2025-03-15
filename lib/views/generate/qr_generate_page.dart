@@ -1,3 +1,4 @@
+import 'package:ez_qr/utils/enums/qr_type.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'widgets/mail.dart';
@@ -5,8 +6,6 @@ import 'widgets/phone.dart';
 import 'widgets/sms.dart';
 import 'widgets/text.dart';
 import 'widgets/url.dart';
-
-enum QROption { text, mail, url, phone, sms }
 
 class QrGeneratePage extends StatefulWidget {
   const QrGeneratePage({super.key});
@@ -20,7 +19,7 @@ class _QrGeneratePageState extends State<QrGeneratePage> {
 
   String qrData = "AddHere";
 
-  QROption? selectedOption = QROption.values.first;
+  QrType? selectedOption = QrType.values.first;
 
   @override
   void initState() {
@@ -84,48 +83,59 @@ class _QrGeneratePageState extends State<QrGeneratePage> {
       onTap: unFocusKeyboard,
       child: Scaffold(
         appBar: AppBar(title: Text("Generate QR")),
+        bottomNavigationBar: Container(
+          padding: EdgeInsets.all(8.0),
+          height: kBottomNavigationBarHeight + 8,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4.0),
+              ),
+            ),
+            onPressed: () => generateQR(size),
+            child: Text(
+              "Generate",
+              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+            ),
+          ),
+        ),
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               spacing: 10,
               children: [
-                Align(
-                  alignment: Alignment.topRight,
-                  child: DropdownButton<QROption>(
-                    value: selectedOption,
-                    items:
-                        QROption.values.map((e) {
-                          return DropdownMenuItem(
-                            value: e,
-                            child: Text(e.name),
-                          );
-                        }).toList(),
-                    onChanged:
-                        (value) => {
+                //Text("QR Type:"),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: [
+                    for (final option in QrType.values)
+                      ChoiceChip(
+                        showCheckmark: false,
+                        selected: selectedOption == option,
+                        label: Text(option.getName),
+                        onSelected: (selected) {
                           setState(() {
-                            selectedOption = value;
-                          }),
+                            selectedOption = selected ? option : null;
+                          });
                         },
-                  ),
+                      ),
+                  ],
                 ),
+
+                const SizedBox(height: 10),
 
                 switch (selectedOption) {
-                  QROption.text => QRText(onChanged: onChanged),
-                  QROption.sms => QRSms(onChanged: onChanged),
-                  QROption.phone => QRPhone(onChanged: onChanged),
-                  QROption.url => QRUrl(onChanged: onChanged),
-                  QROption.mail => QRMail(onChanged: onChanged),
+                  QrType.text => QRText(onChanged: onChanged),
+                  QrType.sms => QRSms(onChanged: onChanged),
+                  QrType.phone => QRPhone(onChanged: onChanged),
+                  QrType.url => QRUrl(onChanged: onChanged),
+                  QrType.mail => QRMail(onChanged: onChanged),
                   null => SizedBox.shrink(),
                 },
-
-                MaterialButton(
-                  color: Theme.of(context).colorScheme.primary,
-                  minWidth: size.width * .95,
-                  onPressed: () => generateQR(size),
-                  child: Text("Generate"),
-                ),
               ],
             ),
           ),

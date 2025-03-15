@@ -24,15 +24,28 @@ class _QRUrlState extends State<QRUrl> {
     super.dispose();
   }
 
+  bool isUrlValid(String value) {
+    Uri? uri = Uri.tryParse(value);
+
+    return uri != null && (uri.hasScheme && uri.scheme.isNotEmpty);
+  }
+
   void onChanged(String value) => widget.onChanged(value);
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: urlController,
-      onChanged: widget.onChanged,
+      onChanged: onChanged,
+      keyboardType: TextInputType.url,
       maxLines: 1,
-      decoration: const InputDecoration(hintText: "URL"),
+      decoration: InputDecoration(
+        hintText: "URL",
+        errorText:
+            isUrlValid(urlController.text) || urlController.text.isEmpty
+                ? null
+                : "Enter a valid URL",
+      ),
     );
   }
 }
