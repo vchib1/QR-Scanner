@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:ez_qr/model/scanned_item_model.dart';
 import 'package:ez_qr/utils/enums/qr_type.dart';
@@ -31,7 +32,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
   @override
   void initState() {
     super.initState();
-    controller = MobileScannerController();
+    controller = MobileScannerController(returnImage: true);
     animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
@@ -71,11 +72,17 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
       if (result == null) return;
 
       final imagePath = result.files.first.path;
+      if (imagePath == null) {
+        throw "No image path found";
+      }
 
-      final data = await controller.analyzeImage(imagePath!);
+      final data = await controller.analyzeImage(
+        imagePath,
+        formats: [BarcodeFormat.all],
+      );
 
-      if (data == null) {
-        throw "No QR code found";
+      if (data == null || data.barcodes.isEmpty) {
+        throw "No QR code found in the image";
       }
 
       await onDetect(data);
@@ -230,51 +237,4 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
       ),
     );
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(),
-  //     body: Center(
-  //       child: LayoutBuilder(
-  //         builder: (context, constraints) {
-  //           double containerHeight = constraints.maxWidth * 0.90;
-  //           double scannerHeight = constraints.maxWidth * 0.10;
-  //
-  //           return Container(
-  //             clipBehavior: Clip.antiAlias,
-  //             decoration: BoxDecoration(
-  //               borderRadius: BorderRadius.circular(10),
-  //             ),
-  //             height: containerHeight,
-  //             width: constraints.maxWidth * .90,
-  //             child: Stack(
-  //               children: [
-  //                 MobileScanner(controller: controller, onDetect: onDetect),
-  //                 AnimatedBuilder(
-  //                   animation: scannerAnimation,
-  //                   builder: (context, child) {
-  //                     return Transform.translate(
-  //                       offset: Offset(
-  //                         0,
-  //                         scannerAnimation.value.dy *
-  //                             (containerHeight - scannerHeight),
-  //                       ),
-  //                       child: child,
-  //                     );
-  //                   },
-  //                   child: Container(
-  //                     height: scannerHeight,
-  //                     width: constraints.maxWidth,
-  //                     color: Colors.white.withValues(alpha: 0.3),
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           );
-  //         },
-  //       ),
-  //     ),
-  //   );
-  // }
 }

@@ -4,6 +4,17 @@ final GlobalKey<ScaffoldMessengerState> snackBarKey =
     GlobalKey<ScaffoldMessengerState>();
 
 class SnackBarUtils {
+  static void clearSnackBars({BuildContext? context}) {
+    if (context != null && context.mounted) {
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      return;
+    }
+
+    if (snackBarKey.currentState != null) {
+      snackBarKey.currentState!.removeCurrentSnackBar();
+    }
+  }
+
   static void showSnackBar(String message, {BuildContext? context}) {
     final snackBar = SnackBar(
       content: Text(message),
