@@ -1,4 +1,5 @@
 import 'package:ez_qr/utils/enums/qr_type.dart';
+import 'package:ez_qr/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'widgets/mail.dart';
@@ -40,35 +41,39 @@ class _QrGeneratePageState extends State<QrGeneratePage> {
   }
 
   void generateQR(Size size) {
-    unFocusKeyboard();
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              spacing: 50,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                QrImageView(data: qrData, size: size.width * 0.70),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.save_outlined),
-                    ),
+    try {
+      unFocusKeyboard();
+      showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                spacing: 50,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  QrImageView(data: qrData, size: size.width * 0.70),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(Icons.save_outlined),
+                      ),
 
-                    IconButton(onPressed: () {}, icon: Icon(Icons.share)),
-                  ],
-                ),
-              ],
+                      IconButton(onPressed: () {}, icon: Icon(Icons.share)),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
-      },
-    );
+          );
+        },
+      );
+    } catch (e) {
+      SnackBarUtils.showSnackBar(e.toString(), context: context);
+    }
   }
 
   void unFocusKeyboard() {
@@ -79,67 +84,75 @@ class _QrGeneratePageState extends State<QrGeneratePage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
 
-    return GestureDetector(
-      onTap: unFocusKeyboard,
-      child: Scaffold(
-        appBar: AppBar(title: Text("Generate QR")),
-        bottomNavigationBar: Container(
-          padding: EdgeInsets.all(8.0),
-          height: kBottomNavigationBarHeight + 8,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4.0),
+    return ScaffoldMessenger(
+      child: Builder(
+        builder: (context) {
+          return GestureDetector(
+            onTap: unFocusKeyboard,
+            child: Scaffold(
+              appBar: AppBar(title: Text("Generate QR")),
+              bottomNavigationBar: Container(
+                padding: EdgeInsets.all(8.0),
+                height: kBottomNavigationBarHeight + 8,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                  ),
+                  onPressed: () => generateQR(size),
+                  child: Text(
+                    "Generate",
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                  ),
+                ),
+              ),
+              body: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 10,
+                    children: [
+                      //Text("QR Type:"),
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: [
+                          for (final option in QrType.values)
+                            ChoiceChip(
+                              showCheckmark: false,
+                              selected: selectedOption == option,
+                              label: Text(option.getName),
+                              onSelected: (selected) {
+                                setState(() {
+                                  selectedOption = selected ? option : null;
+                                });
+                              },
+                            ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      switch (selectedOption) {
+                        QrType.text => QRText(onChanged: onChanged),
+                        QrType.sms => QRSms(onChanged: onChanged),
+                        QrType.phone => QRPhone(onChanged: onChanged),
+                        QrType.url => QRUrl(onChanged: onChanged),
+                        QrType.mail => QRMail(onChanged: onChanged),
+                        null => SizedBox.shrink(),
+                      },
+                    ],
+                  ),
+                ),
               ),
             ),
-            onPressed: () => generateQR(size),
-            child: Text(
-              "Generate",
-              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-            ),
-          ),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 10,
-              children: [
-                //Text("QR Type:"),
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: [
-                    for (final option in QrType.values)
-                      ChoiceChip(
-                        showCheckmark: false,
-                        selected: selectedOption == option,
-                        label: Text(option.getName),
-                        onSelected: (selected) {
-                          setState(() {
-                            selectedOption = selected ? option : null;
-                          });
-                        },
-                      ),
-                  ],
-                ),
-
-                const SizedBox(height: 10),
-
-                switch (selectedOption) {
-                  QrType.text => QRText(onChanged: onChanged),
-                  QrType.sms => QRSms(onChanged: onChanged),
-                  QrType.phone => QRPhone(onChanged: onChanged),
-                  QrType.url => QRUrl(onChanged: onChanged),
-                  QrType.mail => QRMail(onChanged: onChanged),
-                  null => SizedBox.shrink(),
-                },
-              ],
-            ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

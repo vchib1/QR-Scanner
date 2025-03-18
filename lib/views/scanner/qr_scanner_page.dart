@@ -1,7 +1,9 @@
 import 'dart:math';
 import 'package:ez_qr/model/scanned_item_model.dart';
 import 'package:ez_qr/utils/enums/qr_type.dart';
+import 'package:ez_qr/utils/snackbar.dart';
 import 'package:ez_qr/views/history/viewmodel.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -57,6 +59,28 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
 
     if (!await launchUrl(uri)) {
       throw Exception('Could not launch $uri');
+    }
+  }
+
+  Future<void> pickImage() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+      );
+
+      if (result == null) return;
+
+      final imagePath = result.files.first.path;
+
+      final data = await controller.analyzeImage(imagePath!);
+
+      if (data == null) {
+        throw "No QR code found";
+      }
+
+      await onDetect(data);
+    } catch (e) {
+      SnackBarUtils.showSnackBar(e.toString());
     }
   }
 
@@ -119,6 +143,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
+    final iconColor = Colors.white;
 
     final scannerHeight = size.width * .65;
 
@@ -139,53 +164,63 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
             ),
 
             Positioned(
+              left: 0,
               bottom: 50,
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                alignment: Alignment.center,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: toggleFlash,
-                      icon: Icon(flashOn ? Icons.flash_on : Icons.flash_off),
-                    ),
-                    IconButton(
-                      onPressed: flipCamera,
-                      icon: Icon(Icons.flip_camera_android),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            SizedBox(
-              width: size.width,
-              height: size.height,
-              child: Align(
-                alignment: Alignment.centerRight, // Adjust alignment
-                child: Transform.rotate(
-                  angle: pi * 270 / 180,
-                  child: Transform.translate(
-                    offset: Offset(0, 165),
-                    child: SizedBox(
-                      width: size.height * .5,
-                      // This should be the height you expect after rotation
-                      child: Slider(
-                        value: zoomLevel,
-                        min: 0.0,
-                        max: 1.0,
-                        thumbColor: Colors.grey.shade700,
-                        activeColor: Colors.grey.shade700,
-                        inactiveColor: Colors.grey.shade500,
-                        onChanged: (value) {
-                          setState(() {
-                            zoomLevel = value;
-                          });
-                          controller.setZoomScale(zoomLevel);
-                        },
+              child: SizedBox(
+                width: size.width,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Column(
+                    spacing: 20,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.remove_circle, color: iconColor),
+                          Flexible(
+                            child: Slider(
+                              value: zoomLevel,
+                              min: 0.0,
+                              max: 1.0,
+                              thumbColor: iconColor,
+                              activeColor: iconColor,
+                              inactiveColor: Colors.grey.shade700,
+                              onChanged: (value) {
+                                setState(() {
+                                  zoomLevel = value;
+                                });
+                                controller.setZoomScale(zoomLevel);
+                              },
+                            ),
+                          ),
+                          Icon(Icons.add_circle, color: iconColor),
+                        ],
                       ),
-                    ),
+
+                      Row(
+                        spacing: 50,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            onPressed: pickImage,
+                            color: iconColor,
+                            icon: Icon(Icons.image),
+                          ),
+                          IconButton(
+                            onPressed: toggleFlash,
+                            color: iconColor,
+                            icon: Icon(
+                              flashOn ? Icons.flash_on : Icons.flash_off,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: flipCamera,
+                            color: iconColor,
+                            icon: Icon(Icons.flip_camera_android),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),

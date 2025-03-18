@@ -1,3 +1,4 @@
+import 'package:ez_qr/utils/snackbar.dart';
 import 'package:ez_qr/views/generate/qr_generate_page.dart';
 import 'package:ez_qr/views/history/history_page.dart';
 import 'package:ez_qr/views/home/home_page.dart';
@@ -16,6 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      scaffoldMessengerKey: snackBarKey,
       debugShowCheckedModeBanner: false,
       title: 'EZ-QR',
       theme: ThemeData(
