@@ -1,33 +1,53 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class QRScannerFrame extends StatelessWidget {
+  final Animation<double> animation;
   final double size;
   final Color? color;
 
-  const QRScannerFrame({super.key, this.size = 250.0, this.color});
+  const QRScannerFrame({
+    super.key,
+    this.size = 250.0,
+    this.color,
+    required this.animation,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: size,
-      height: size,
-      child: CustomPaint(
-        painter: QRScannerFramePainter(borderColor: color ?? Colors.white),
-      ),
+    return AnimatedBuilder(
+      animation: Tween(
+        begin: 0.0,
+        end: 1.0,
+      ).chain(CurveTween(curve: Curves.easeInOut)).animate(animation),
+      builder: (context, child) {
+        return SizedBox(
+          width: size,
+          height: size,
+          child: CustomPaint(
+            painter: QRScannerFramePainter(
+              borderColor: color ?? Colors.white,
+              animation: animation,
+            ),
+          ),
+        );
+      },
     );
   }
 }
 
 class QRScannerFramePainter extends CustomPainter {
+  final Animation<double> animation;
   final Color borderColor;
   final double strokeWidth;
   final double cornerLength;
 
   QRScannerFramePainter({
+    required this.animation,
     this.borderColor = Colors.white,
     this.strokeWidth = 3.0,
     this.cornerLength = 20.0,
-  });
+  }) : super(repaint: animation);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -58,8 +78,12 @@ class QRScannerFramePainter extends CustomPainter {
     drawCorner(0, height, false, true);
     // Bottom-right corner
     drawCorner(width, height, true, true);
+
+    // center line
+    final dy = lerpDouble(0, height, animation.value) ?? 0.0;
+    canvas.drawLine(Offset(0, dy), Offset(width, dy), paint);
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant QRScannerFramePainter oldDelegate) => false;
 }

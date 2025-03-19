@@ -5,11 +5,11 @@ import 'package:ez_qr/utils/url_launch.dart';
 import 'package:ez_qr/views/history/viewmodel.dart';
 import 'package:ez_qr/views/scanner/viewmodel.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
-
 import 'widgets/qr_frame.dart';
 
 class QrScannerPage extends ConsumerStatefulWidget {
@@ -19,18 +19,45 @@ class QrScannerPage extends ConsumerStatefulWidget {
   ConsumerState<QrScannerPage> createState() => _QrScannerPageState();
 }
 
-class _QrScannerPageState extends ConsumerState<QrScannerPage> {
+class _QrScannerPageState extends ConsumerState<QrScannerPage>
+    with SingleTickerProviderStateMixin {
   late final MobileScannerController controller;
+
+  late AnimationController animationController;
+
+  Rect scanWindow = Rect.zero;
 
   @override
   void initState() {
     super.initState();
+
     controller = MobileScannerController(
       autoStart: false,
-      facing: CameraFacing.back,
       detectionTimeoutMs: 1500,
     );
+
+    animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    );
+
+    animationController.repeat(reverse: true);
+
     Future.delayed(Duration.zero, handlePermission);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => setScanWindow());
+  }
+
+  void setScanWindow() {
+    final size = MediaQuery.of(context).size;
+    final scannerSize = size.width * 0.70;
+
+    final left = (size.width - scannerSize) / 2;
+    final top = (size.height - scannerSize - kToolbarHeight) / 2;
+
+    scanWindow = Rect.fromLTWH(left, top, scannerSize, scannerSize);
+    controller.updateScanWindow(scanWindow);
+    setState(() {});
   }
 
   @override
@@ -74,11 +101,11 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage> {
       if (resultFound) return;
 
       ref.read(qrScannerViewModel.notifier).setResultFound(true);
-      await controller.pause();
 
       final data = capture.barcodes.first.rawValue;
 
       if (data != null) {
+        await controller.pause();
         final scannedItem = ScannedItem(data: data);
 
         await ref.read(historyViewModel.notifier).addItem(scannedItem);
@@ -108,6 +135,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage> {
           );
         }
 
+        ref.read(qrScannerViewModel.notifier).setResultFound(false);
         await controller.start();
         //if (mounted) Navigator.popUntil(context, (ModalRoute.withName('/')));
       }
@@ -169,6 +197,10 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage> {
     ref.read(qrScannerViewModel.notifier).setZoom(zoomLevel);
   }
 
+  Future<void> switchCamera() async {
+    await controller.switchCamera();
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
@@ -177,32 +209,87 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage> {
     final scannerHeight = size.width * .60;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        elevation: 0.0,
+        scrolledUnderElevation: 0.0,
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back, color: iconColor),
+        ),
+        actions: [
+          IconButton(
+            onPressed: switchCamera,
+            icon: Icon(Icons.flip_camera_ios, color: iconColor),
+          ),
+          const SizedBox(width: 5),
+          IconButton(
+            onPressed: toggleFlash,
+            icon: Icon(
+              ref.watch(qrScannerViewModel).flashOn
+                  ? Icons.flash_on
+                  : Icons.flash_off,
+              color: iconColor,
+            ),
+          ),
+          const SizedBox(width: 5),
+        ],
+      ),
       body: SizedBox(
         height: size.height,
         width: size.width,
         child: Stack(
           children: [
             MobileScanner(controller: controller, onDetect: onDetect),
-            Align(
-              alignment: Alignment.center,
+
+            // Text(
+            //   "Scan QR Code",
+            //   style: Theme.of(
+            //     context,
+            //   ).textTheme.bodyLarge!.copyWith(color: iconColor),
+            // ),
+            Center(
               child: Column(
-                spacing: 30,
+                spacing: 10,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    "Scan QR Code",
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyLarge!.copyWith(color: iconColor),
+                  QRScannerFrame(
+                    size: scannerHeight,
+                    color: iconColor,
+                    animation: animationController,
                   ),
-                  Center(
-                    child: QRScannerFrame(
-                      size: scannerHeight,
-                      color: iconColor,
+
+                  const SizedBox(height: 50),
+                ],
+              ),
+            ),
+
+            Positioned(
+              left: 0,
+              bottom: 125,
+              child: SizedBox(
+                width: size.width,
+                child: Center(
+                  child: MaterialButton(
+                    onPressed: pickImage,
+                    color: iconColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      spacing: 10,
+                      children: [
+                        Icon(Icons.image, color: Colors.black),
+                        Text(
+                          "pick from gallery",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
             ),
 
@@ -213,65 +300,45 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage> {
                 width: size.width,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    spacing: 20,
-                    mainAxisSize: MainAxisSize.min,
+                  child: Row(
                     children: [
-                      Row(
-                        children: [
-                          Icon(Icons.remove_circle, color: iconColor),
-                          Consumer(
-                            builder: (context, ref, child) {
-                              final zoomLevel =
-                                  ref.watch(qrScannerViewModel).zoomLevel;
+                      Icon(Icons.remove_circle, color: iconColor),
+                      Consumer(
+                        builder: (context, ref, child) {
+                          final zoomLevel =
+                              ref.watch(qrScannerViewModel).zoomLevel;
 
-                              return Flexible(
-                                child: Slider(
-                                  value: zoomLevel,
-                                  min: 0.0,
-                                  max: 1.0,
-                                  thumbColor: iconColor,
-                                  activeColor: iconColor,
-                                  inactiveColor: Colors.grey.shade700,
-                                  onChanged: changeZoomLevel,
-                                ),
-                              );
-                            },
-                          ),
-                          Icon(Icons.add_circle, color: iconColor),
-                        ],
+                          return Flexible(
+                            child: Slider(
+                              value: zoomLevel,
+                              min: 0.0,
+                              max: 1.0,
+                              thumbColor: iconColor,
+                              activeColor: iconColor,
+                              inactiveColor: Colors.grey.shade700,
+                              onChanged: changeZoomLevel,
+                            ),
+                          );
+                        },
                       ),
-
-                      Row(
-                        spacing: 50,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            onPressed: pickImage,
-                            color: iconColor,
-                            icon: Icon(Icons.image),
-                          ),
-                          Consumer(
-                            builder: (context, ref, child) {
-                              final flashOn =
-                                  ref.watch(qrScannerViewModel).flashOn;
-
-                              return IconButton(
-                                onPressed: toggleFlash,
-                                color: iconColor,
-                                icon: Icon(
-                                  flashOn ? Icons.flash_on : Icons.flash_off,
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
+                      Icon(Icons.add_circle, color: iconColor),
                     ],
                   ),
                 ),
               ),
             ),
+
+            if (kDebugMode)
+              Positioned.fromRect(
+                rect: scanWindow,
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white, width: 1),
+                    // Red border
+                    color: Colors.transparent,
+                  ),
+                ),
+              ),
           ],
         ),
       ),

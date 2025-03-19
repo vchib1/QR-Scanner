@@ -22,5 +22,5 @@ enum QrType {
     }
   }
 
-  bool get canOpen => this != QrType.text;
+  bool get canOpen => (this != QrType.text);
 }

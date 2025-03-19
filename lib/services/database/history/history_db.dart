@@ -1,8 +1,8 @@
+import 'package:uuid/uuid.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:ez_qr/model/scanned_item_model.dart';
 import 'package:ez_qr/services/database/database.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:uuid/uuid.dart';
 
 final historyDBProvider = Provider<HistoryDB>(
   (ref) =>
@@ -30,7 +30,7 @@ class HistoryDB {
 
       return res;
     } catch (_) {
-      rethrow;
+      return [];
     }
   }
 
