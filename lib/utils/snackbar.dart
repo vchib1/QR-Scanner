@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-final GlobalKey<ScaffoldMessengerState> snackBarKey =
-    GlobalKey<ScaffoldMessengerState>();
-
 class SnackBarUtils {
+  static GlobalKey<ScaffoldMessengerState> snackBarKey =
+      GlobalKey<ScaffoldMessengerState>();
+
   static void clearSnackBars({BuildContext? context}) {
     if (context != null && context.mounted) {
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
@@ -15,9 +15,21 @@ class SnackBarUtils {
     }
   }
 
+  static ThemeData get theme {
+    if (snackBarKey.currentState != null) {
+      return Theme.of(snackBarKey.currentState!.context);
+    } else {
+      throw Exception("❌ No ScaffoldMessenger found.");
+    }
+  }
+
   static void showSnackBar(String message, {BuildContext? context}) {
     final snackBar = SnackBar(
-      content: Text(message),
+      content: Text(
+        message,
+        style: TextStyle(color: theme.colorScheme.onPrimary),
+      ),
+      backgroundColor: theme.colorScheme.primary,
       behavior: SnackBarBehavior.floating,
       duration: Duration(seconds: 3),
     );
@@ -31,7 +43,7 @@ class SnackBarUtils {
     if (snackBarKey.currentState != null) {
       snackBarKey.currentState!.showSnackBar(snackBar);
     } else {
-      debugPrint("❌ No ScaffoldMessenger found.");
+      throw Exception("❌ No ScaffoldMessenger found.");
     }
   }
 }

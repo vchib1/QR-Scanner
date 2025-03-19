@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ez_qr/services/database/history/history_db.dart';
 import 'package:ez_qr/utils/enums/qr_type.dart';
 import 'package:ez_qr/utils/snackbar.dart';
@@ -5,8 +7,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 import 'widgets/mail.dart';
 import 'widgets/phone.dart';
 import 'widgets/sms.dart';
@@ -83,20 +87,66 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
     return (result != null);
   }
 
-  Future<void> shareQRImage() async {}
+  Future<bool> shareQRImage() async {
+    // get QR code screenshot image
+    Uint8List image = await captureQRScreenshot();
+
+    final tempDir = await getTemporaryDirectory();
+
+    File file = File("${tempDir.path}/qr.png");
+
+    File result = await file.writeAsBytes(image);
+
+    ShareResult? res = await Share.shareXFiles([
+      XFile(result.path),
+    ], text: "QR Code");
+
+    return (res.status == ShareResultStatus.success);
+  }
 
   Future<void> generateQR(Size size, BuildContext context) async {
+    bool isSaving = false;
+    bool isSharing = false;
+
     try {
       unFocusKeyboard();
 
-      bool isSaving = false;
-
-      bool? success = await showModalBottomSheet(
+      String? result = await showModalBottomSheet(
         context: context,
         showDragHandle: true,
         builder: (context) {
+          final loadingWidget = SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(strokeWidth: 3),
+          );
+
           return StatefulBuilder(
             builder: (context, setState) {
+              Future<void> saveImage() async {
+                setState(() => isSaving = true);
+                bool success = await saveQRImage();
+
+                if (context.mounted) {
+                  Navigator.pop(
+                    context,
+                    success ? "Saved QR successfully" : null,
+                  );
+                }
+              }
+
+              Future<void> shareImage() async {
+                setState(() => isSharing = true);
+                bool success = await shareQRImage();
+
+                if (context.mounted) {
+                  Navigator.pop(
+                    context,
+                    success ? "Shared QR successfully" : null,
+                  );
+                }
+              }
+
               return Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -110,27 +160,14 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         IconButton(
-                          onPressed: () async {
-                            setState(() => isSaving = true);
-                            bool success = await saveQRImage();
-
-                            if (context.mounted) {
-                              Navigator.pop(context, success);
-                            }
-                          },
-                          icon:
-                              isSaving
-                                  ? SizedBox(
-                                    width: 24,
-                                    height: 24,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 3,
-                                    ),
-                                  )
-                                  : Icon(Icons.save),
+                          onPressed: saveImage,
+                          icon: isSaving ? loadingWidget : Icon(Icons.save),
                         ),
 
-                        IconButton(onPressed: () {}, icon: Icon(Icons.share)),
+                        IconButton(
+                          onPressed: shareImage,
+                          icon: isSharing ? loadingWidget : Icon(Icons.share),
+                        ),
                       ],
                     ),
                   ],
@@ -141,18 +178,13 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
         },
       );
 
-      if (success == null) return;
-
-      if (success && context.mounted) {
-        SnackBarUtils.showSnackBar(
-          "QR code saved successfully",
-          context: context,
-        );
-      } else {
-        throw "Saving QR aborted";
+      if (result != null && context.mounted) {
+        SnackBarUtils.showSnackBar(result, context: context);
       }
     } catch (e) {
-      SnackBarUtils.showSnackBar(e.toString(), context: context);
+      if (context.mounted) {
+        SnackBarUtils.showSnackBar(e.toString(), context: context);
+      }
     }
   }
 

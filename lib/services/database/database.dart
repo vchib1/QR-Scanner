@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' show join;
 
 final databaseProvider = Provider<LocalDatabase>((ref) {
   return LocalDatabase();

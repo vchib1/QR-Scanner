@@ -1,14 +1,16 @@
-import 'dart:io';
-import 'dart:math';
 import 'package:ez_qr/model/scanned_item_model.dart';
 import 'package:ez_qr/utils/enums/qr_type.dart';
 import 'package:ez_qr/utils/snackbar.dart';
+import 'package:ez_qr/utils/url_launch.dart';
 import 'package:ez_qr/views/history/viewmodel.dart';
+import 'package:ez_qr/views/scanner/viewmodel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+import 'widgets/qr_frame.dart';
 
 class QrScannerPage extends ConsumerStatefulWidget {
   const QrScannerPage({super.key});
@@ -17,50 +19,24 @@ class QrScannerPage extends ConsumerStatefulWidget {
   ConsumerState<QrScannerPage> createState() => _QrScannerPageState();
 }
 
-class _QrScannerPageState extends ConsumerState<QrScannerPage>
-    with SingleTickerProviderStateMixin {
+class _QrScannerPageState extends ConsumerState<QrScannerPage> {
   late final MobileScannerController controller;
-  late final AnimationController animationController;
-  late final Animation<Offset> scannerAnimation;
-
-  bool foundResult = false;
-
-  bool flashOn = false;
-
-  double zoomLevel = 0.0;
 
   @override
   void initState() {
     super.initState();
-    controller = MobileScannerController(returnImage: true);
-    animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
+    controller = MobileScannerController(
+      autoStart: false,
+      facing: CameraFacing.back,
+      detectionTimeoutMs: 1500,
     );
-
-    scannerAnimation = Tween<Offset>(
-      begin: const Offset(0, 0),
-      end: const Offset(0, 1),
-    ).animate(
-      CurvedAnimation(parent: animationController, curve: Curves.easeInOut),
-    );
-
-    animationController.repeat(reverse: true);
+    Future.delayed(Duration.zero, handlePermission);
   }
 
   @override
   void dispose() {
     controller.dispose();
-    animationController.dispose();
     super.dispose();
-  }
-
-  Future<void> _launchUrl(String data) async {
-    final uri = Uri.parse(data);
-
-    if (!await launchUrl(uri)) {
-      throw Exception('Could not launch $uri');
-    }
   }
 
   Future<void> pickImage() async {
@@ -73,7 +49,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
 
       final imagePath = result.files.first.path;
       if (imagePath == null) {
-        throw "No image path found";
+        throw "Picked image does not exist";
       }
 
       final data = await controller.analyzeImage(
@@ -92,11 +68,12 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
   }
 
   Future<void> onDetect(BarcodeCapture capture) async {
-    try {
-      if (foundResult) return;
+    final resultFound = ref.read(qrScannerViewModel).resultFound;
 
-      foundResult = true;
-      animationController.stop();
+    try {
+      if (resultFound) return;
+
+      ref.read(qrScannerViewModel.notifier).setResultFound(true);
       await controller.pause();
 
       final data = capture.barcodes.first.rawValue;
@@ -120,7 +97,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
 
                       if (QrType.getQrType(data).canOpen)
                         TextButton(
-                          onPressed: () => _launchUrl(data),
+                          onPressed: () => launchQRData(data),
                           child: Text("Open"),
                         ),
                     ],
@@ -131,20 +108,65 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
           );
         }
 
-        if (mounted) Navigator.popUntil(context, (ModalRoute.withName('/')));
+        await controller.start();
+        //if (mounted) Navigator.popUntil(context, (ModalRoute.withName('/')));
       }
     } catch (e, s) {
       debugPrintStack(label: e.toString(), stackTrace: s);
     }
   }
 
-  Future<void> toggleFlash() async {
-    await controller.toggleTorch();
-    setState(() => flashOn = !flashOn);
+  Future<void> handlePermission() async {
+    final alertDialog = AlertDialog(
+      title: const Text("Permission Required"),
+      content: const Text(
+        "Camera Permission is required to scan QR Code. Please enable it in settings.",
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text("Cancel"),
+        ),
+        TextButton(
+          onPressed: () async {
+            bool settingsAccessed = await openAppSettings();
+            if (mounted) Navigator.pop(context);
+            if (settingsAccessed) {
+              handlePermission();
+            }
+          },
+          child: const Text("Open Settings"),
+        ),
+      ],
+    );
+
+    try {
+      PermissionStatus status =
+          await Permission.camera
+              .onDeniedCallback(() {
+                SnackBarUtils.showSnackBar("Camera Permission Denied");
+              })
+              .onPermanentlyDeniedCallback(() {
+                showDialog(context: context, builder: (context) => alertDialog);
+              })
+              .request();
+
+      if (status == PermissionStatus.granted) {
+        await controller.start();
+      }
+    } catch (e) {
+      SnackBarUtils.showSnackBar(e.toString());
+    }
   }
 
-  Future<void> flipCamera() async {
-    await controller.switchCamera();
+  Future<void> toggleFlash() async {
+    await controller.toggleTorch();
+    ref.read(qrScannerViewModel.notifier).toggleFlash();
+  }
+
+  Future<void> changeZoomLevel(double zoomLevel) async {
+    await controller.setZoomScale(zoomLevel);
+    ref.read(qrScannerViewModel.notifier).setZoom(zoomLevel);
   }
 
   @override
@@ -152,21 +174,35 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
     final size = MediaQuery.sizeOf(context);
     final iconColor = Colors.white;
 
-    final scannerHeight = size.width * .65;
+    final scannerHeight = size.width * .60;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SizedBox(
         height: size.height,
         width: size.width,
         child: Stack(
           children: [
             MobileScanner(controller: controller, onDetect: onDetect),
-
             Align(
               alignment: Alignment.center,
-              child: ColoredBox(
-                color: Colors.white.withValues(alpha: 0.15),
-                child: SizedBox.square(dimension: scannerHeight),
+              child: Column(
+                spacing: 30,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Scan QR Code",
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge!.copyWith(color: iconColor),
+                  ),
+                  Center(
+                    child: QRScannerFrame(
+                      size: scannerHeight,
+                      color: iconColor,
+                    ),
+                  ),
+                ],
               ),
             ),
 
@@ -184,21 +220,23 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                       Row(
                         children: [
                           Icon(Icons.remove_circle, color: iconColor),
-                          Flexible(
-                            child: Slider(
-                              value: zoomLevel,
-                              min: 0.0,
-                              max: 1.0,
-                              thumbColor: iconColor,
-                              activeColor: iconColor,
-                              inactiveColor: Colors.grey.shade700,
-                              onChanged: (value) {
-                                setState(() {
-                                  zoomLevel = value;
-                                });
-                                controller.setZoomScale(zoomLevel);
-                              },
-                            ),
+                          Consumer(
+                            builder: (context, ref, child) {
+                              final zoomLevel =
+                                  ref.watch(qrScannerViewModel).zoomLevel;
+
+                              return Flexible(
+                                child: Slider(
+                                  value: zoomLevel,
+                                  min: 0.0,
+                                  max: 1.0,
+                                  thumbColor: iconColor,
+                                  activeColor: iconColor,
+                                  inactiveColor: Colors.grey.shade700,
+                                  onChanged: changeZoomLevel,
+                                ),
+                              );
+                            },
                           ),
                           Icon(Icons.add_circle, color: iconColor),
                         ],
@@ -213,17 +251,19 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                             color: iconColor,
                             icon: Icon(Icons.image),
                           ),
-                          IconButton(
-                            onPressed: toggleFlash,
-                            color: iconColor,
-                            icon: Icon(
-                              flashOn ? Icons.flash_on : Icons.flash_off,
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: flipCamera,
-                            color: iconColor,
-                            icon: Icon(Icons.flip_camera_android),
+                          Consumer(
+                            builder: (context, ref, child) {
+                              final flashOn =
+                                  ref.watch(qrScannerViewModel).flashOn;
+
+                              return IconButton(
+                                onPressed: toggleFlash,
+                                color: iconColor,
+                                icon: Icon(
+                                  flashOn ? Icons.flash_on : Icons.flash_off,
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
