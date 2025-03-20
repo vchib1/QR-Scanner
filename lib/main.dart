@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
       scaffoldMessengerKey: SnackBarUtils.snackBarKey,
       debugShowCheckedModeBanner: false,
       title: 'EZ-QR',
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.dark,
       theme: MaterialTheme(textTheme).lightMediumContrast(),
       darkTheme: MaterialTheme(textTheme).darkMediumContrast(),
       initialRoute: "/",

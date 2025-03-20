@@ -10,9 +10,7 @@ class ScannedItem {
     return ScannedItem(
       id: map["id"] as String,
       data: map["data"] as String,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(
-        (map["createdAt"] as int) * 1000,
-      ),
+      createdAt: DateTime.fromMillisecondsSinceEpoch((map["createdAt"] as int)),
     );
   }
 

@@ -14,26 +14,45 @@ class HistoryPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text("History")),
       body: history.when(
-        data: (historyItems) {
+        data: (groupedHistory) {
           return ListView.builder(
-            itemCount: historyItems.length,
+            itemCount: groupedHistory.length,
             itemBuilder: (context, index) {
-              final item = historyItems[index];
+              final date = groupedHistory.keys.elementAt(index);
+              final items = groupedHistory[date]!;
 
-              return ListTile(
-                onLongPress: () => historyVM.removeItem(item),
-                leading: CircleAvatar(
-                  child: Text(
-                    QrType.getQrType(item.data).getName,
-                    style: Theme.of(context).textTheme.labelSmall,
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Section Header (Date)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      date,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                ),
-                title: Text(item.data),
+                  // List of Items for this Date
+                  ...items.map(
+                    (item) => ListTile(
+                      onLongPress: () => historyVM.removeItem(item),
+                      leading: CircleAvatar(
+                        child: Text(
+                          QrType.getQrType(item.data).getName,
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                      ),
+                      title: Text(item.data),
+                    ),
+                  ),
+                ],
               );
             },
           );
         },
-        error: (error, stackTrace) => Text(error.toString()),
+        error: (error, stackTrace) => Center(child: Text(error.toString())),
         loading: () => const Center(child: CircularProgressIndicator()),
       ),
     );

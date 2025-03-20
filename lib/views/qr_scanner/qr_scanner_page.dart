@@ -3,7 +3,6 @@ import 'package:ez_qr/utils/enums/qr_type.dart';
 import 'package:ez_qr/utils/url_launch.dart';
 import 'package:ez_qr/views/history/viewmodel.dart';
 import 'package:ez_qr/views/qr_scanner/viewmodel.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -217,17 +216,17 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
               ),
             ),
 
-            if (kDebugMode)
-              Positioned.fromRect(
-                rect: scanWindow,
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white, width: 1),
-                    // Red border
-                    color: Colors.transparent,
-                  ),
-                ),
-              ),
+            // if (kDebugMode)
+            //   Positioned.fromRect(
+            //     rect: scanWindow,
+            //     child: Container(
+            //       decoration: BoxDecoration(
+            //         border: Border.all(color: Colors.white, width: 1),
+            //         // Red border
+            //         color: Colors.transparent,
+            //       ),
+            //     ),
+            //   ),
           ],
         ),
       ),

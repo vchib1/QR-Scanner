@@ -1,3 +1,4 @@
+import 'package:ez_qr/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -33,8 +34,6 @@ class HomePage extends StatelessWidget {
                     bool settingsOpened = await openAppSettings();
 
                     if (settingsOpened) {
-                      print("Settings opened, waiting for user...");
-
                       // Wait before checking permission again
                       await Future.delayed(const Duration(seconds: 2));
 
@@ -42,12 +41,11 @@ class HomePage extends StatelessWidget {
                         await requestCameraPermission(context);
                       }
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            "Failed to open settings. Please open manually.",
-                          ),
-                        ),
+                      if (!context.mounted) return;
+
+                      SnackBarUtils.showSnackBar(
+                        "Failed to open settings. Please open manually.",
+                        context: context,
                       );
                     }
                   } else {
@@ -66,10 +64,7 @@ class HomePage extends StatelessWidget {
   Future<void> requestCameraPermission(BuildContext context) async {
     PermissionStatus status = await Permission.camera.request();
 
-    if (!context.mounted) {
-      print("context is not mounted");
-      return;
-    }
+    if (!context.mounted) return;
 
     if (status == PermissionStatus.denied) {
       await showPermissionDialog(context);
