@@ -1,54 +1,117 @@
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  static const list = ["Scan a QR", "Generate a QR", "History", "Settings"];
+  Future<void> showPermissionDialog(
+    BuildContext context, {
+    bool isPermanentlyDenied = false,
+  }) async {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text("Permission Required"),
+            content: Text(
+              isPermanentlyDenied
+                  ? "Camera permission is required to scan QR codes. Please enable it in settings."
+                  : "Camera permission is required to scan QR codes. Please allow access.",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(
+                    context,
+                  ); // Close dialog before opening settings
+
+                  if (isPermanentlyDenied) {
+                    bool settingsOpened = await openAppSettings();
+
+                    if (settingsOpened) {
+                      print("Settings opened, waiting for user...");
+
+                      // Wait before checking permission again
+                      await Future.delayed(const Duration(seconds: 2));
+
+                      if (context.mounted) {
+                        await requestCameraPermission(context);
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            "Failed to open settings. Please open manually.",
+                          ),
+                        ),
+                      );
+                    }
+                  } else {
+                    await requestCameraPermission(context);
+                  }
+                },
+                child: Text(
+                  isPermanentlyDenied ? "Open Settings" : "Allow Permission",
+                ),
+              ),
+            ],
+          ),
+    );
+  }
+
+  Future<void> requestCameraPermission(BuildContext context) async {
+    PermissionStatus status = await Permission.camera.request();
+
+    if (!context.mounted) {
+      print("context is not mounted");
+      return;
+    }
+
+    if (status == PermissionStatus.denied) {
+      await showPermissionDialog(context);
+    } else if (status == PermissionStatus.permanentlyDenied) {
+      await showPermissionDialog(context, isPermanentlyDenied: true);
+    } else if (status == PermissionStatus.granted) {
+      Navigator.pushNamed(context, "/qr_scanner");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final iconSize = 32.0;
+
     return Scaffold(
-      appBar: AppBar(title: Text("Ez-QR")),
-      body: SizedBox(
-        width: double.infinity,
+      appBar: AppBar(title: Text("EZQR")),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 30,
+          spacing: 12,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: [
-                ...list.map(
-                  (text) => InkWell(
-                    onTap: () {
-                      if (text == "Scan a QR") {
-                        Navigator.pushNamed(context, "/scanner");
-                      }
+            FlutterLogo(size: 200, style: FlutterLogoStyle.horizontal),
+            ListTile(
+              onTap: () async => await requestCameraPermission(context),
+              leading: Icon(Icons.qr_code_scanner, size: iconSize),
+              title: Text("Scan QR Code"),
+              subtitle: Text("Scan QR codes using device camera."),
+            ),
 
-                      if (text == "Generate a QR") {
-                        Navigator.pushNamed(context, "/generate");
-                      }
+            ListTile(
+              onTap: () => Navigator.pushNamed(context, "/image_scanner"),
+              leading: Icon(Icons.image_search, size: iconSize),
+              title: Text("Scan Image"),
+              subtitle: Text("Find QR codes from images."),
+            ),
 
-                      if (text == "History") {
-                        Navigator.pushNamed(context, "/history");
-                      }
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      alignment: Alignment.center,
-                      color: Theme.of(context).colorScheme.primary,
-                      width: 150,
-                      child: Text(
-                        text,
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            ListTile(
+              onTap: () => Navigator.pushNamed(context, "/generator"),
+              leading: Icon(Icons.qr_code_2_outlined, size: iconSize),
+              title: Text("QR Generator"),
+              subtitle: Text("Create your own QR Codes."),
             ),
           ],
         ),

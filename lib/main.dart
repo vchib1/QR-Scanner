@@ -1,11 +1,14 @@
 import 'package:ez_qr/utils/snackbar.dart';
+import 'package:ez_qr/utils/theme/theme.dart';
 import 'package:ez_qr/views/generate/qr_generate_page.dart';
 import 'package:ez_qr/views/history/history_page.dart';
 import 'package:ez_qr/views/home/home_page.dart';
+import 'package:ez_qr/views/image_scanner/image_scanner_page.dart';
+import 'package:ez_qr/views/nav_page.dart';
+import 'package:ez_qr/views/qr_scanner/qr_scanner_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'views/scanner/qr_scanner_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,21 +24,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return MaterialApp(
       scaffoldMessengerKey: SnackBarUtils.snackBarKey,
       debugShowCheckedModeBanner: false,
       title: 'EZ-QR',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        inputDecorationTheme: InputDecorationTheme(
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-      ),
+      themeMode: ThemeMode.light,
+      theme: MaterialTheme(textTheme).lightMediumContrast(),
+      darkTheme: MaterialTheme(textTheme).darkMediumContrast(),
       initialRoute: "/",
       routes: {
-        "/": (context) => const HomePage(),
-        "/scanner": (context) => const QrScannerPage(),
-        "/generate": (context) => const QrGeneratePage(),
+        "/": (context) => const NavPage(),
+        "/home": (context) => const HomePage(),
+        "/qr_scanner": (context) => const QrScannerPage(),
+        "/image_scanner": (context) => const ImageScannerPage(),
+        "/generator": (context) => const QrGeneratePage(),
         "/history": (context) => const HistoryPage(),
       },
     );

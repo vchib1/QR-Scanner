@@ -1,15 +1,12 @@
 import 'package:ez_qr/model/scanned_item_model.dart';
 import 'package:ez_qr/utils/enums/qr_type.dart';
-import 'package:ez_qr/utils/snackbar.dart';
 import 'package:ez_qr/utils/url_launch.dart';
 import 'package:ez_qr/views/history/viewmodel.dart';
-import 'package:ez_qr/views/scanner/viewmodel.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:ez_qr/views/qr_scanner/viewmodel.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'widgets/qr_frame.dart';
 
 class QrScannerPage extends ConsumerStatefulWidget {
@@ -21,7 +18,7 @@ class QrScannerPage extends ConsumerStatefulWidget {
 
 class _QrScannerPageState extends ConsumerState<QrScannerPage>
     with SingleTickerProviderStateMixin {
-  late final MobileScannerController controller;
+  late MobileScannerController controller;
 
   late AnimationController animationController;
 
@@ -31,10 +28,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
   void initState() {
     super.initState();
 
-    controller = MobileScannerController(
-      autoStart: false,
-      detectionTimeoutMs: 1500,
-    );
+    controller = MobileScannerController(detectionTimeoutMs: 1500);
 
     animationController = AnimationController(
       vsync: this,
@@ -43,9 +37,14 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
 
     animationController.repeat(reverse: true);
 
-    Future.delayed(Duration.zero, handlePermission);
-
     WidgetsBinding.instance.addPostFrameCallback((_) => setScanWindow());
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    animationController.dispose();
+    super.dispose();
   }
 
   void setScanWindow() {
@@ -58,40 +57,6 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
     scanWindow = Rect.fromLTWH(left, top, scannerSize, scannerSize);
     controller.updateScanWindow(scanWindow);
     setState(() {});
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
-  Future<void> pickImage() async {
-    try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.image,
-      );
-
-      if (result == null) return;
-
-      final imagePath = result.files.first.path;
-      if (imagePath == null) {
-        throw "Picked image does not exist";
-      }
-
-      final data = await controller.analyzeImage(
-        imagePath,
-        formats: [BarcodeFormat.all],
-      );
-
-      if (data == null || data.barcodes.isEmpty) {
-        throw "No QR code found in the image";
-      }
-
-      await onDetect(data);
-    } catch (e) {
-      SnackBarUtils.showSnackBar(e.toString());
-    }
   }
 
   Future<void> onDetect(BarcodeCapture capture) async {
@@ -144,49 +109,6 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
     }
   }
 
-  Future<void> handlePermission() async {
-    final alertDialog = AlertDialog(
-      title: const Text("Permission Required"),
-      content: const Text(
-        "Camera Permission is required to scan QR Code. Please enable it in settings.",
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text("Cancel"),
-        ),
-        TextButton(
-          onPressed: () async {
-            bool settingsAccessed = await openAppSettings();
-            if (mounted) Navigator.pop(context);
-            if (settingsAccessed) {
-              handlePermission();
-            }
-          },
-          child: const Text("Open Settings"),
-        ),
-      ],
-    );
-
-    try {
-      PermissionStatus status =
-          await Permission.camera
-              .onDeniedCallback(() {
-                SnackBarUtils.showSnackBar("Camera Permission Denied");
-              })
-              .onPermanentlyDeniedCallback(() {
-                showDialog(context: context, builder: (context) => alertDialog);
-              })
-              .request();
-
-      if (status == PermissionStatus.granted) {
-        await controller.start();
-      }
-    } catch (e) {
-      SnackBarUtils.showSnackBar(e.toString());
-    }
-  }
-
   Future<void> toggleFlash() async {
     await controller.toggleTorch();
     ref.read(qrScannerViewModel.notifier).toggleFlash();
@@ -209,6 +131,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
     final scannerHeight = size.width * .60;
 
     return Scaffold(
+      backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         elevation: 0.0,
@@ -243,12 +166,6 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
           children: [
             MobileScanner(controller: controller, onDetect: onDetect),
 
-            // Text(
-            //   "Scan QR Code",
-            //   style: Theme.of(
-            //     context,
-            //   ).textTheme.bodyLarge!.copyWith(color: iconColor),
-            // ),
             Center(
               child: Column(
                 spacing: 10,
@@ -262,34 +179,6 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
 
                   const SizedBox(height: 50),
                 ],
-              ),
-            ),
-
-            Positioned(
-              left: 0,
-              bottom: 125,
-              child: SizedBox(
-                width: size.width,
-                child: Center(
-                  child: MaterialButton(
-                    onPressed: pickImage,
-                    color: iconColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      spacing: 10,
-                      children: [
-                        Icon(Icons.image, color: Colors.black),
-                        Text(
-                          "pick from gallery",
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
               ),
             ),
 
