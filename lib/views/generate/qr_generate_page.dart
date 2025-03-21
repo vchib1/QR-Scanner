@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:ez_qr/services/database/history/history_db.dart';
 import 'package:ez_qr/utils/enums/qr_type.dart';
 import 'package:ez_qr/utils/snackbar.dart';
+import 'package:ez_qr/views/editor/editor_page.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -211,7 +212,14 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
                       borderRadius: BorderRadius.circular(4.0),
                     ),
                   ),
-                  onPressed: () => generateQR(size, context),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditorPage(qrData: qrData),
+                      ),
+                    );
+                  },
                   child: Text(
                     "Generate",
                     style: TextStyle(
@@ -227,7 +235,6 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     spacing: 10,
                     children: [
-                      //Text("QR Type:"),
                       Wrap(
                         spacing: 10,
                         runSpacing: 10,

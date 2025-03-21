@@ -31,8 +31,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'EZ-QR',
       themeMode: ThemeMode.dark,
-      theme: MaterialTheme(textTheme).lightMediumContrast(),
-      darkTheme: MaterialTheme(textTheme).darkMediumContrast(),
+      theme: MaterialTheme(textTheme).light(),
+      darkTheme: MaterialTheme(textTheme).darkHighContrast(),
       initialRoute: "/",
       routes: {
         "/": (context) => const NavPage(),
