@@ -1,9 +1,7 @@
 import 'dart:io';
-
 import 'package:ez_qr/services/database/history/history_db.dart';
 import 'package:ez_qr/utils/enums/qr_type.dart';
 import 'package:ez_qr/utils/snackbar.dart';
-import 'package:ez_qr/views/editor/editor_page.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -191,10 +189,13 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
 
   void unFocusKeyboard() => FocusManager.instance.primaryFocus?.unfocus();
 
+  void navigateToEditor() {
+    unFocusKeyboard();
+    Navigator.pushNamed(context, "/editor", arguments: qrData);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-
     return ScaffoldMessenger(
       child: Builder(
         builder: (context) {
@@ -212,14 +213,7 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
                       borderRadius: BorderRadius.circular(4.0),
                     ),
                   ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EditorPage(qrData: qrData),
-                      ),
-                    );
-                  },
+                  onPressed: navigateToEditor,
                   child: Text(
                     "Generate",
                     style: TextStyle(

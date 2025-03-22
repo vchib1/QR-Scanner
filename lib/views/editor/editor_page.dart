@@ -23,6 +23,8 @@ class EditorPage extends ConsumerStatefulWidget {
 class _EditorPageState extends ConsumerState<EditorPage> {
   late final ScreenshotController screenshotController;
 
+  static const qrSize = 200.0;
+
   @override
   void initState() {
     super.initState();
@@ -34,6 +36,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     Color color,
     Function(Color color) setState,
   ) async {
+    //
     Color newColor = await showColorPickerDialog(
       context,
       color,
@@ -50,22 +53,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
 
   /// Capture QR code screenshot and return as Uint8List
   Future<Uint8List> captureQRScreenshot() async {
-    final state = ref.read(qrEditViewModel);
-    final size = MediaQuery.sizeOf(context);
-
     Uint8List image = await screenshotController.captureFromWidget(
-      QrImageView(
-        data: widget.qrData,
-        size: size.width * .65,
-        gapless: !state.allowGap,
-        backgroundColor: state.bgColor,
-        version: state.version,
-        dataModuleStyle: QrDataModuleStyle(
-          color: state.patternColor,
-          dataModuleShape: state.patternShape,
-        ),
-        eyeStyle: QrEyeStyle(color: state.eyeColor, eyeShape: state.eyeShape),
-      ),
+      _buildQRView(context),
     );
 
     return image;
@@ -159,24 +148,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
             spacing: 12.0,
             children: [
               const SizedBox(height: 8.0),
-              SizedBox(
-                height: size.width * .65,
-                child: QrImageView(
-                  data: widget.qrData,
-                  size: size.width * .65,
-                  gapless: !state.allowGap,
-                  backgroundColor: state.bgColor,
-                  version: state.version,
-                  dataModuleStyle: QrDataModuleStyle(
-                    color: state.patternColor,
-                    dataModuleShape: state.patternShape,
-                  ),
-                  eyeStyle: QrEyeStyle(
-                    color: state.eyeColor,
-                    eyeShape: state.eyeShape,
-                  ),
-                ),
-              ),
+              SizedBox(height: qrSize, child: _buildQRView(context)),
 
               const SizedBox(height: 12.0),
 
@@ -186,14 +158,15 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                 children: [
                   // Background Color
                   ListTile(
-                    onTap:
-                        () => colorPickerDialog(
-                          context,
-                          state.bgColor,
-                          (color) => viewModel.changeState(
-                            state.copyWith(bgColor: color),
-                          ),
+                    onTap: () {
+                      colorPickerDialog(
+                        context,
+                        state.bgColor,
+                        (color) => viewModel.changeState(
+                          state.copyWith(bgColor: color),
                         ),
+                      );
+                    },
                     title: Text("Background Color"),
                     subtitle: Text(
                       "Choose a color that contrasts with the pattern to ensure clear scanning.",
@@ -211,14 +184,15 @@ class _EditorPageState extends ConsumerState<EditorPage> {
 
                   // Pattern Color
                   ListTile(
-                    onTap:
-                        () => colorPickerDialog(
-                          context,
-                          state.patternColor,
-                          (color) => viewModel.changeState(
-                            state.copyWith(patternColor: color),
-                          ),
+                    onTap: () {
+                      colorPickerDialog(
+                        context,
+                        state.patternColor,
+                        (color) => viewModel.changeState(
+                          state.copyWith(patternColor: color),
                         ),
+                      );
+                    },
                     title: Text("Pattern Color"),
                     subtitle: Text(
                       "Set the main QR code color. Use a dark color for better scanning.",
@@ -230,14 +204,15 @@ class _EditorPageState extends ConsumerState<EditorPage> {
 
                   // Eye Color
                   ListTile(
-                    onTap:
-                        () => colorPickerDialog(
-                          context,
-                          state.eyeColor,
-                          (color) => viewModel.changeState(
-                            state.copyWith(eyeColor: color),
-                          ),
+                    onTap: () {
+                      colorPickerDialog(
+                        context,
+                        state.eyeColor,
+                        (color) => viewModel.changeState(
+                          state.copyWith(eyeColor: color),
                         ),
+                      );
+                    },
                     title: Text("Eye Color"),
                     subtitle: Text(
                       "Pick a color for the QR code's eye patterns (corner markers).",
@@ -249,14 +224,15 @@ class _EditorPageState extends ConsumerState<EditorPage> {
 
                   // Gap
                   ListTile(
-                    onTap:
-                        () => colorPickerDialog(
-                          context,
-                          state.eyeColor,
-                          (color) => viewModel.changeState(
-                            state.copyWith(eyeColor: color),
-                          ),
+                    onTap: () {
+                      colorPickerDialog(
+                        context,
+                        state.eyeColor,
+                        (color) => viewModel.changeState(
+                          state.copyWith(eyeColor: color),
                         ),
+                      );
+                    },
                     title: Text("Enable Gap"),
                     subtitle: Text(
                       "If enabled, the squares will have some gap.",
@@ -267,6 +243,39 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                         viewModel.changeState(state.copyWith(allowGap: value));
                       },
                     ),
+                  ),
+
+                  const SizedBox(height: 8.0),
+
+                  // Background Color
+                  ListTile(
+                    onTap: () async {
+                      final path = await Navigator.pushNamed(
+                        context,
+                        "/editor/logo",
+                      );
+
+                      if (path == null) return;
+
+                      viewModel.changeState(
+                        state.copyWith(logoPath: path as String),
+                      );
+                    },
+                    title: Text("Custom Logo"),
+                    subtitle: Text(
+                      "Add a your custom logo in the center of the QR code.",
+                    ),
+                    trailing:
+                        state.logoPath != null
+                            ? IconButton(
+                              onPressed: () {
+                                viewModel.changeState(
+                                  state.copyWith(clearLogoPath: true),
+                                );
+                              },
+                              icon: Icon(Icons.delete),
+                            )
+                            : const Icon(Icons.arrow_forward),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(16.0),
@@ -326,6 +335,25 @@ class _EditorPageState extends ConsumerState<EditorPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildQRView(BuildContext context) {
+    final state = ref.read(qrEditViewModel);
+
+    return QrImageView(
+      data: widget.qrData,
+      size: qrSize,
+      gapless: !state.allowGap,
+      backgroundColor: state.bgColor,
+      version: state.version,
+      embeddedImage:
+          state.logoPath != null ? FileImage(File(state.logoPath!)) : null,
+      dataModuleStyle: QrDataModuleStyle(
+        color: state.patternColor,
+        dataModuleShape: state.patternShape,
+      ),
+      eyeStyle: QrEyeStyle(color: state.eyeColor, eyeShape: state.eyeShape),
     );
   }
 

@@ -1,5 +1,7 @@
 import 'package:ez_qr/utils/snackbar.dart';
 import 'package:ez_qr/utils/theme/theme.dart';
+import 'package:ez_qr/views/editor/editor_page.dart';
+import 'package:ez_qr/views/editor/logo_picker_page.dart';
 import 'package:ez_qr/views/generate/qr_generate_page.dart';
 import 'package:ez_qr/views/history/history_page.dart';
 import 'package:ez_qr/views/home/home_page.dart';
@@ -34,13 +36,41 @@ class MyApp extends StatelessWidget {
       theme: MaterialTheme(textTheme).light(),
       darkTheme: MaterialTheme(textTheme).darkHighContrast(),
       initialRoute: "/",
-      routes: {
-        "/": (context) => const NavPage(),
-        "/home": (context) => const HomePage(),
-        "/qr_scanner": (context) => const QrScannerPage(),
-        "/image_scanner": (context) => const ImageScannerPage(),
-        "/generator": (context) => const QrGeneratePage(),
-        "/history": (context) => const HistoryPage(),
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case "/":
+            return MaterialPageRoute(builder: (context) => const NavPage());
+          case "/home":
+            return MaterialPageRoute(builder: (context) => const HomePage());
+          case "/qr_scanner":
+            return MaterialPageRoute(
+              builder: (context) => const QrScannerPage(),
+            );
+          case "/image_scanner":
+            return MaterialPageRoute(
+              builder: (context) => const ImageScannerPage(),
+            );
+          case "/generator":
+            return MaterialPageRoute(
+              builder: (context) => const QrGeneratePage(),
+            );
+          case "/history":
+            return MaterialPageRoute(builder: (context) => const HistoryPage());
+        }
+
+        if (settings.name == "/editor") {
+          final qrData = settings.arguments as String;
+
+          return MaterialPageRoute(
+            builder: (context) => EditorPage(qrData: qrData),
+          );
+        }
+
+        if (settings.name == "/editor/logo") {
+          return MaterialPageRoute(builder: (context) => LogoPickerPage());
+        }
+
+        return null;
       },
     );
   }

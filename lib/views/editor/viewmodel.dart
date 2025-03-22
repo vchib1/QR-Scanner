@@ -18,6 +18,7 @@ class QREditViewModel extends AutoDisposeNotifier<QREditState> {
       eyeShape: QrEyeShape.square,
       version: QrVersions.auto,
       allowGap: true,
+      logoPath: null,
     );
   }
 
@@ -32,6 +33,7 @@ class QREditState {
   final QrEyeShape eyeShape;
   final int version;
   final bool allowGap;
+  final String? logoPath;
 
   const QREditState({
     required this.bgColor,
@@ -41,6 +43,7 @@ class QREditState {
     required this.eyeShape,
     required this.version,
     required this.allowGap,
+    required this.logoPath,
   });
 
   QREditState copyWith({
@@ -51,6 +54,8 @@ class QREditState {
     QrEyeShape? eyeShape,
     int? version,
     bool? allowGap,
+    String? logoPath,
+    bool clearLogoPath = false,
   }) => QREditState(
     bgColor: bgColor ?? this.bgColor,
     patternColor: patternColor ?? this.patternColor,
@@ -59,5 +64,6 @@ class QREditState {
     eyeShape: eyeShape ?? this.eyeShape,
     version: version ?? this.version,
     allowGap: allowGap ?? this.allowGap,
+    logoPath: clearLogoPath ? null : (logoPath ?? this.logoPath),
   );
 }
