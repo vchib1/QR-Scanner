@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:ez_qr/utils/helper_functions/colorpicker_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:share_plus/share_plus.dart';
@@ -8,7 +9,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:ez_qr/views/editor/viewmodel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:ez_qr/services/database/history/history_db.dart';
 
 class EditorPage extends ConsumerStatefulWidget {
@@ -21,43 +21,24 @@ class EditorPage extends ConsumerStatefulWidget {
 }
 
 class _EditorPageState extends ConsumerState<EditorPage> {
-  late final ScreenshotController screenshotController;
-
-  static const qrSize = 200.0;
-
-  @override
-  void initState() {
-    super.initState();
-    screenshotController = ScreenshotController();
-  }
-
-  Future<void> colorPickerDialog(
-    BuildContext context,
-    Color color,
-    Function(Color color) setState,
-  ) async {
-    //
-    Color newColor = await showColorPickerDialog(
-      context,
-      color,
-      heading: Text("Pick a Color"),
-      pickersEnabled: <ColorPickerType, bool>{
-        ColorPickerType.wheel: true,
-        ColorPickerType.primary: false,
-        ColorPickerType.accent: false,
-      },
-    );
-
-    setState(newColor);
-  }
+  static const qrSize = 250.0;
 
   /// Capture QR code screenshot and return as Uint8List
   Future<Uint8List> captureQRScreenshot() async {
-    Uint8List image = await screenshotController.captureFromWidget(
-      _buildQRView(context),
+    final screenshotController = ScreenshotController();
+
+    final qrWidget = MediaQuery(
+      data: MediaQueryData.fromView(View.of(context)),
+      child: Transform(
+        alignment: Alignment.center,
+        transform: Matrix4.identity()..scale(1.0, -1.0), // Flip vertically
+        child: _buildQRView(),
+      ),
     );
 
-    return image;
+    final imageBytes = await screenshotController.captureFromWidget(qrWidget);
+
+    return imageBytes;
   }
 
   /// Save QR code image to device
@@ -112,6 +93,26 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     }
   }
 
+  Future<void> processLogo() async {
+    final state = ref.read(qrEditViewModel);
+    final viewModel = ref.read(qrEditViewModel.notifier);
+
+    final result =
+        await Navigator.pushNamed(context, "/editor/logo")
+            as Map<String, dynamic>?;
+
+    if (result == null) return;
+
+    File file = File(result["path"] as String);
+    QRLogoSize logoSize = result["size"] as QRLogoSize;
+
+    Uint8List bytes = await file.readAsBytes();
+
+    viewModel.changeState(
+      state.copyWith(selectedLogo: bytes, logoSize: logoSize),
+    );
+  }
+
   void showLoadingDialog() => showDialog<void>(
     context: context,
     barrierDismissible: false,
@@ -120,8 +121,6 @@ class _EditorPageState extends ConsumerState<EditorPage> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-
     final state = ref.watch(qrEditViewModel);
     final viewModel = ref.watch(qrEditViewModel.notifier);
 
@@ -148,7 +147,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
             spacing: 12.0,
             children: [
               const SizedBox(height: 8.0),
-              SizedBox(height: qrSize, child: _buildQRView(context)),
+              SizedBox(height: qrSize, child: _buildQRView()),
 
               const SizedBox(height: 12.0),
 
@@ -249,28 +248,17 @@ class _EditorPageState extends ConsumerState<EditorPage> {
 
                   // Background Color
                   ListTile(
-                    onTap: () async {
-                      final path = await Navigator.pushNamed(
-                        context,
-                        "/editor/logo",
-                      );
-
-                      if (path == null) return;
-
-                      viewModel.changeState(
-                        state.copyWith(logoPath: path as String),
-                      );
-                    },
+                    onTap: processLogo,
                     title: Text("Custom Logo"),
                     subtitle: Text(
                       "Add a your custom logo in the center of the QR code.",
                     ),
                     trailing:
-                        state.logoPath != null
+                        state.selectedLogo != null
                             ? IconButton(
                               onPressed: () {
                                 viewModel.changeState(
-                                  state.copyWith(clearLogoPath: true),
+                                  state.copyWith(clearLogo: true),
                                 );
                               },
                               icon: Icon(Icons.delete),
@@ -338,7 +326,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     );
   }
 
-  Widget _buildQRView(BuildContext context) {
+  Widget _buildQRView() {
     final state = ref.read(qrEditViewModel);
 
     return QrImageView(
@@ -347,8 +335,11 @@ class _EditorPageState extends ConsumerState<EditorPage> {
       gapless: !state.allowGap,
       backgroundColor: state.bgColor,
       version: state.version,
+      embeddedImageStyle: QrEmbeddedImageStyle(
+        size: Size.square(state.logoSize.size),
+      ),
       embeddedImage:
-          state.logoPath != null ? FileImage(File(state.logoPath!)) : null,
+          state.selectedLogo != null ? MemoryImage(state.selectedLogo!) : null,
       dataModuleStyle: QrDataModuleStyle(
         color: state.patternColor,
         dataModuleShape: state.patternShape,

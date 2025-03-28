@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -9,18 +10,7 @@ final qrEditViewModel =
 
 class QREditViewModel extends AutoDisposeNotifier<QREditState> {
   @override
-  QREditState build() {
-    return const QREditState(
-      bgColor: Colors.white,
-      patternColor: Colors.black,
-      eyeColor: Colors.black,
-      patternShape: QrDataModuleShape.square,
-      eyeShape: QrEyeShape.square,
-      version: QrVersions.auto,
-      allowGap: true,
-      logoPath: null,
-    );
-  }
+  QREditState build() => const QREditState.init();
 
   void changeState(QREditState updatedState) => state = updatedState;
 }
@@ -33,7 +23,8 @@ class QREditState {
   final QrEyeShape eyeShape;
   final int version;
   final bool allowGap;
-  final String? logoPath;
+  final Uint8List? selectedLogo;
+  final QRLogoSize logoSize;
 
   const QREditState({
     required this.bgColor,
@@ -43,7 +34,20 @@ class QREditState {
     required this.eyeShape,
     required this.version,
     required this.allowGap,
-    required this.logoPath,
+    required this.selectedLogo,
+    required this.logoSize,
+  });
+
+  const QREditState.init({
+    this.bgColor = Colors.white,
+    this.patternColor = Colors.black,
+    this.eyeColor = Colors.black,
+    this.patternShape = QrDataModuleShape.square,
+    this.eyeShape = QrEyeShape.square,
+    this.version = QrVersions.auto,
+    this.allowGap = true,
+    this.selectedLogo,
+    this.logoSize = QRLogoSize.large,
   });
 
   QREditState copyWith({
@@ -54,8 +58,9 @@ class QREditState {
     QrEyeShape? eyeShape,
     int? version,
     bool? allowGap,
-    String? logoPath,
-    bool clearLogoPath = false,
+    QRLogoSize? logoSize,
+    Uint8List? selectedLogo,
+    bool clearLogo = false,
   }) => QREditState(
     bgColor: bgColor ?? this.bgColor,
     patternColor: patternColor ?? this.patternColor,
@@ -64,6 +69,17 @@ class QREditState {
     eyeShape: eyeShape ?? this.eyeShape,
     version: version ?? this.version,
     allowGap: allowGap ?? this.allowGap,
-    logoPath: clearLogoPath ? null : (logoPath ?? this.logoPath),
+    logoSize: logoSize ?? this.logoSize,
+    selectedLogo: clearLogo ? null : (selectedLogo ?? this.selectedLogo),
   );
+}
+
+enum QRLogoSize {
+  small(25.0),
+  medium(37.0),
+  large(50.0);
+
+  final double size;
+
+  const QRLogoSize(this.size);
 }

@@ -6,7 +6,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../model/scanned_item_model.dart';
 import '../../utils/enums/qr_type.dart';
 import '../../utils/snackbar.dart';
-import '../../utils/url_launch.dart';
+import '../../utils/helper_functions/url_launch.dart';
 import '../history/viewmodel.dart';
 
 class ImageScannerPage extends ConsumerStatefulWidget {

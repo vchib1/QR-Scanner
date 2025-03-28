@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:ez_qr/views/editor/viewmodel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +12,7 @@ class LogoPickerPage extends StatefulWidget {
 }
 
 class _LogoPickerPageState extends State<LogoPickerPage> {
-  double selectedSize = 50.0;
+  QRLogoSize logoSize = QRLogoSize.large;
 
   String? imagePath;
 
@@ -54,7 +55,7 @@ class _LogoPickerPageState extends State<LogoPickerPage> {
             ListTile(
               title: Text("Select Logo Size"),
               subtitle: Text("Please pick a suitable logo size."),
-              trailing: SegmentedButton<double>(
+              trailing: SegmentedButton<QRLogoSize>(
                 direction: Axis.horizontal,
                 style: ButtonStyle(
                   padding: WidgetStateProperty.all(const EdgeInsets.all(0.0)),
@@ -63,15 +64,19 @@ class _LogoPickerPageState extends State<LogoPickerPage> {
                     const RoundedRectangleBorder(),
                   ),
                 ),
-                segments: const [
-                  ButtonSegment(value: 50, label: Text("S")),
-                  ButtonSegment(value: 62.5, label: Text("M")),
-                  ButtonSegment(value: 75, label: Text("L")),
-                ],
-                selected: {selectedSize},
+                segments:
+                    QRLogoSize.values
+                        .map(
+                          (e) => ButtonSegment(
+                            value: e,
+                            label: Text(e.size.toString()),
+                          ),
+                        )
+                        .toList(),
+                selected: {logoSize},
                 onSelectionChanged: (newSelection) {
                   setState(() {
-                    selectedSize = newSelection.first;
+                    logoSize = newSelection.first;
                   });
                 },
               ),
@@ -80,7 +85,10 @@ class _LogoPickerPageState extends State<LogoPickerPage> {
             ElevatedButton(
               onPressed:
                   (imagePath != null)
-                      ? () => Navigator.pop(context, imagePath)
+                      ? () => Navigator.pop(context, {
+                        "path": imagePath,
+                        "size": logoSize,
+                      })
                       : null,
               child: const Text("Confirm"),
             ),
