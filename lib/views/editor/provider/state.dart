@@ -1,19 +1,7 @@
+import 'package:ez_qr/utils/enums/qr_logo_size.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-
-final qrEditViewModel =
-    AutoDisposeNotifierProvider<QREditViewModel, QREditState>(
-      QREditViewModel.new,
-    );
-
-class QREditViewModel extends AutoDisposeNotifier<QREditState> {
-  @override
-  QREditState build() => const QREditState.init();
-
-  void changeState(QREditState updatedState) => state = updatedState;
-}
 
 class QREditState {
   final Color bgColor;
@@ -72,14 +60,4 @@ class QREditState {
     logoSize: logoSize ?? this.logoSize,
     selectedLogo: clearLogo ? null : (selectedLogo ?? this.selectedLogo),
   );
-}
-
-enum QRLogoSize {
-  small(25.0),
-  medium(37.0),
-  large(50.0);
-
-  final double size;
-
-  const QRLogoSize(this.size);
 }

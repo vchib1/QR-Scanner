@@ -40,12 +40,14 @@ class HistoryViewModel extends AsyncNotifier<Map<String, List<ScannedItem>>> {
       final date = item.createdAt;
       final itemDate = DateTime(date.year, date.month, date.day);
 
+      return DateFormat("dd/MMM/yyyy").format(itemDate);
+
       if (itemDate == today) {
         return "Today";
       } else if (itemDate == yesterday) {
         return "Yesterday";
       } else {
-        return DateFormat("dd-MM-yyyy").format(itemDate);
+        return DateFormat("dd-MMM-yyyy").format(itemDate);
       }
     });
   }

@@ -1,8 +1,9 @@
+import 'package:ez_qr/utils/helper_functions/loading_dialog.dart';
+import 'package:ez_qr/utils/helper_functions/qr_data_dialog.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-
 import '../../model/scanned_item_model.dart';
 import '../../utils/enums/qr_type.dart';
 import '../../utils/snackbar.dart';
@@ -33,9 +34,18 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
 
   Future<void> pickImage() async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.image,
-      );
+      showLoadingDialog(context);
+
+      FilePickerResult? result;
+
+      try {
+        result = await FilePicker.platform.pickFiles(type: FileType.image);
+      } catch (e) {
+        if (mounted) Navigator.pop(context);
+        throw "Failed to pick image: ${e.toString()}";
+      }
+
+      if (mounted) Navigator.pop(context);
 
       if (result == null) return;
 
@@ -50,11 +60,13 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
       );
 
       if (data == null || data.barcodes.isEmpty) {
-        throw "No QR code found in the image";
+        SnackBarUtils.showSnackBar("No QR code found in the image");
+        return;
       }
 
       await onDetect(data);
     } catch (e) {
+      if (mounted) Navigator.pop(context);
       SnackBarUtils.showSnackBar(e.toString());
     }
   }
@@ -70,28 +82,7 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
         await ref.read(historyViewModel.notifier).addItem(scannedItem);
 
         if (mounted) {
-          await showDialog(
-            context: context,
-            builder: (context) {
-              return Dialog(
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(data),
-
-                      if (QrType.getQrType(data).canOpen)
-                        TextButton(
-                          onPressed: () => launchQRData(data),
-                          child: Text("Open"),
-                        ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
+          await showQRDataDialog(context, data: data);
         }
       }
     } catch (e, s) {

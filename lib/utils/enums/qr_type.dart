@@ -15,7 +15,7 @@ enum QrType {
         return QrType.sms;
       case "mailto":
         return QrType.mail;
-      case "http" || "https:" || "www":
+      case "http" || "https" || "www":
         return QrType.url;
       default:
         return QrType.text;

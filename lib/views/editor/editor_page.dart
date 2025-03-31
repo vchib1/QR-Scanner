@@ -1,5 +1,11 @@
 import 'dart:io';
+import 'dart:async';
+import 'package:ez_qr/utils/enums/qr_logo_size.dart';
+import 'package:ez_qr/utils/enums/qr_size.dart';
 import 'package:ez_qr/utils/helper_functions/colorpicker_dialog.dart';
+import 'package:ez_qr/utils/helper_functions/loading_dialog.dart';
+import 'package:ez_qr/utils/snackbar.dart';
+import 'package:ez_qr/views/editor/provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:share_plus/share_plus.dart';
@@ -7,7 +13,6 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:ez_qr/views/editor/viewmodel.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ez_qr/services/database/history/history_db.dart';
 
@@ -21,7 +26,7 @@ class EditorPage extends ConsumerStatefulWidget {
 }
 
 class _EditorPageState extends ConsumerState<EditorPage> {
-  static const qrSize = 250.0;
+  QrSize qrSize = QrSize.m;
 
   /// Capture QR code screenshot and return as Uint8List
   Future<Uint8List> captureQRScreenshot() async {
@@ -29,11 +34,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
 
     final qrWidget = MediaQuery(
       data: MediaQueryData.fromView(View.of(context)),
-      child: Transform(
-        alignment: Alignment.center,
-        transform: Matrix4.identity()..scale(1.0, -1.0), // Flip vertically
-        child: _buildQRView(),
-      ),
+      child: _buildQRView(),
     );
 
     final imageBytes = await screenshotController.captureFromWidget(qrWidget);
@@ -44,7 +45,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
   /// Save QR code image to device
   Future<bool> saveQRImage() async {
     try {
-      showLoadingDialog();
+      showLoadingDialog(context);
 
       // get QR code screenshot image
       Uint8List image = await captureQRScreenshot();
@@ -60,7 +61,13 @@ class _EditorPageState extends ConsumerState<EditorPage> {
         bytes: image,
       );
 
-      return (result != null);
+      final fileSaved = result != null;
+
+      if (fileSaved) {
+        SnackBarUtils.showSnackBar("QR Saved");
+      }
+
+      return fileSaved;
     } finally {
       if (mounted) {
         Navigator.pop(context);
@@ -70,12 +77,12 @@ class _EditorPageState extends ConsumerState<EditorPage> {
 
   Future<bool> shareQRImage() async {
     try {
-      showLoadingDialog();
+      showLoadingDialog(context);
 
       // get QR code screenshot image
       Uint8List image = await captureQRScreenshot();
 
-      final tempDir = await getTemporaryDirectory();
+      Directory tempDir = await getTemporaryDirectory();
 
       File file = File("${tempDir.path}/qr.png");
 
@@ -94,38 +101,95 @@ class _EditorPageState extends ConsumerState<EditorPage> {
   }
 
   Future<void> processLogo() async {
-    final state = ref.read(qrEditViewModel);
-    final viewModel = ref.read(qrEditViewModel.notifier);
-
-    final result =
-        await Navigator.pushNamed(context, "/editor/logo")
-            as Map<String, dynamic>?;
+    Map<String, dynamic>? result = await showLogoPickerModal();
 
     if (result == null) return;
 
-    File file = File(result["path"] as String);
-    QRLogoSize logoSize = result["size"] as QRLogoSize;
+    final imgPath = result["image"];
+    final size = result["size"];
+
+    if (imgPath == null) {
+      SnackBarUtils.showSnackBar("Please pick a valid logo.");
+      return;
+    }
+
+    File file = File(imgPath as String);
+    QRLogoSize logoSize = size as QRLogoSize;
 
     Uint8List bytes = await file.readAsBytes();
 
-    viewModel.changeState(
-      state.copyWith(selectedLogo: bytes, logoSize: logoSize),
-    );
+    final state = ref.read(qrEditorProvider);
+
+    ref
+        .read(qrEditorProvider.notifier)
+        .changeState(state.copyWith(selectedLogo: bytes, logoSize: logoSize));
   }
 
-  void showLoadingDialog() => showDialog<void>(
-    context: context,
-    barrierDismissible: false,
-    builder: (context) => const Center(child: CircularProgressIndicator()),
-  );
+  Future<Map<String, dynamic>?> showLogoPickerModal() async {
+    String? imgPath;
+    QRLogoSize logoSize = QRLogoSize.large;
+
+    final result = await showModalBottomSheet(
+      context: context,
+      isDismissible: true,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  title: const Text("Pick Logo"),
+                  subtitle: const Text(
+                    "Adding a logo could cause QR readability issues.",
+                  ),
+                  leading: const Icon(Icons.image),
+                  onTap: () async {
+                    FilePickerResult? res = await FilePicker.platform.pickFiles(
+                      allowedExtensions: ["png", "jpg", "jpeg"],
+                      type: FileType.custom,
+                    );
+
+                    if (res == null) return;
+
+                    String? path = res.files.first.path;
+
+                    if (path != null) {
+                      setState(() {
+                        imgPath = path;
+                      });
+                    }
+                  },
+                ),
+                ListTile(
+                  title: const Text("Confirm Selection"),
+                  leading: const Icon(Icons.check),
+                  onTap: () {
+                    Navigator.pop(context, {
+                      "image": imgPath,
+                      "size": logoSize,
+                    });
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    return result;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(qrEditViewModel);
-    final viewModel = ref.watch(qrEditViewModel.notifier);
+    final state = ref.watch(qrEditorProvider);
+    final provider = ref.watch(qrEditorProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        scrolledUnderElevation: 0.0,
         title: Text("QR Editor"),
         actions: [
           IconButton(
@@ -140,198 +204,209 @@ class _EditorPageState extends ConsumerState<EditorPage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            spacing: 12.0,
-            children: [
-              const SizedBox(height: 8.0),
-              SizedBox(height: qrSize, child: _buildQRView()),
-
-              const SizedBox(height: 12.0),
-
-              ListView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  // Background Color
-                  ListTile(
-                    onTap: () {
-                      colorPickerDialog(
-                        context,
-                        state.bgColor,
-                        (color) => viewModel.changeState(
-                          state.copyWith(bgColor: color),
-                        ),
-                      );
-                    },
-                    title: Text("Background Color"),
-                    subtitle: Text(
-                      "Choose a color that contrasts with the pattern to ensure clear scanning.",
-                    ),
-                    trailing: _buildColoredBox(context, state.bgColor),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(16.0),
-                        topRight: Radius.circular(16.0),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 8.0),
-
-                  // Pattern Color
-                  ListTile(
-                    onTap: () {
-                      colorPickerDialog(
-                        context,
-                        state.patternColor,
-                        (color) => viewModel.changeState(
-                          state.copyWith(patternColor: color),
-                        ),
-                      );
-                    },
-                    title: Text("Pattern Color"),
-                    subtitle: Text(
-                      "Set the main QR code color. Use a dark color for better scanning.",
-                    ),
-                    trailing: _buildColoredBox(context, state.patternColor),
-                  ),
-
-                  const SizedBox(height: 8.0),
-
-                  // Eye Color
-                  ListTile(
-                    onTap: () {
-                      colorPickerDialog(
-                        context,
-                        state.eyeColor,
-                        (color) => viewModel.changeState(
-                          state.copyWith(eyeColor: color),
-                        ),
-                      );
-                    },
-                    title: Text("Eye Color"),
-                    subtitle: Text(
-                      "Pick a color for the QR code's eye patterns (corner markers).",
-                    ),
-                    trailing: _buildColoredBox(context, state.eyeColor),
-                  ),
-
-                  const SizedBox(height: 8.0),
-
-                  // Gap
-                  ListTile(
-                    onTap: () {
-                      colorPickerDialog(
-                        context,
-                        state.eyeColor,
-                        (color) => viewModel.changeState(
-                          state.copyWith(eyeColor: color),
-                        ),
-                      );
-                    },
-                    title: Text("Enable Gap"),
-                    subtitle: Text(
-                      "If enabled, the squares will have some gap.",
-                    ),
-                    trailing: Switch(
-                      value: state.allowGap,
-                      onChanged: (value) {
-                        viewModel.changeState(state.copyWith(allowGap: value));
-                      },
-                    ),
-                  ),
-
-                  const SizedBox(height: 8.0),
-
-                  // Background Color
-                  ListTile(
-                    onTap: processLogo,
-                    title: Text("Custom Logo"),
-                    subtitle: Text(
-                      "Add a your custom logo in the center of the QR code.",
-                    ),
-                    trailing:
-                        state.selectedLogo != null
-                            ? IconButton(
-                              onPressed: () {
-                                viewModel.changeState(
-                                  state.copyWith(clearLogo: true),
-                                );
-                              },
-                              icon: Icon(Icons.delete),
-                            )
-                            : const Icon(Icons.arrow_forward),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(16.0),
-                        bottomRight: Radius.circular(16.0),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 16.0),
-
-                  DropdownMenu<QrDataModuleShape>(
-                    width: double.infinity,
-
-                    initialSelection: state.patternShape,
-                    label: const Text("Pattern Shape"),
-                    onSelected:
-                        (value) => viewModel.changeState(
-                          state.copyWith(patternShape: value),
-                        ),
-                    dropdownMenuEntries:
-                        QrDataModuleShape.values
-                            .map(
-                              (shape) => DropdownMenuEntry(
-                                value: shape,
-                                label: shape.toString().split('.').last,
-                              ),
-                            )
-                            .toList(),
-                  ),
-
-                  const SizedBox(height: 16.0),
-
-                  // Eye Shape
-                  DropdownMenu<QrEyeShape>(
-                    width: double.infinity,
-                    initialSelection: state.eyeShape,
-                    label: const Text("Eye Shape"),
-                    onSelected:
-                        (value) => viewModel.changeState(
-                          state.copyWith(eyeShape: value),
-                        ),
-                    dropdownMenuEntries:
-                        QrEyeShape.values
-                            .map(
-                              (shape) => DropdownMenuEntry(
-                                value: shape,
-                                label: shape.toString().split('.').last,
-                              ),
-                            )
-                            .toList(),
-                  ),
-
-                  const SizedBox(height: 8.0),
-                ],
-              ),
-            ],
+      body: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 24.0),
+            alignment: Alignment.center,
+            color: Theme.of(context).colorScheme.surface,
+            child: SizedBox.square(dimension: 200, child: _buildQRView(200)),
           ),
-        ),
+
+          Expanded(
+            child: SingleChildScrollView(
+              child: Container(
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).listTileTheme.tileColor,
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                child: Column(
+                  spacing: 8.0,
+                  children: [
+                    // Background Color
+                    ListTile(
+                      tileColor: Colors.transparent,
+                      onTap: () {
+                        colorPickerDialog(
+                          context,
+                          state.bgColor,
+                          (color) => provider.changeState(
+                            state.copyWith(bgColor: color),
+                          ),
+                        );
+                      },
+                      title: Text("Background Color"),
+                      subtitle: Text(
+                        "Choose a color that contrasts with the pattern to ensure clear scanning.",
+                      ),
+                      trailing: _buildColoredBox(context, state.bgColor),
+                    ),
+
+                    // Pattern Color
+                    ListTile(
+                      onTap: () {
+                        colorPickerDialog(
+                          context,
+                          state.patternColor,
+                          (color) => provider.changeState(
+                            state.copyWith(patternColor: color),
+                          ),
+                        );
+                      },
+                      title: Text("Pattern Color"),
+                      subtitle: Text(
+                        "Set the main QR code color. Use a dark color for better scanning.",
+                      ),
+                      trailing: _buildColoredBox(context, state.patternColor),
+                    ),
+
+                    // Eye Color
+                    ListTile(
+                      onTap: () {
+                        colorPickerDialog(
+                          context,
+                          state.eyeColor,
+                          (color) => provider.changeState(
+                            state.copyWith(eyeColor: color),
+                          ),
+                        );
+                      },
+                      title: Text("Eye Color"),
+                      subtitle: Text(
+                        "Pick a color for the QR code's eye patterns (corner markers).",
+                      ),
+                      trailing: _buildColoredBox(context, state.eyeColor),
+                    ),
+
+                    // Background Color
+                    ListTile(
+                      onTap: processLogo,
+                      title: Text("Pick Custom Logo"),
+                      subtitle: Text(
+                        "Add a your custom logo in the center of the QR code.",
+                      ),
+                      trailing:
+                          state.selectedLogo != null
+                              ? IconButton(
+                                onPressed: () {
+                                  provider.changeState(
+                                    state.copyWith(clearLogo: true),
+                                  );
+                                },
+                                icon: Icon(Icons.delete),
+                              )
+                              : const Icon(Icons.image_outlined),
+                    ),
+
+                    // Export Size
+                    ListTile(
+                      isThreeLine: true,
+                      title: const Text("Export Size"),
+                      subtitle: const Text(
+                        "Larger sizes provide better quality.",
+                      ),
+                      trailing: SizedBox(
+                        width: MediaQuery.sizeOf(context).width * .40,
+                        child: Slider(
+                          padding: EdgeInsets.symmetric(vertical: 0.0),
+                          year2023: false,
+                          value: qrSize.value,
+                          label: qrSize.name.toUpperCase(),
+                          min: QrSize.values.first.value,
+                          max: QrSize.values.last.value,
+                          divisions: QrSize.values.length - 1,
+                          onChanged: (double newValue) {
+                            setState(() {
+                              qrSize = QrSize.parseValue(newValue);
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+
+                    // Gap
+                    ListTile(
+                      onTap: () {
+                        colorPickerDialog(
+                          context,
+                          state.eyeColor,
+                          (color) => provider.changeState(
+                            state.copyWith(eyeColor: color),
+                          ),
+                        );
+                      },
+                      title: Text("Enable Gap"),
+                      subtitle: Text("Allows the squares to have some gap."),
+                      trailing: Switch(
+                        value: state.allowGap,
+                        onChanged: (value) {
+                          provider.changeState(state.copyWith(allowGap: value));
+                        },
+                      ),
+                    ),
+
+                    // Pattern Shape
+                    ListTile(
+                      title: DropdownMenu<QrDataModuleShape>(
+                        width: double.infinity,
+
+                        initialSelection: state.patternShape,
+                        label: const Text("Pattern Shape"),
+                        onSelected:
+                            (value) => provider.changeState(
+                              state.copyWith(patternShape: value),
+                            ),
+                        dropdownMenuEntries:
+                            QrDataModuleShape.values
+                                .map(
+                                  (shape) => DropdownMenuEntry(
+                                    value: shape,
+                                    label: shape.toString().split('.').last,
+                                  ),
+                                )
+                                .toList(),
+                      ),
+                    ),
+
+                    // Eye Shape
+                    ListTile(
+                      tileColor: Colors.transparent,
+                      title: DropdownMenu<QrEyeShape>(
+                        width: double.infinity,
+                        initialSelection: state.eyeShape,
+                        label: const Text("Eye Shape"),
+                        onSelected:
+                            (value) => provider.changeState(
+                              state.copyWith(eyeShape: value),
+                            ),
+                        dropdownMenuEntries:
+                            QrEyeShape.values
+                                .map(
+                                  (shape) => DropdownMenuEntry(
+                                    value: shape,
+                                    label: shape.toString().split('.').last,
+                                  ),
+                                )
+                                .toList(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildQRView() {
-    final state = ref.read(qrEditViewModel);
+  Widget _buildQRView([double? size]) {
+    final state = ref.read(qrEditorProvider);
 
     return QrImageView(
       data: widget.qrData,
-      size: qrSize,
+      size: size ?? qrSize.value,
       gapless: !state.allowGap,
       backgroundColor: state.bgColor,
       version: state.version,

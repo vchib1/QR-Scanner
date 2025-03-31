@@ -1,5 +1,6 @@
 import 'package:ez_qr/model/scanned_item_model.dart';
 import 'package:ez_qr/utils/enums/qr_type.dart';
+import 'package:ez_qr/utils/helper_functions/qr_data_dialog.dart';
 import 'package:ez_qr/utils/helper_functions/url_launch.dart';
 import 'package:ez_qr/views/history/viewmodel.dart';
 import 'package:ez_qr/views/qr_scanner/viewmodel.dart';
@@ -75,28 +76,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
         await ref.read(historyViewModel.notifier).addItem(scannedItem);
 
         if (mounted) {
-          await showDialog(
-            context: context,
-            builder: (context) {
-              return Dialog(
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(data),
-
-                      if (QrType.getQrType(data).canOpen)
-                        TextButton(
-                          onPressed: () => launchQRData(data),
-                          child: Text("Open"),
-                        ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
+          await showQRDataDialog(context, data: data);
         }
 
         ref.read(qrScannerViewModel.notifier).setResultFound(false);

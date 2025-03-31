@@ -1,7 +1,9 @@
 import 'package:ez_qr/utils/enums/qr_type.dart';
+import 'package:ez_qr/utils/helper_functions/qr_data_dialog.dart';
 import 'package:ez_qr/views/history/viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class HistoryPage extends ConsumerWidget {
   const HistoryPage({super.key});
@@ -16,6 +18,8 @@ class HistoryPage extends ConsumerWidget {
       body: history.when(
         data: (groupedHistory) {
           return ListView.builder(
+            reverse: true,
+            shrinkWrap: true,
             itemCount: groupedHistory.length,
             itemBuilder: (context, index) {
               final date = groupedHistory.keys.elementAt(index);
@@ -35,18 +39,47 @@ class HistoryPage extends ConsumerWidget {
                     ),
                   ),
                   // List of Items for this Date
-                  ...items.map(
-                    (item) => ListTile(
-                      onLongPress: () => historyVM.removeItem(item),
-                      leading: CircleAvatar(
-                        child: Text(
-                          QrType.getQrType(item.data).getName,
-                          style: Theme.of(context).textTheme.labelSmall,
+                  ...items.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final item = entry.value;
+                    final isFirst = index == 0;
+                    final isLast = index == items.length - 1;
+                    final isSingle = items.length == 1;
+
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 4.0),
+                      child: ListTile(
+                        onTap: () => showQRDataDialog(context, data: item.data),
+                        leading: QrImageView(
+                          data: item.data,
+                          size: 50,
+                          backgroundColor: Colors.white,
+                        ),
+                        title: Text(QrType.getQrType(item.data).getName),
+                        subtitle: Text(item.data),
+                        trailing: IconButton(
+                          onPressed: () => historyVM.removeItem(item),
+                          icon: Icon(Icons.delete),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(
+                              isFirst || isSingle ? 16.0 : 0,
+                            ),
+                            topRight: Radius.circular(
+                              isFirst || isSingle ? 16.0 : 0,
+                            ),
+                            bottomLeft: Radius.circular(
+                              isLast || isSingle ? 16.0 : 0,
+                            ),
+                            bottomRight: Radius.circular(
+                              isLast || isSingle ? 16.0 : 0,
+                            ),
+                          ),
                         ),
                       ),
-                      title: Text(item.data),
-                    ),
-                  ),
+                    );
+                  }),
                 ],
               );
             },
