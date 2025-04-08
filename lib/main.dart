@@ -1,4 +1,5 @@
 import 'package:ez_qr/services/shared_pref.dart';
+import 'package:ez_qr/utils/enums/theme_contrast.dart';
 import 'package:ez_qr/utils/snackbar.dart';
 import 'package:ez_qr/utils/theme/theme.dart';
 import 'package:ez_qr/views/editor/editor_page.dart';
@@ -35,6 +36,31 @@ Future<void> main() async {
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
+  ThemeData lightThemeData(
+    BuildContext context,
+    TextTheme textTheme,
+    ThemeContrastMode contrastMode,
+  ) {
+    return switch (contrastMode) {
+      ThemeContrastMode.light => MaterialTheme(textTheme).light(),
+      ThemeContrastMode.medium =>
+        MaterialTheme(textTheme).lightMediumContrast(),
+      ThemeContrastMode.high => MaterialTheme(textTheme).lightHighContrast(),
+    };
+  }
+
+  ThemeData darkThemeData(
+    BuildContext context,
+    TextTheme textTheme,
+    ThemeContrastMode contrastMode,
+  ) {
+    return switch (contrastMode) {
+      ThemeContrastMode.light => MaterialTheme(textTheme).dark(),
+      ThemeContrastMode.medium => MaterialTheme(textTheme).darkMediumContrast(),
+      ThemeContrastMode.high => MaterialTheme(textTheme).darkHighContrast(),
+    };
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textTheme = Theme.of(context).textTheme;
@@ -44,8 +70,16 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       title: 'EZ-QR',
       themeMode: ref.watch(settingsProvider).themeMode,
-      theme: MaterialTheme(textTheme).light(),
-      darkTheme: MaterialTheme(textTheme).darkHighContrast(),
+      theme: lightThemeData(
+        context,
+        textTheme,
+        ref.watch(settingsProvider).contrastMode,
+      ),
+      darkTheme: darkThemeData(
+        context,
+        textTheme,
+        ref.watch(settingsProvider).contrastMode,
+      ),
       initialRoute: "/",
       onGenerateRoute: (settings) {
         switch (settings.name) {

@@ -26,7 +26,7 @@ class HistoryDB {
     try {
       final db = await database;
 
-      final res = await db.query(history);
+      final res = await db.query(history, orderBy: "createdAt DESC");
 
       return res;
     } catch (_) {

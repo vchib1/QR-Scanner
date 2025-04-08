@@ -1,21 +1,24 @@
-import 'package:collection/collection.dart';
 import 'package:ez_qr/model/scanned_item_model.dart';
 import 'package:ez_qr/repository/history_repo.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import "package:collection/collection.dart";
 
-final historyViewModel =
-    AsyncNotifierProvider<HistoryViewModel, Map<String, List<ScannedItem>>>(
-      HistoryViewModel.new,
+final historyAsyncProvider =
+    AsyncNotifierProvider<HistoryAsyncProvider, Map<String, List<ScannedItem>>>(
+      HistoryAsyncProvider.new,
     );
 
-class HistoryViewModel extends AsyncNotifier<Map<String, List<ScannedItem>>> {
+class HistoryAsyncProvider
+    extends AsyncNotifier<Map<String, List<ScannedItem>>> {
   late HistoryRepo historyRepo;
 
   @override
   Future<Map<String, List<ScannedItem>>> build() async {
     historyRepo = ref.watch(historyRepoProvider);
     final items = await historyRepo.getScannedItems();
+    debugPrint("Init");
 
     return _groupByDate(items);
   }
@@ -40,14 +43,12 @@ class HistoryViewModel extends AsyncNotifier<Map<String, List<ScannedItem>>> {
       final date = item.createdAt;
       final itemDate = DateTime(date.year, date.month, date.day);
 
-      return DateFormat("dd/MMM/yyyy").format(itemDate);
-
       if (itemDate == today) {
         return "Today";
       } else if (itemDate == yesterday) {
         return "Yesterday";
       } else {
-        return DateFormat("dd-MMM-yyyy").format(itemDate);
+        return DateFormat("MMM d, yyyy").format(itemDate);
       }
     });
   }

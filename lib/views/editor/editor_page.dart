@@ -5,6 +5,7 @@ import 'package:ez_qr/utils/enums/qr_size.dart';
 import 'package:ez_qr/utils/helper_functions/colorpicker_dialog.dart';
 import 'package:ez_qr/utils/helper_functions/loading_dialog.dart';
 import 'package:ez_qr/utils/snackbar.dart';
+import 'package:ez_qr/utils/tile_shapes.dart';
 import 'package:ez_qr/views/editor/provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -139,6 +140,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 ListTile(
+                  shape: topRoundedBorder(),
                   title: const Text("Pick Logo"),
                   subtitle: const Text(
                     "Adding a logo could cause QR readability issues.",
@@ -162,6 +164,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                   },
                 ),
                 ListTile(
+                  shape: noneBorder(),
                   title: const Text("Confirm Selection"),
                   leading: const Icon(Icons.check),
                   onTap: () {

@@ -1,24 +1,38 @@
 import 'package:ez_qr/utils/enums/qr_type.dart';
 import 'package:ez_qr/utils/helper_functions/qr_data_dialog.dart';
-import 'package:ez_qr/views/history/viewmodel.dart';
+import 'package:ez_qr/views/history/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 class HistoryPage extends ConsumerWidget {
   const HistoryPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final history = ref.watch(historyViewModel);
-    final historyVM = ref.watch(historyViewModel.notifier);
+    final history = ref.watch(historyAsyncProvider);
+    final historyVM = ref.watch(historyAsyncProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(title: Text("History")),
       body: history.when(
         data: (groupedHistory) {
+          if (groupedHistory.isEmpty) {
+            return Center(
+              child: Column(
+                spacing: 8.0,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.history_sharp, size: 48.0),
+                  Text(
+                    "No History",
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                ],
+              ),
+            );
+          }
+
           return ListView.builder(
-            reverse: true,
             shrinkWrap: true,
             itemCount: groupedHistory.length,
             itemBuilder: (context, index) {
@@ -47,16 +61,16 @@ class HistoryPage extends ConsumerWidget {
                     final isSingle = items.length == 1;
 
                     return Padding(
-                      padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 4.0),
+                      padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0.0),
                       child: ListTile(
                         onTap: () => showQRDataDialog(context, data: item.data),
-                        leading: QrImageView(
-                          data: item.data,
-                          size: 50,
-                          backgroundColor: Colors.white,
-                        ),
+                        leading: Icon(Icons.qr_code_rounded),
                         title: Text(QrType.getQrType(item.data).getName),
-                        subtitle: Text(item.data),
+                        subtitle: Text(
+                          item.data,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                         trailing: IconButton(
                           onPressed: () => historyVM.removeItem(item),
                           icon: Icon(Icons.delete),
@@ -86,7 +100,9 @@ class HistoryPage extends ConsumerWidget {
           );
         },
         error: (error, stackTrace) => Center(child: Text(error.toString())),
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading:
+            () =>
+                const Center(child: CircularProgressIndicator(year2023: false)),
       ),
     );
   }

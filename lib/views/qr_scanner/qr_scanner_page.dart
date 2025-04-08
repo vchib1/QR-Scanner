@@ -2,7 +2,7 @@ import 'package:ez_qr/model/scanned_item_model.dart';
 import 'package:ez_qr/utils/enums/qr_type.dart';
 import 'package:ez_qr/utils/helper_functions/qr_data_dialog.dart';
 import 'package:ez_qr/utils/helper_functions/url_launch.dart';
-import 'package:ez_qr/views/history/viewmodel.dart';
+import 'package:ez_qr/views/history/provider.dart';
 import 'package:ez_qr/views/qr_scanner/viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -73,7 +73,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
         await controller.pause();
         final scannedItem = ScannedItem(data: data);
 
-        await ref.read(historyViewModel.notifier).addItem(scannedItem);
+        await ref.read(historyAsyncProvider.notifier).addItem(scannedItem);
 
         if (mounted) {
           await showQRDataDialog(context, data: data);

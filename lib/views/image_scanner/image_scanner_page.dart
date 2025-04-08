@@ -8,7 +8,7 @@ import '../../model/scanned_item_model.dart';
 import '../../utils/enums/qr_type.dart';
 import '../../utils/snackbar.dart';
 import '../../utils/helper_functions/url_launch.dart';
-import '../history/viewmodel.dart';
+import '../history/provider.dart';
 
 class ImageScannerPage extends ConsumerStatefulWidget {
   const ImageScannerPage({super.key});
@@ -79,7 +79,7 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
         await controller.pause();
         final scannedItem = ScannedItem(data: data);
 
-        await ref.read(historyViewModel.notifier).addItem(scannedItem);
+        await ref.read(historyAsyncProvider.notifier).addItem(scannedItem);
 
         if (mounted) {
           await showQRDataDialog(context, data: data);

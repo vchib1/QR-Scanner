@@ -347,6 +347,8 @@ class MaterialTheme {
     canvasColor: colorScheme.surface,
     listTileTheme: ListTileThemeData(
       tileColor: colorScheme.surfaceContainerHigh,
+      iconColor: colorScheme.primary,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
     ),
     dropdownMenuTheme: DropdownMenuThemeData(
       inputDecorationTheme: InputDecorationTheme(

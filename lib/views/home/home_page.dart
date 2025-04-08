@@ -1,4 +1,6 @@
 import 'package:ez_qr/utils/snackbar.dart';
+import 'package:ez_qr/utils/tile_shapes.dart';
+import 'package:ez_qr/views/settings/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -80,15 +82,19 @@ class HomePage extends StatelessWidget {
     final iconSize = 32.0;
 
     return Scaffold(
-      appBar: AppBar(title: Text("EZQR")),
+      appBar: AppBar(title: Text("HOME")),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12.0),
         child: Column(
-          spacing: 12,
+          mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            FlutterLogo(size: 200, style: FlutterLogoStyle.horizontal),
+            const SizedBox(height: 16.0),
+            Icon(Icons.qr_code_2_rounded, size: 200.0),
+
+            const SizedBox(height: 16.0),
             ListTile(
+              shape: topRoundedBorder(),
               onTap: () async => await requestCameraPermission(context),
               leading: Icon(Icons.qr_code_scanner, size: iconSize),
               title: Text("Scan QR Code"),
@@ -96,6 +102,7 @@ class HomePage extends StatelessWidget {
             ),
 
             ListTile(
+              shape: noneBorder(),
               onTap: () => Navigator.pushNamed(context, "/image_scanner"),
               leading: Icon(Icons.image_search, size: iconSize),
               title: Text("Scan Image"),
@@ -103,6 +110,7 @@ class HomePage extends StatelessWidget {
             ),
 
             ListTile(
+              shape: bottomRoundedBorder(),
               onTap: () => Navigator.pushNamed(context, "/generator"),
               leading: Icon(Icons.qr_code_2_outlined, size: iconSize),
               title: Text("QR Generator"),
