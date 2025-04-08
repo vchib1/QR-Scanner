@@ -19,10 +19,12 @@ class LocalDatabase {
     return _database!;
   }
 
+  static const int dbVersion = 1;
+
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    return await openDatabase(path, version: 1, onCreate: _onCreateDB);
+    return await openDatabase(path, version: dbVersion, onCreate: _onCreateDB);
   }
 
   Future<void> _onCreateDB(Database db, int version) async {

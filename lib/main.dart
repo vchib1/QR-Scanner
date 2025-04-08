@@ -9,7 +9,7 @@ import 'package:ez_qr/views/home/home_page.dart';
 import 'package:ez_qr/views/image_scanner/image_scanner_page.dart';
 import 'package:ez_qr/views/nav_page.dart';
 import 'package:ez_qr/views/qr_scanner/qr_scanner_page.dart';
-import 'package:ez_qr/views/settings/provider/provider.dart';
+import 'package:ez_qr/views/settings/provider/theme/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,31 +36,6 @@ Future<void> main() async {
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
-  ThemeData lightThemeData(
-    BuildContext context,
-    TextTheme textTheme,
-    ThemeContrastMode contrastMode,
-  ) {
-    return switch (contrastMode) {
-      ThemeContrastMode.light => MaterialTheme(textTheme).light(),
-      ThemeContrastMode.medium =>
-        MaterialTheme(textTheme).lightMediumContrast(),
-      ThemeContrastMode.high => MaterialTheme(textTheme).lightHighContrast(),
-    };
-  }
-
-  ThemeData darkThemeData(
-    BuildContext context,
-    TextTheme textTheme,
-    ThemeContrastMode contrastMode,
-  ) {
-    return switch (contrastMode) {
-      ThemeContrastMode.light => MaterialTheme(textTheme).dark(),
-      ThemeContrastMode.medium => MaterialTheme(textTheme).darkMediumContrast(),
-      ThemeContrastMode.high => MaterialTheme(textTheme).darkHighContrast(),
-    };
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textTheme = Theme.of(context).textTheme;
@@ -69,16 +44,16 @@ class MyApp extends ConsumerWidget {
       scaffoldMessengerKey: SnackBarUtils.snackBarKey,
       debugShowCheckedModeBanner: false,
       title: 'EZ-QR',
-      themeMode: ref.watch(settingsProvider).themeMode,
+      themeMode: ref.watch(themeProvider).themeMode,
       theme: lightThemeData(
         context,
         textTheme,
-        ref.watch(settingsProvider).contrastMode,
+        ref.watch(themeProvider).contrastMode,
       ),
       darkTheme: darkThemeData(
         context,
         textTheme,
-        ref.watch(settingsProvider).contrastMode,
+        ref.watch(themeProvider).contrastMode,
       ),
       initialRoute: "/",
       onGenerateRoute: (settings) {
@@ -114,5 +89,30 @@ class MyApp extends ConsumerWidget {
         return null;
       },
     );
+  }
+
+  ThemeData lightThemeData(
+    BuildContext context,
+    TextTheme textTheme,
+    ThemeContrastMode contrastMode,
+  ) {
+    return switch (contrastMode) {
+      ThemeContrastMode.light => MaterialTheme(textTheme).light(),
+      ThemeContrastMode.medium =>
+        MaterialTheme(textTheme).lightMediumContrast(),
+      ThemeContrastMode.high => MaterialTheme(textTheme).lightHighContrast(),
+    };
+  }
+
+  ThemeData darkThemeData(
+    BuildContext context,
+    TextTheme textTheme,
+    ThemeContrastMode contrastMode,
+  ) {
+    return switch (contrastMode) {
+      ThemeContrastMode.light => MaterialTheme(textTheme).dark(),
+      ThemeContrastMode.medium => MaterialTheme(textTheme).darkMediumContrast(),
+      ThemeContrastMode.high => MaterialTheme(textTheme).darkHighContrast(),
+    };
   }
 }

@@ -1,32 +1,32 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:ez_qr/services/shared_pref.dart';
-import 'package:ez_qr/views/settings/provider/state.dart';
+import 'package:ez_qr/views/settings/provider/theme/state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final settingsProvider = NotifierProvider<SettingsProvider, SettingState>(
-  SettingsProvider.new,
+final themeProvider = NotifierProvider<ThemeProvider, ThemeState>(
+  ThemeProvider.new,
 );
 
-class SettingsProvider extends Notifier<SettingState> {
+class ThemeProvider extends Notifier<ThemeState> {
   @override
-  SettingState build() {
-    return getSetting();
+  ThemeState build() {
+    return getThemeState();
   }
 
-  SettingState getSetting() {
+  ThemeState getThemeState() {
     final pref = ref.watch(sharedPrefProvider);
 
     String? data = pref.getString("preferences");
 
     if (data != null) {
-      return SettingState.fromJson(jsonDecode(data));
+      return ThemeState.fromJson(jsonDecode(data));
     }
 
-    return const SettingState();
+    return const ThemeState();
   }
 
-  Future<void> updateSetting(SettingState newState) async {
+  Future<void> updateState(ThemeState newState) async {
     final pref = ref.watch(sharedPrefProvider);
 
     state = newState;

@@ -1,11 +1,11 @@
 import 'package:ez_qr/utils/enums/theme_contrast.dart';
 import 'package:flutter/material.dart';
 
-class SettingState {
+class ThemeState {
   final ThemeMode themeMode;
   final ThemeContrastMode contrastMode;
 
-  const SettingState({
+  const ThemeState({
     this.themeMode = ThemeMode.system,
     this.contrastMode = ThemeContrastMode.light,
   });
@@ -14,8 +14,8 @@ class SettingState {
     return {"themeMode": themeMode.name, "contrastMode": contrastMode.name};
   }
 
-  factory SettingState.fromJson(Map<String, dynamic> map) {
-    return SettingState(
+  factory ThemeState.fromJson(Map<String, dynamic> map) {
+    return ThemeState(
       themeMode: ThemeMode.values.firstWhere(
         (e) => e.name == map["themeMode"],
         orElse: () => ThemeMode.system,
@@ -27,11 +27,11 @@ class SettingState {
     );
   }
 
-  SettingState copyWith({
+  ThemeState copyWith({
     ThemeMode? themeMode,
     ThemeContrastMode? contrastMode,
   }) {
-    return SettingState(
+    return ThemeState(
       themeMode: themeMode ?? this.themeMode,
       contrastMode: contrastMode ?? this.contrastMode,
     );
