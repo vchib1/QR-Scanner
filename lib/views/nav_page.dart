@@ -32,11 +32,6 @@ class _NavPageState extends State<NavPage> {
         icon: "qr_scan",
       ),
       ShortcutItem(
-        type: 'action_image_scan',
-        localizedTitle: "Scan Image",
-        icon: "image_scan",
-      ),
-      ShortcutItem(
         type: 'action_generate',
         localizedTitle: "Generate QR",
         icon: "qr_generate",
@@ -48,9 +43,6 @@ class _NavPageState extends State<NavPage> {
         switch (type) {
           case 'action_camera_scan':
             Navigator.pushNamed(context, "/qr_scanner");
-            break;
-          case 'action_image_scan':
-            Navigator.pushNamed(context, "/image_scanner");
             break;
           case 'action_generate':
             Navigator.pushNamed(context, "/generate");

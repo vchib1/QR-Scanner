@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:ez_qr/repository/db_backup_repo.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final dbBackupNotifier = AsyncNotifierProvider<DBBackupNotifier,void>(
+final dbBackupNotifier = AsyncNotifierProvider<DBBackupNotifier, void>(
   DBBackupNotifier.new,
 );
 
@@ -9,19 +11,20 @@ class DBBackupNotifier extends AsyncNotifier<void> {
   @override
   Future<void> build() async {}
 
-  Future<void> backupDatabase() async {
-    final manager = ref.watch(dbBackupRepoProvider);
+  Future<File?> backupDatabase() async {
+    File? file;
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      await manager.backupDatabase();
+      file = await ref.watch(dbBackupRepoProvider).backupDatabase();
     });
+
+    return file;
   }
 
-  Future<void> restoreDatabase() async {
-    final manager = ref.watch(dbBackupRepoProvider);
+  Future<void> restoreDatabase(String backupPath) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      await manager.restoreDatabase();
+      await ref.watch(dbBackupRepoProvider).restoreDatabase(backupPath);
     });
   }
 }

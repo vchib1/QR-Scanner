@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:ez_qr/services/database/database.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,7 +11,8 @@ class DatabaseBackupRepo {
 
   DatabaseBackupRepo({required this.db});
 
-  Future<void> backupDatabase() async {}
+  Future<File> backupDatabase() => db.backupDatabase();
 
-  Future<void> restoreDatabase() async {}
+  Future<void> restoreDatabase(String backupPath) =>
+      db.restoreDatabase(backupPath);
 }

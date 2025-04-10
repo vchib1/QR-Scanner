@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:ez_qr/utils/enums/theme_contrast.dart';
+import 'package:ez_qr/utils/snackbar.dart';
 import 'package:ez_qr/utils/tile_shapes.dart';
 import 'package:ez_qr/views/settings/provider/theme/provider.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'provider/backup/backup_provider.dart';
 
 class SettingsPage extends ConsumerWidget {
@@ -134,23 +137,7 @@ class SettingsPage extends ConsumerWidget {
               // Backup Data
               ListTile(
                 shape: topRoundedBorder(),
-                onTap: () async {
-                  final notifier = ref.read(dbBackupNotifier.notifier);
-                  await notifier.backupDatabase();
-
-                  final state = ref.read(dbBackupNotifier);
-                  state.whenOrNull(
-                    data:
-                        (_) => ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Backup successful!")),
-                        ),
-                    error:
-                        (error, _) =>
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Backup failed: $error")),
-                            ),
-                  );
-                },
+                onTap: () => _backupDatabase(ref),
                 leading: Icon(Icons.backup_table),
                 title: Text("Backup Scanned Data"),
                 subtitle: Text("Backup your scanned data to your device"),
@@ -159,7 +146,7 @@ class SettingsPage extends ConsumerWidget {
               // Restore Data
               ListTile(
                 shape: bottomRoundedBorder(),
-                onTap: () {},
+                onTap: () => _restoreBackupDatabase(ref),
                 leading: Icon(Icons.restore),
                 title: Text("Restore Scanned Data"),
                 subtitle: Text("Restore your scanned data from your device"),
@@ -237,5 +224,67 @@ class SettingsPage extends ConsumerWidget {
         color: Theme.of(context).colorScheme.primary,
       ),
     );
+  }
+
+  Future<void> _backupDatabase(WidgetRef ref) async {
+    final notifier = ref.read(dbBackupNotifier.notifier);
+    final dbFile = await notifier.backupDatabase();
+
+    try {
+      if (dbFile != null) {
+        String? savedPath = await FilePicker.platform.saveFile(
+          type: FileType.custom,
+          fileName: "qr_backup.db",
+          allowedExtensions: ["db"],
+          bytes: dbFile.readAsBytesSync(),
+        );
+
+        if (savedPath == null) return;
+      }
+    } catch (e) {
+      SnackBarUtils.showSnackBar("Backup Operation Failed: ${e.toString()}");
+      return;
+    }
+
+    final state = ref.read(dbBackupNotifier);
+
+    state.whenOrNull(
+      data: (_) => SnackBarUtils.showSnackBar("Backup successful!"),
+      error:
+          (e, _) =>
+              SnackBarUtils.showSnackBar("Backup failed: ${e.toString()}"),
+    );
+  }
+
+  Future<void> _restoreBackupDatabase(WidgetRef ref) async {
+    try {
+      FilePickerResult? files = await FilePicker.platform.pickFiles(
+        type: FileType.any,
+      );
+
+      if (files == null) return;
+
+      File pickedFile = File(files.files.first.path!);
+
+      if (pickedFile.path.split(".").last != "db") {
+        SnackBarUtils.showSnackBar(
+          "Please pick a valid file with .db extension.",
+        );
+        return;
+      }
+
+      final notifier = ref.watch(dbBackupNotifier.notifier);
+
+      await notifier.restoreDatabase(pickedFile.path);
+
+      final state = ref.read(dbBackupNotifier);
+
+      state.whenOrNull(
+        data: (_) => SnackBarUtils.showSnackBar("Backup Restored!"),
+        error: (e, _) => throw e,
+      );
+    } catch (e) {
+      SnackBarUtils.showSnackBar("Backup Restoration Failed: ${e.toString()}");
+    }
   }
 }
