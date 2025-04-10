@@ -4,6 +4,8 @@ import 'package:ez_qr/views/settings/provider/theme/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'provider/backup/backup_provider.dart';
+
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
 
@@ -126,13 +128,29 @@ class SettingsPage extends ConsumerWidget {
 
               const SizedBox(height: 16.0),
 
-              _buildTitle(context, "App"),
+              _buildTitle(context, "Data"),
               const SizedBox(height: 8.0),
 
               // Backup Data
               ListTile(
                 shape: topRoundedBorder(),
-                onTap: () {},
+                onTap: () async {
+                  final notifier = ref.read(dbBackupNotifier.notifier);
+                  await notifier.backupDatabase();
+
+                  final state = ref.read(dbBackupNotifier);
+                  state.whenOrNull(
+                    data:
+                        (_) => ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Backup successful!")),
+                        ),
+                    error:
+                        (error, _) =>
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Backup failed: $error")),
+                            ),
+                  );
+                },
                 leading: Icon(Icons.backup_table),
                 title: Text("Backup Scanned Data"),
                 subtitle: Text("Backup your scanned data to your device"),

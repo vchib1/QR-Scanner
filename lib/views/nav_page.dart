@@ -1,8 +1,7 @@
-import 'package:ez_qr/utils/snackbar.dart';
 import 'package:ez_qr/views/home/home_page.dart';
 import 'package:ez_qr/views/settings/settings_page.dart';
 import 'package:flutter/material.dart';
-
+import 'package:quick_actions/quick_actions.dart';
 import 'history/history_page.dart';
 
 class NavPage extends StatefulWidget {
@@ -17,56 +16,70 @@ class _NavPageState extends State<NavPage> {
 
   final pages = [HomePage(), HistoryPage(), SettingsPage()];
 
-  DateTime? lastPressed;
+  @override
+  initState() {
+    super.initState();
+    initializeQuickActions();
+  }
+
+  void initializeQuickActions() {
+    QuickActions quickActions = const QuickActions();
+
+    quickActions.setShortcutItems([
+      ShortcutItem(
+        type: 'action_camera_scan',
+        localizedTitle: "Scan QR",
+        icon: "qr_scan",
+      ),
+      ShortcutItem(
+        type: 'action_image_scan',
+        localizedTitle: "Scan Image",
+        icon: "image_scan",
+      ),
+      ShortcutItem(
+        type: 'action_generate',
+        localizedTitle: "Generate QR",
+        icon: "qr_generate",
+      ),
+    ]);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      quickActions.initialize((type) {
+        switch (type) {
+          case 'action_camera_scan':
+            Navigator.pushNamed(context, "/qr_scanner");
+            break;
+          case 'action_image_scan':
+            Navigator.pushNamed(context, "/image_scanner");
+            break;
+          case 'action_generate':
+            Navigator.pushNamed(context, "/generate");
+            break;
+        }
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, _) {
-        if (didPop) return;
-
-        final now = DateTime.now();
-        final lastPress = lastPressed;
-
-        if (lastPress == null ||
-            now.difference(lastPress) > const Duration(seconds: 2)) {
+    return Scaffold(
+      body: pages[currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentIndex,
+        enableFeedback: true,
+        onTap: (value) {
           setState(() {
-            lastPressed = now;
+            currentIndex = value;
           });
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Press back again to exit')),
-          );
-        } else {
-          Navigator.pop(context);
-        }
-      },
-      child: Scaffold(
-        body: pages[currentIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: currentIndex,
-          enableFeedback: true,
-          onTap: (value) {
-            setState(() {
-              currentIndex = value;
-            });
-          },
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_filled),
-              label: "HOME",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.history),
-              label: "History",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: "Settings",
-            ),
-          ],
-        ),
+        },
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "HOME"),
+          BottomNavigationBarItem(icon: Icon(Icons.history), label: "History"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: "Settings",
+          ),
+        ],
       ),
     );
   }

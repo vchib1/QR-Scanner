@@ -111,7 +111,7 @@ class HomePage extends StatelessWidget {
 
             ListTile(
               shape: bottomRoundedBorder(),
-              onTap: () => Navigator.pushNamed(context, "/generator"),
+              onTap: () => Navigator.pushNamed(context, "/generate"),
               leading: Icon(Icons.qr_code_2_outlined, size: iconSize),
               title: Text("QR Generator"),
               subtitle: Text("Create your own QR Codes."),

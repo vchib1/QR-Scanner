@@ -70,7 +70,7 @@ class MyApp extends ConsumerWidget {
             return MaterialPageRoute(
               builder: (context) => const ImageScannerPage(),
             );
-          case "/generator":
+          case "/generate":
             return MaterialPageRoute(
               builder: (context) => const QrGeneratePage(),
             );
