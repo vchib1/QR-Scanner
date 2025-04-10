@@ -12,25 +12,39 @@ final historyAsyncProvider =
 
 class HistoryAsyncProvider
     extends AsyncNotifier<Map<String, List<ScannedItem>>> {
-  late HistoryRepo historyRepo;
+  late HistoryRepo _historyRepo;
 
   @override
   Future<Map<String, List<ScannedItem>>> build() async {
-    historyRepo = ref.watch(historyRepoProvider);
-    final items = await historyRepo.getScannedItems();
-    debugPrint("Init");
+    _historyRepo = ref.watch(historyRepoProvider);
 
-    return _groupByDate(items);
+    return init();
   }
 
   Future<void> addItem(ScannedItem item) async {
-    await historyRepo.addScannedItem(item);
+    await _historyRepo.addScannedItem(item);
     state = AsyncValue.data(await build());
   }
 
   Future<void> removeItem(ScannedItem item) async {
-    await historyRepo.removeScannedItem(item);
+    await _historyRepo.removeScannedItem(item);
     state = AsyncValue.data(await build());
+  }
+
+  // initialize history
+  Future<Map<String, List<ScannedItem>>> init() async {
+    final items = await _historyRepo.getScannedItems();
+    return Future.value(_groupByDate(items));
+  }
+
+  Future<void> refresh() async {
+    state = const AsyncValue.loading();
+    try {
+      final refreshedData = await init();
+      state = AsyncValue.data(refreshedData);
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+    }
   }
 
   /// Groups items by "Today", "Yesterday", or "dd-MM-yyyy"

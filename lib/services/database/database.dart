@@ -1,8 +1,5 @@
 import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' show join;
 
@@ -75,5 +72,8 @@ class LocalDatabase {
 
     // Copy the backup file to the database location
     await backupFile.copy(dbFile);
+
+    // Reopen database with write permissions
+    _database = await openDatabase(dbFile, readOnly: false);
   }
 }

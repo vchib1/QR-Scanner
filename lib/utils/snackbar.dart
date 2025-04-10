@@ -46,4 +46,50 @@ class SnackBarUtils {
       throw Exception("❌ No ScaffoldMessenger found.");
     }
   }
+
+  static void showSuccessBar(String message, {BuildContext? context}) {
+    final snackBar = SnackBar(
+      content: Text(message, style: TextStyle(color: Colors.white)),
+      backgroundColor: Colors.green,
+      behavior: SnackBarBehavior.floating,
+      duration: Duration(seconds: 3),
+      showCloseIcon: true,
+      closeIconColor: Colors.white,
+    );
+
+    if (context != null && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
+    }
+
+    // Fallback to global key if no context is provided
+    if (snackBarKey.currentState != null) {
+      snackBarKey.currentState!.showSnackBar(snackBar);
+    } else {
+      throw Exception("❌ No ScaffoldMessenger found.");
+    }
+  }
+
+  static void showErrorBar(String message, {BuildContext? context}) {
+    final snackBar = SnackBar(
+      content: Text(message, style: TextStyle(color: Colors.white)),
+      backgroundColor: Colors.red,
+      behavior: SnackBarBehavior.floating,
+      duration: Duration(seconds: 3),
+      showCloseIcon: true,
+      closeIconColor: Colors.white,
+    );
+
+    if (context != null && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
+    }
+
+    // Fallback to global key if no context is provided
+    if (snackBarKey.currentState != null) {
+      snackBarKey.currentState!.showSnackBar(snackBar);
+    } else {
+      throw Exception("❌ No ScaffoldMessenger found.");
+    }
+  }
 }

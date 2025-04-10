@@ -1,12 +1,15 @@
 import 'dart:io';
 
 import 'package:ez_qr/utils/enums/theme_contrast.dart';
+import 'package:ez_qr/utils/helper_functions/loading_dialog.dart';
 import 'package:ez_qr/utils/snackbar.dart';
 import 'package:ez_qr/utils/tile_shapes.dart';
+import 'package:ez_qr/views/history/provider.dart';
 import 'package:ez_qr/views/settings/provider/theme/provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'provider/backup/backup_provider.dart';
 
 class SettingsPage extends ConsumerWidget {
@@ -139,17 +142,17 @@ class SettingsPage extends ConsumerWidget {
                 shape: topRoundedBorder(),
                 onTap: () => _backupDatabase(ref),
                 leading: Icon(Icons.backup_table),
-                title: Text("Backup Scanned Data"),
-                subtitle: Text("Backup your scanned data to your device"),
+                title: Text("Backup Data"),
+                subtitle: Text("Create a backup file in your device"),
               ),
 
               // Restore Data
               ListTile(
                 shape: bottomRoundedBorder(),
-                onTap: () => _restoreBackupDatabase(ref),
+                onTap: () => _showRestoreDBDialog(context, ref),
                 leading: Icon(Icons.restore),
-                title: Text("Restore Scanned Data"),
-                subtitle: Text("Restore your scanned data from your device"),
+                title: Text("Restore Data"),
+                subtitle: Text("Restore backup from your device"),
               ),
 
               const SizedBox(height: 16.0),
@@ -204,7 +207,7 @@ class SettingsPage extends ConsumerWidget {
               // Bug Report
               ListTile(
                 shape: bottomRoundedBorder(),
-                onTap: () {},
+                onTap: () => _reportBugDialog(context),
                 leading: Icon(Icons.pest_control_sharp),
                 title: Text("Bug Report"),
                 subtitle: Text("Report a bug on GitHub"),
@@ -227,10 +230,10 @@ class SettingsPage extends ConsumerWidget {
   }
 
   Future<void> _backupDatabase(WidgetRef ref) async {
-    final notifier = ref.read(dbBackupNotifier.notifier);
-    final dbFile = await notifier.backupDatabase();
-
     try {
+      final notifier = ref.read(dbBackupNotifier.notifier);
+      final dbFile = await notifier.backupDatabase();
+
       if (dbFile != null) {
         String? savedPath = await FilePicker.platform.saveFile(
           type: FileType.custom,
@@ -241,24 +244,67 @@ class SettingsPage extends ConsumerWidget {
 
         if (savedPath == null) return;
       }
+
+      final state = ref.read(dbBackupNotifier);
+
+      state.whenOrNull(
+        data: (_) => SnackBarUtils.showSuccessBar("Backup successful!"),
+        error:
+            (e, _) =>
+                SnackBarUtils.showErrorBar("Backup failed: ${e.toString()}"),
+      );
     } catch (e) {
-      SnackBarUtils.showSnackBar("Backup Operation Failed: ${e.toString()}");
-      return;
+      SnackBarUtils.showErrorBar(e.toString());
     }
+  }
 
-    final state = ref.read(dbBackupNotifier);
-
-    state.whenOrNull(
-      data: (_) => SnackBarUtils.showSnackBar("Backup successful!"),
-      error:
-          (e, _) =>
-              SnackBarUtils.showSnackBar("Backup failed: ${e.toString()}"),
+  Future<void> _showRestoreDBDialog(BuildContext context, WidgetRef ref) async {
+    bool? proceed = await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Row(
+            spacing: 8.0,
+            children: [
+              Icon(Icons.settings_backup_restore),
+              Text("Restore Data"),
+            ],
+          ),
+          content: const Text(
+            "This process will overwrite the existing data. Are you sure you want to proceed?",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text("Proceed"),
+            ),
+          ],
+        );
+      },
     );
+
+    if (!(proceed ?? true)) return;
+
+    try {
+      if (!context.mounted) return;
+      showLoadingDialog(context);
+      await _restoreBackupDatabase(ref);
+    } finally {
+      // pop loading dialog
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+    }
   }
 
   Future<void> _restoreBackupDatabase(WidgetRef ref) async {
     try {
       FilePickerResult? files = await FilePicker.platform.pickFiles(
+        dialogTitle: "Pick backup file",
         type: FileType.any,
       );
 
@@ -267,10 +313,7 @@ class SettingsPage extends ConsumerWidget {
       File pickedFile = File(files.files.first.path!);
 
       if (pickedFile.path.split(".").last != "db") {
-        SnackBarUtils.showSnackBar(
-          "Please pick a valid file with .db extension.",
-        );
-        return;
+        throw "Please pick a valid file with .db extension.";
       }
 
       final notifier = ref.watch(dbBackupNotifier.notifier);
@@ -280,11 +323,65 @@ class SettingsPage extends ConsumerWidget {
       final state = ref.read(dbBackupNotifier);
 
       state.whenOrNull(
-        data: (_) => SnackBarUtils.showSnackBar("Backup Restored!"),
+        data: (_) async {
+          SnackBarUtils.showSuccessBar("Backup Restored!");
+
+          await ref.watch(historyAsyncProvider.notifier).refresh();
+        },
         error: (e, _) => throw e,
       );
     } catch (e) {
-      SnackBarUtils.showSnackBar("Backup Restoration Failed: ${e.toString()}");
+      SnackBarUtils.showErrorBar("$e");
     }
+  }
+
+  Future<void> _reportBugDialog(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            spacing: 8.0,
+            children: [
+              Icon(Icons.bug_report_sharp),
+              const Text("Report a Bug"),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Would you like to report a bug on GitHub?",
+                style: TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 8.0),
+              const Text(
+                "This will open our GitHub issues page where you can describe the problem you encountered.",
+                style: TextStyle(fontSize: 12),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                // todo: add github repo url
+                // Replace with your GitHub issues URL
+                launchUrl(
+                  Uri.parse("https://github.com/vchib1"),
+                  mode: LaunchMode.externalApplication,
+                );
+              },
+              child: const Text("Open"),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
