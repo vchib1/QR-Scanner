@@ -39,12 +39,14 @@ class HistoryPage extends ConsumerWidget {
               final date = groupedHistory.keys.elementAt(index);
               final items = groupedHistory[date]!;
 
+              final firstIdx = index == 0;
+
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Section Header (Date)
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: EdgeInsets.fromLTRB(8, firstIdx ? 0 : 12, 8, 8),
                     child: Text(
                       date,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -78,22 +80,23 @@ class HistoryPage extends ConsumerWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(
-                              isFirst || isSingle ? 16.0 : 0,
+                              isFirst || isSingle ? 8.0 : 0,
                             ),
                             topRight: Radius.circular(
-                              isFirst || isSingle ? 16.0 : 0,
+                              isFirst || isSingle ? 8.0 : 0,
                             ),
                             bottomLeft: Radius.circular(
-                              isLast || isSingle ? 16.0 : 0,
+                              isLast || isSingle ? 8.0 : 0,
                             ),
                             bottomRight: Radius.circular(
-                              isLast || isSingle ? 16.0 : 0,
+                              isLast || isSingle ? 8.0 : 0,
                             ),
                           ),
                         ),
                       ),
                     );
                   }),
+                  const SizedBox(height: 8.0),
                 ],
               );
             },

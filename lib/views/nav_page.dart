@@ -1,3 +1,4 @@
+import 'package:ez_qr/utils/helper_functions/camera_permission_dialog.dart';
 import 'package:ez_qr/views/home/home_page.dart';
 import 'package:ez_qr/views/settings/settings_page.dart';
 import 'package:flutter/material.dart';
@@ -39,10 +40,10 @@ class _NavPageState extends State<NavPage> {
     ]);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      quickActions.initialize((type) {
+      quickActions.initialize((type) async {
         switch (type) {
           case 'action_camera_scan':
-            Navigator.pushNamed(context, "/qr_scanner");
+            await requestCameraPermission(context);
             break;
           case 'action_generate':
             Navigator.pushNamed(context, "/generate");
