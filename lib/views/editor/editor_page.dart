@@ -17,6 +17,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ez_qr/services/database/history/history_db.dart';
 
+import '../../utils/helper_functions/share_qr_image.dart';
+
 class EditorPage extends ConsumerStatefulWidget {
   final String qrData;
 
@@ -29,27 +31,17 @@ class EditorPage extends ConsumerStatefulWidget {
 class _EditorPageState extends ConsumerState<EditorPage> {
   QrSize qrSize = QrSize.m;
 
-  /// Capture QR code screenshot and return as Uint8List
-  Future<Uint8List> captureQRScreenshot() async {
-    final screenshotController = ScreenshotController();
-
-    final qrWidget = MediaQuery(
-      data: MediaQueryData.fromView(View.of(context)),
-      child: _buildQRView(),
-    );
-
-    final imageBytes = await screenshotController.captureFromWidget(qrWidget);
-
-    return imageBytes;
-  }
-
   /// Save QR code image to device
   Future<bool> saveQRImage() async {
     try {
       showLoadingDialog(context);
 
       // get QR code screenshot image
-      Uint8List image = await captureQRScreenshot();
+      Uint8List image = await captureQRScreenshot(
+        context,
+        data: widget.qrData,
+        child: _buildQRView(),
+      );
 
       // create a random file name to save
       String uid = ref.read(uuidProvider).v4().split("-").last;
@@ -65,35 +57,10 @@ class _EditorPageState extends ConsumerState<EditorPage> {
       final fileSaved = result != null;
 
       if (fileSaved) {
-        SnackBarUtils.showSnackBar("QR Saved");
+        SnackBarUtils.showSuccessBar("QR Saved");
       }
 
       return fileSaved;
-    } finally {
-      if (mounted) {
-        Navigator.pop(context);
-      }
-    }
-  }
-
-  Future<bool> shareQRImage() async {
-    try {
-      showLoadingDialog(context);
-
-      // get QR code screenshot image
-      Uint8List image = await captureQRScreenshot();
-
-      Directory tempDir = await getTemporaryDirectory();
-
-      File file = File("${tempDir.path}/qr.png");
-
-      File result = await file.writeAsBytes(image);
-
-      ShareResult? res = await Share.shareXFiles([
-        XFile(result.path),
-      ], text: "QR Code");
-
-      return (res.status == ShareResultStatus.success);
     } finally {
       if (mounted) {
         Navigator.pop(context);
@@ -110,7 +77,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     final size = result["size"];
 
     if (imgPath == null) {
-      SnackBarUtils.showSnackBar("Please pick a valid logo.");
+      SnackBarUtils.showErrorBar("Please pick a valid logo.");
       return;
     }
 
@@ -203,7 +170,12 @@ class _EditorPageState extends ConsumerState<EditorPage> {
           IconButton(
             tooltip: "Share QR Code",
             icon: const Icon(Icons.share),
-            onPressed: () => shareQRImage(),
+            onPressed:
+                () => shareQRImage(
+                  context,
+                  data: widget.qrData,
+                  child: _buildQRView(),
+                ),
           ),
         ],
       ),

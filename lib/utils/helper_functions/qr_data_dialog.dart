@@ -1,4 +1,5 @@
 import 'package:ez_qr/utils/enums/qr_type.dart';
+import 'package:ez_qr/utils/helper_functions/share_qr_image.dart';
 import 'package:ez_qr/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,15 +11,30 @@ Future<T?> showQRDataDialog<T>(BuildContext context, {required String data}) {
     builder: (context) {
       return AlertDialog(
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Chip(label: Text(QrType.getQrType(data).getName)),
+            Expanded(
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Chip(label: Text(QrType
+                    .getQrType(data)
+                    .getName)),
+              ),
+            ),
             IconButton(
               onPressed: () async {
                 await Clipboard.setData(ClipboardData(text: data));
                 SnackBarUtils.showSnackBar("Content Copied");
               },
               icon: Icon(Icons.copy),
+            ),
+            IconButton(
+              onPressed: () async {
+                await shareQRImage(context, data: data);
+                if (!context.mounted) return;
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.share_outlined),
             ),
           ],
         ),
@@ -29,7 +45,9 @@ Future<T?> showQRDataDialog<T>(BuildContext context, {required String data}) {
             },
             child: Text('CANCEL'),
           ),
-          if (QrType.getQrType(data).canOpen)
+          if (QrType
+              .getQrType(data)
+              .canOpen)
             TextButton(onPressed: () => launchQRData(data), child: Text("OPEN"))
           else
             TextButton(
@@ -44,7 +62,10 @@ Future<T?> showQRDataDialog<T>(BuildContext context, {required String data}) {
           decoration: BoxDecoration(
             border: Border.all(),
             borderRadius: BorderRadius.circular(8.0),
-            color: Theme.of(context).colorScheme.surfaceContainer,
+            color: Theme
+                .of(context)
+                .colorScheme
+                .surfaceContainer,
           ),
           child: Text(data),
         ),
