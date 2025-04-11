@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../model/scanned_item_model.dart';
 import '../../utils/snackbar.dart';
-import '../history/provider.dart';
+import '../history/provider/provider.dart';
 
 class ImageScannerPage extends ConsumerStatefulWidget {
   const ImageScannerPage({super.key});

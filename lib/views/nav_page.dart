@@ -14,17 +14,17 @@ class NavPage extends StatefulWidget {
 
 class _NavPageState extends State<NavPage> {
   int currentIndex = 0;
-
+  bool quickActionLaunched = false;
   final pages = [const HomePage(), const HistoryPage(), const SettingsPage()];
 
   @override
-  initState() {
+  void initState() {
     super.initState();
     initializeQuickActions();
   }
 
   void initializeQuickActions() {
-    QuickActions quickActions = const QuickActions();
+    const QuickActions quickActions = QuickActions();
 
     quickActions.setShortcutItems([
       const ShortcutItem(
@@ -39,18 +39,24 @@ class _NavPageState extends State<NavPage> {
       ),
     ]);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      quickActions.initialize((type) async {
-        switch (type) {
-          case 'action_camera_scan':
-            await requestCameraPermission(context);
-            break;
-          case 'action_generate':
-            Navigator.pushNamed(context, "/generate");
-            break;
-        }
-      });
+    quickActions.initialize((type) async {
+      // prevents quick action to launch view twice
+      if (!quickActionLaunched) {
+        quickActionLaunched = true;
+        handleQuickAction(type);
+      }
     });
+  }
+
+  void handleQuickAction(String type) async {
+    switch (type) {
+      case 'action_camera_scan':
+        await requestCameraPermission(context);
+        break;
+      case 'action_generate':
+        Navigator.pushNamed(context, "/generate");
+        break;
+    }
   }
 
   @override
@@ -60,13 +66,12 @@ class _NavPageState extends State<NavPage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         enableFeedback: true,
-        onTap: (value) {
-          setState(() {
-            currentIndex = value;
-          });
+        onTap: (index) {
+          if (currentIndex == index) return;
+          setState(() => currentIndex = index);
         },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "HOME"),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(icon: Icon(Icons.history), label: "History"),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),

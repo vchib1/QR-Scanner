@@ -21,7 +21,7 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
 
   String qrData = "";
 
-  QrType? selectedOption = QrType.values.first;
+  QrType selectedOption = QrType.values.first;
 
   @override
   void initState() {
@@ -85,17 +85,21 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
                     spacing: 10,
                     children: [
                       Wrap(
-                        spacing: 10,
-                        runSpacing: 10,
+                        spacing: 8.0,
+                        runSpacing: 8.0,
                         children: [
                           for (final option in QrType.values)
                             ChoiceChip(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(32.0),
+                              ),
                               showCheckmark: false,
                               selected: selectedOption == option,
                               label: Text(option.getName),
                               onSelected: (selected) {
                                 setState(() {
-                                  selectedOption = selected ? option : null;
+                                  selectedOption =
+                                      selected ? option : selectedOption;
                                 });
                               },
                             ),
@@ -110,7 +114,6 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
                         QrType.phone => QRPhone(onChanged: onChanged),
                         QrType.url => QRUrl(onChanged: onChanged),
                         QrType.mail => QRMail(onChanged: onChanged),
-                        null => const SizedBox.shrink(),
                       },
                     ],
                   ),

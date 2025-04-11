@@ -1,10 +1,9 @@
 import 'dart:io';
-
 import 'package:ez_qr/utils/enums/theme_contrast.dart';
 import 'package:ez_qr/utils/helper_functions/loading_dialog.dart';
 import 'package:ez_qr/utils/snackbar.dart';
 import 'package:ez_qr/utils/tile_shapes.dart';
-import 'package:ez_qr/views/history/provider.dart';
+import 'package:ez_qr/views/history/provider/provider.dart';
 import 'package:ez_qr/views/settings/provider/theme/provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +24,7 @@ class SettingsPage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildTitle(context, "Appearance"),
+              _buildTitle(context, "Theme"),
               const SizedBox(height: 8.0),
 
               Consumer(
@@ -39,7 +38,7 @@ class SettingsPage extends ConsumerWidget {
                         shape: topRoundedBorder(),
                         leading: const Icon(Icons.brightness_6_outlined),
                         title: const Text("Theme"),
-                        subtitle: const Text("Pick a provider"),
+                        subtitle: const Text("Theme Mode"),
                         trailing: SegmentedButton(
                           selected: {state.themeMode},
                           onSelectionChanged: (data) {
@@ -342,10 +341,7 @@ class SettingsPage extends ConsumerWidget {
         return AlertDialog(
           title: const Row(
             spacing: 8.0,
-            children: [
-              Icon(Icons.bug_report_sharp),
-              Text("Report a Bug"),
-            ],
+            children: [Icon(Icons.bug_report_sharp), Text("Report a Bug")],
           ),
           content: const Column(
             mainAxisSize: MainAxisSize.min,

@@ -1,7 +1,7 @@
 import 'package:ez_qr/model/scanned_item_model.dart';
 import 'package:ez_qr/utils/helper_functions/qr_data_dialog.dart';
-import 'package:ez_qr/views/history/provider.dart';
-import 'package:ez_qr/views/qr_scanner/viewmodel.dart';
+import 'package:ez_qr/views/history/provider/provider.dart';
+import 'package:ez_qr/views/qr_scanner/provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -58,12 +58,12 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
   }
 
   Future<void> onDetect(BarcodeCapture capture) async {
-    final resultFound = ref.read(qrScannerViewModel).resultFound;
+    final resultFound = ref.read(qrScannerNotifierProvider).resultFound;
 
     try {
       if (resultFound) return;
 
-      ref.read(qrScannerViewModel.notifier).setResultFound(true);
+      ref.read(qrScannerNotifierProvider.notifier).setResultFound(true);
 
       final data = capture.barcodes.first.rawValue;
 
@@ -77,7 +77,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
           await showQRDataDialog(context, data: data);
         }
 
-        ref.read(qrScannerViewModel.notifier).setResultFound(false);
+        ref.read(qrScannerNotifierProvider.notifier).setResultFound(false);
         await controller.start();
         //if (mounted) Navigator.popUntil(context, (ModalRoute.withName('/')));
       }
@@ -88,12 +88,12 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
 
   Future<void> toggleFlash() async {
     await controller.toggleTorch();
-    ref.read(qrScannerViewModel.notifier).toggleFlash();
+    ref.read(qrScannerNotifierProvider.notifier).toggleFlash();
   }
 
   Future<void> changeZoomLevel(double zoomLevel) async {
     await controller.setZoomScale(zoomLevel);
-    ref.read(qrScannerViewModel.notifier).setZoom(zoomLevel);
+    ref.read(qrScannerNotifierProvider.notifier).setZoom(zoomLevel);
   }
 
   Future<void> switchCamera() async {
@@ -127,7 +127,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
           IconButton(
             onPressed: toggleFlash,
             icon: Icon(
-              ref.watch(qrScannerViewModel).flashOn
+              ref.watch(qrScannerNotifierProvider).flashOn
                   ? Icons.flash_on
                   : Icons.flash_off,
               color: iconColor,
@@ -172,7 +172,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                       Consumer(
                         builder: (context, ref, child) {
                           final zoomLevel =
-                              ref.watch(qrScannerViewModel).zoomLevel;
+                              ref.watch(qrScannerNotifierProvider).zoomLevel;
 
                           return Flexible(
                             child: Slider(

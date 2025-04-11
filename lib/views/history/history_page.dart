@@ -4,7 +4,7 @@ import 'package:ez_qr/utils/helper_functions/qr_data_dialog.dart';
 import 'package:ez_qr/utils/helper_functions/share_qr_image.dart';
 import 'package:ez_qr/utils/snackbar.dart';
 import 'package:ez_qr/utils/tile_shapes.dart';
-import 'package:ez_qr/views/history/provider.dart';
+import 'package:ez_qr/views/history/provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -85,7 +85,8 @@ class HistoryPage extends ConsumerWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                         trailing: IconButton(
-                          onPressed: () => historyVM.removeItem(item),
+                          onPressed:
+                              () => _deleteItemDialog(context, ref, item),
                           icon: const Icon(Icons.delete),
                         ),
                         shape: RoundedRectangleBorder(
@@ -130,7 +131,7 @@ class HistoryPage extends ConsumerWidget {
         return Dialog(
           clipBehavior: Clip.antiAlias,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(16.0),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -161,16 +162,43 @@ class HistoryPage extends ConsumerWidget {
                 title: const Text("Delete"),
                 leading: const Icon(Icons.delete),
                 onTap: () async {
-                  await ref
-                      .read(historyAsyncProvider.notifier)
-                      .removeItem(item);
                   if (!context.mounted) return;
                   Navigator.pop(context);
+                  _deleteItemDialog(context, ref, item);
                 },
               ),
-              const Text("data"),
             ],
           ),
+        );
+      },
+    );
+  }
+
+  Future<bool?> _deleteItemDialog(
+    BuildContext context,
+    WidgetRef ref,
+    ScannedItem item,
+  ) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Delete Item"),
+          content: const Text("Are you sure you want to delete this item?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                await ref.read(historyAsyncProvider.notifier).removeItem(item);
+                if (!context.mounted) return;
+                Navigator.pop(context, true);
+              },
+              child: const Text("Delete"),
+            ),
+          ],
         );
       },
     );

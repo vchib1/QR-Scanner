@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final qrScannerViewModel =
-    AutoDisposeNotifierProvider<QrScannerViewModel, QrScannerState>(
-      () => QrScannerViewModel(),
+final qrScannerNotifierProvider =
+    AutoDisposeNotifierProvider<QrScannerNotifier, QrScannerState>(
+      () => QrScannerNotifier(),
     );
 
-class QrScannerViewModel extends AutoDisposeNotifier<QrScannerState> {
+class QrScannerNotifier extends AutoDisposeNotifier<QrScannerState> {
   @override
   QrScannerState build() {
     return QrScannerState();

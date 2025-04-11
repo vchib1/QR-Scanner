@@ -10,7 +10,7 @@ class HomePage extends StatelessWidget {
     const iconSize = 32.0;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("HOME")),
+      appBar: AppBar(title: const Text("Home")),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12.0),
         child: Column(
