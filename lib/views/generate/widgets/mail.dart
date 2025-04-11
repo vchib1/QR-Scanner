@@ -42,7 +42,7 @@ class _QRMailState extends State<QRMail> {
 
   @override
   Widget build(BuildContext context) {
-    final maxLines = 5;
+    const maxLines = 5;
 
     return Column(
       spacing: 10,
@@ -51,13 +51,13 @@ class _QRMailState extends State<QRMail> {
           controller: emailController,
           onChanged: onChanged,
           maxLines: 1,
-          decoration: InputDecoration(hintText: "Email"),
+          decoration: const InputDecoration(hintText: "Email"),
         ),
         TextField(
           controller: subjectController,
           onChanged: onChanged,
           maxLines: 1,
-          decoration: InputDecoration(hintText: "Subject"),
+          decoration: const InputDecoration(hintText: "Subject"),
         ),
         SizedBox(
           height: maxLines * 24.0,
@@ -65,7 +65,7 @@ class _QRMailState extends State<QRMail> {
             controller: bodyController,
             onChanged: onChanged,
             maxLines: maxLines,
-            decoration: InputDecoration(hintText: "Body"),
+            decoration: const InputDecoration(hintText: "Body"),
           ),
         ),
       ],

@@ -15,7 +15,7 @@ class NavPage extends StatefulWidget {
 class _NavPageState extends State<NavPage> {
   int currentIndex = 0;
 
-  final pages = [HomePage(), HistoryPage(), SettingsPage()];
+  final pages = [const HomePage(), const HistoryPage(), const SettingsPage()];
 
   @override
   initState() {
@@ -27,12 +27,12 @@ class _NavPageState extends State<NavPage> {
     QuickActions quickActions = const QuickActions();
 
     quickActions.setShortcutItems([
-      ShortcutItem(
+      const ShortcutItem(
         type: 'action_camera_scan',
         localizedTitle: "Scan QR",
         icon: "qr_scan",
       ),
-      ShortcutItem(
+      const ShortcutItem(
         type: 'action_generate',
         localizedTitle: "Generate QR",
         icon: "qr_generate",
@@ -65,7 +65,7 @@ class _NavPageState extends State<NavPage> {
             currentIndex = value;
           });
         },
-        items: [
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "HOME"),
           BottomNavigationBarItem(icon: Icon(Icons.history), label: "History"),
           BottomNavigationBarItem(

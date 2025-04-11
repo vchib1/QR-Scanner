@@ -10,7 +10,7 @@ Future<void> colorPickerDialog(
   Color newColor = await showColorPickerDialog(
     context,
     color,
-    heading: Text("Pick a Color"),
+    heading: const Text("Pick a Color"),
     pickersEnabled: <ColorPickerType, bool>{
       ColorPickerType.wheel: true,
       ColorPickerType.primary: false,

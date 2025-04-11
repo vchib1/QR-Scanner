@@ -51,7 +51,7 @@ class _QRSmsState extends State<QRSms> {
             controller: msgController,
             onChanged: onChanged,
             maxLines: 10,
-            decoration: InputDecoration(hintText: "Message"),
+            decoration: const InputDecoration(hintText: "Message"),
           ),
         ),
       ],

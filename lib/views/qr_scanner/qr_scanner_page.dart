@@ -1,7 +1,5 @@
 import 'package:ez_qr/model/scanned_item_model.dart';
-import 'package:ez_qr/utils/enums/qr_type.dart';
 import 'package:ez_qr/utils/helper_functions/qr_data_dialog.dart';
-import 'package:ez_qr/utils/helper_functions/url_launch.dart';
 import 'package:ez_qr/views/history/provider.dart';
 import 'package:ez_qr/views/qr_scanner/viewmodel.dart';
 import 'package:flutter/material.dart';
@@ -105,7 +103,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    final iconColor = Colors.white;
+    const iconColor = Colors.white;
 
     final scannerHeight = size.width * .60;
 
@@ -118,12 +116,12 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
         backgroundColor: Colors.transparent,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back, color: iconColor),
+          icon: const Icon(Icons.arrow_back, color: iconColor),
         ),
         actions: [
           IconButton(
             onPressed: switchCamera,
-            icon: Icon(Icons.flip_camera_ios, color: iconColor),
+            icon: const Icon(Icons.flip_camera_ios, color: iconColor),
           ),
           const SizedBox(width: 5),
           IconButton(
@@ -170,7 +168,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Row(
                     children: [
-                      Icon(Icons.remove_circle, color: iconColor),
+                      const Icon(Icons.remove_circle, color: iconColor),
                       Consumer(
                         builder: (context, ref, child) {
                           final zoomLevel =
@@ -189,7 +187,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                           );
                         },
                       ),
-                      Icon(Icons.add_circle, color: iconColor),
+                      const Icon(Icons.add_circle, color: iconColor),
                     ],
                   ),
                 ),

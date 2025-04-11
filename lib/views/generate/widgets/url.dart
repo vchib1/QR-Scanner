@@ -54,7 +54,7 @@ class _QRUrlState extends State<QRUrl> {
   void onChanged(String value) {
     debounce?.cancel();
 
-    debounce = Timer(Duration(milliseconds: 500), () {
+    debounce = Timer(const Duration(milliseconds: 500), () {
       setState(() {
         errorText =
             value.isEmpty || isValidUrl(value) ? null : "Enter a valid URL";

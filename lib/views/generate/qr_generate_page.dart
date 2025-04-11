@@ -57,9 +57,9 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
           return GestureDetector(
             onTap: unFocusKeyboard,
             child: Scaffold(
-              appBar: AppBar(title: Text("Generate QR")),
+              appBar: AppBar(title: const Text("Generate QR")),
               bottomNavigationBar: Container(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 height: kBottomNavigationBarHeight + 8,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -110,7 +110,7 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
                         QrType.phone => QRPhone(onChanged: onChanged),
                         QrType.url => QRUrl(onChanged: onChanged),
                         QrType.mail => QRMail(onChanged: onChanged),
-                        null => SizedBox.shrink(),
+                        null => const SizedBox.shrink(),
                       },
                     ],
                   ),

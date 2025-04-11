@@ -18,7 +18,7 @@ class SettingsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(title: Text("Settings")),
+      appBar: AppBar(title: const Text("Settings")),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
@@ -37,9 +37,9 @@ class SettingsPage extends ConsumerWidget {
                       // Theme Mode
                       ListTile(
                         shape: topRoundedBorder(),
-                        leading: Icon(Icons.brightness_6_outlined),
-                        title: Text("Theme"),
-                        subtitle: Text("Pick a provider"),
+                        leading: const Icon(Icons.brightness_6_outlined),
+                        title: const Text("Theme"),
+                        subtitle: const Text("Pick a provider"),
                         trailing: SegmentedButton(
                           selected: {state.themeMode},
                           onSelectionChanged: (data) {
@@ -50,7 +50,7 @@ class SettingsPage extends ConsumerWidget {
                                 );
                           },
                           showSelectedIcon: false,
-                          style: ButtonStyle(
+                          style: const ButtonStyle(
                             padding: WidgetStatePropertyAll(
                               EdgeInsets.symmetric(horizontal: 0.0),
                             ),
@@ -61,7 +61,7 @@ class SettingsPage extends ConsumerWidget {
                             visualDensity: VisualDensity(horizontal: -4),
                             enableFeedback: true,
                           ),
-                          segments: [
+                          segments: const [
                             ButtonSegment(
                               tooltip: "System",
                               value: ThemeMode.system,
@@ -84,9 +84,9 @@ class SettingsPage extends ConsumerWidget {
                       // Theme Contrast Mode
                       ListTile(
                         shape: bottomRoundedBorder(),
-                        leading: Icon(Icons.contrast),
-                        title: Text("Contrast"),
-                        subtitle: Text("Theme contrast"),
+                        leading: const Icon(Icons.contrast),
+                        title: const Text("Contrast"),
+                        subtitle: const Text("Theme contrast"),
                         trailing: SegmentedButton(
                           selected: {state.contrastMode},
                           onSelectionChanged: (data) {
@@ -97,7 +97,7 @@ class SettingsPage extends ConsumerWidget {
                                 );
                           },
                           showSelectedIcon: false,
-                          style: ButtonStyle(
+                          style: const ButtonStyle(
                             padding: WidgetStatePropertyAll(
                               EdgeInsets.symmetric(horizontal: 0.0),
                             ),
@@ -108,7 +108,7 @@ class SettingsPage extends ConsumerWidget {
                             visualDensity: VisualDensity(horizontal: -4),
                             enableFeedback: true,
                           ),
-                          segments: [
+                          segments: const [
                             ButtonSegment(
                               tooltip: "Light",
                               value: ThemeContrastMode.light,
@@ -141,18 +141,18 @@ class SettingsPage extends ConsumerWidget {
               ListTile(
                 shape: topRoundedBorder(),
                 onTap: () => _backupDatabase(ref),
-                leading: Icon(Icons.backup_table),
-                title: Text("Backup Data"),
-                subtitle: Text("Create a backup file in your device"),
+                leading: const Icon(Icons.backup_table),
+                title: const Text("Backup Data"),
+                subtitle: const Text("Create a backup file in your device"),
               ),
 
               // Restore Data
               ListTile(
                 shape: bottomRoundedBorder(),
                 onTap: () => _showRestoreDBDialog(context, ref),
-                leading: Icon(Icons.restore),
-                title: Text("Restore Data"),
-                subtitle: Text("Restore backup from your device"),
+                leading: const Icon(Icons.restore),
+                title: const Text("Restore Data"),
+                subtitle: const Text("Restore backup from your device"),
               ),
 
               const SizedBox(height: 16.0),
@@ -167,21 +167,21 @@ class SettingsPage extends ConsumerWidget {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: Text("Privacy Policy"),
-                        content: Text("Read our privacy policy"),
+                        title: const Text("Privacy Policy"),
+                        content: const Text("Read our privacy policy"),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context),
-                            child: Text("Close"),
+                            child: const Text("Close"),
                           ),
                         ],
                       );
                     },
                   );
                 },
-                leading: Icon(Icons.policy),
-                title: Text("Privacy Policy"),
-                subtitle: Text("Click here to read our privacy policy"),
+                leading: const Icon(Icons.policy),
+                title: const Text("Privacy Policy"),
+                subtitle: const Text("Click here to read our privacy policy"),
               ),
 
               // Licenses
@@ -199,18 +199,18 @@ class SettingsPage extends ConsumerWidget {
                             applicationVersion: '1.0',
                           ),
                     ),
-                leading: Icon(Icons.library_books),
-                title: Text("Licenses"),
-                subtitle: Text("Click here to view the licenses"),
+                leading: const Icon(Icons.library_books),
+                title: const Text("Licenses"),
+                subtitle: const Text("Click here to view the licenses"),
               ),
 
               // Bug Report
               ListTile(
                 shape: bottomRoundedBorder(),
                 onTap: () => _reportBugDialog(context),
-                leading: Icon(Icons.pest_control_sharp),
-                title: Text("Bug Report"),
-                subtitle: Text("Report a bug on GitHub"),
+                leading: const Icon(Icons.pest_control_sharp),
+                title: const Text("Bug Report"),
+                subtitle: const Text("Report a bug on GitHub"),
               ),
             ],
           ),
@@ -263,7 +263,7 @@ class SettingsPage extends ConsumerWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Row(
+          title: const Row(
             spacing: 8.0,
             children: [
               Icon(Icons.settings_backup_restore),
@@ -276,11 +276,11 @@ class SettingsPage extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text("Cancel"),
+              child: const Text("Cancel"),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: Text("Proceed"),
+              child: const Text("Proceed"),
             ),
           ],
         );
@@ -340,23 +340,23 @@ class SettingsPage extends ConsumerWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Row(
+          title: const Row(
             spacing: 8.0,
             children: [
               Icon(Icons.bug_report_sharp),
-              const Text("Report a Bug"),
+              Text("Report a Bug"),
             ],
           ),
-          content: Column(
+          content: const Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 "Would you like to report a bug on GitHub?",
                 style: TextStyle(fontSize: 16),
               ),
-              const SizedBox(height: 8.0),
-              const Text(
+              SizedBox(height: 8.0),
+              Text(
                 "This will open our GitHub issues page where you can describe the problem you encountered.",
                 style: TextStyle(fontSize: 12),
               ),

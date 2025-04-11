@@ -50,6 +50,8 @@ dependencies:
   intl: ^0.20.2
   flex_color_picker: ^3.7.0
   quick_actions: ^1.1.0
+  collection: ^1.19.1
+  path: ^1.9.1
 
 dev_dependencies:
   flutter_test:

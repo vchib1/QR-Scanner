@@ -9,11 +9,8 @@ import 'package:ez_qr/utils/tile_shapes.dart';
 import 'package:ez_qr/views/editor/provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:screenshot/screenshot.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ez_qr/services/database/history/history_db.dart';
 
@@ -160,7 +157,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
         scrolledUnderElevation: 0.0,
-        title: Text("QR Editor"),
+        title: const Text("QR Editor"),
         actions: [
           IconButton(
             tooltip: "Save QR Code",
@@ -182,7 +179,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
       body: Column(
         children: [
           Container(
-            padding: EdgeInsets.symmetric(vertical: 24.0),
+            padding: const EdgeInsets.symmetric(vertical: 24.0),
             alignment: Alignment.center,
             color: Theme.of(context).colorScheme.surface,
             child: SizedBox.square(dimension: 200, child: _buildQRView(200)),
@@ -211,8 +208,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                           ),
                         );
                       },
-                      title: Text("Background Color"),
-                      subtitle: Text(
+                      title: const Text("Background Color"),
+                      subtitle: const Text(
                         "Choose a color that contrasts with the pattern to ensure clear scanning.",
                       ),
                       trailing: _buildColoredBox(context, state.bgColor),
@@ -229,8 +226,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                           ),
                         );
                       },
-                      title: Text("Pattern Color"),
-                      subtitle: Text(
+                      title: const Text("Pattern Color"),
+                      subtitle: const Text(
                         "Set the main QR code color. Use a dark color for better scanning.",
                       ),
                       trailing: _buildColoredBox(context, state.patternColor),
@@ -247,8 +244,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                           ),
                         );
                       },
-                      title: Text("Eye Color"),
-                      subtitle: Text(
+                      title: const Text("Eye Color"),
+                      subtitle: const Text(
                         "Pick a color for the QR code's eye patterns (corner markers).",
                       ),
                       trailing: _buildColoredBox(context, state.eyeColor),
@@ -257,8 +254,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                     // Background Color
                     ListTile(
                       onTap: processLogo,
-                      title: Text("Pick Custom Logo"),
-                      subtitle: Text(
+                      title: const Text("Pick Custom Logo"),
+                      subtitle: const Text(
                         "Add a your custom logo in the center of the QR code.",
                       ),
                       trailing:
@@ -269,7 +266,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                                     state.copyWith(clearLogo: true),
                                   );
                                 },
-                                icon: Icon(Icons.delete),
+                                icon: const Icon(Icons.delete),
                               )
                               : const Icon(Icons.image_outlined),
                     ),
@@ -284,7 +281,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                       trailing: SizedBox(
                         width: MediaQuery.sizeOf(context).width * .40,
                         child: Slider(
-                          padding: EdgeInsets.symmetric(vertical: 0.0),
+                          padding: const EdgeInsets.symmetric(vertical: 0.0),
+                          //ignore: deprecated_member_use
                           year2023: false,
                           value: qrSize.value,
                           label: qrSize.name.toUpperCase(),
@@ -311,8 +309,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                           ),
                         );
                       },
-                      title: Text("Enable Gap"),
-                      subtitle: Text("Allows the squares to have some gap."),
+                      title: const Text("Enable Gap"),
+                      subtitle: const Text("Allows the squares to have some gap."),
                       trailing: Switch(
                         value: state.allowGap,
                         onChanged: (value) {
@@ -403,7 +401,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
       color: color,
       elevation: 1.0,
       shadowColor: Theme.of(context).colorScheme.shadow,
-      child: ColoredBox(color: color, child: SizedBox.square(dimension: 32.0)),
+      child: ColoredBox(color: color, child: const SizedBox.square(dimension: 32.0)),
     );
   }
 }

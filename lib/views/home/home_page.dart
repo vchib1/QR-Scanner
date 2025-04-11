@@ -7,10 +7,10 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final iconSize = 32.0;
+    const iconSize = 32.0;
 
     return Scaffold(
-      appBar: AppBar(title: Text("HOME")),
+      appBar: AppBar(title: const Text("HOME")),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12.0),
         child: Column(
@@ -18,31 +18,31 @@ class HomePage extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 16.0),
-            Icon(Icons.qr_code_2_rounded, size: 200.0),
+            const Icon(Icons.qr_code_2_rounded, size: 200.0),
 
             const SizedBox(height: 16.0),
             ListTile(
               shape: topRoundedBorder(),
               onTap: () async => await requestCameraPermission(context),
-              leading: Icon(Icons.qr_code_scanner, size: iconSize),
-              title: Text("Scan QR Code"),
-              subtitle: Text("Scan QR codes using device camera."),
+              leading: const Icon(Icons.qr_code_scanner, size: iconSize),
+              title: const Text("Scan QR Code"),
+              subtitle: const Text("Scan QR codes using device camera."),
             ),
 
             ListTile(
               shape: noneBorder(),
               onTap: () => Navigator.pushNamed(context, "/image_scanner"),
-              leading: Icon(Icons.image_search, size: iconSize),
-              title: Text("Scan Image"),
-              subtitle: Text("Find QR codes from images."),
+              leading: const Icon(Icons.image_search, size: iconSize),
+              title: const Text("Scan Image"),
+              subtitle: const Text("Find QR codes from images."),
             ),
 
             ListTile(
               shape: bottomRoundedBorder(),
               onTap: () => Navigator.pushNamed(context, "/generate"),
-              leading: Icon(Icons.qr_code_2_outlined, size: iconSize),
-              title: Text("QR Generator"),
-              subtitle: Text("Create your own QR Codes."),
+              leading: const Icon(Icons.qr_code_2_outlined, size: iconSize),
+              title: const Text("QR Generator"),
+              subtitle: const Text("Create your own QR Codes."),
             ),
           ],
         ),

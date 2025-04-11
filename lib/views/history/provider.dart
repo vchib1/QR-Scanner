@@ -1,6 +1,5 @@
 import 'package:ez_qr/model/scanned_item_model.dart';
 import 'package:ez_qr/repository/history_repo.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import "package:collection/collection.dart";
@@ -51,7 +50,7 @@ class HistoryAsyncProvider
   Map<String, List<ScannedItem>> _groupByDate(List<ScannedItem> items) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(Duration(days: 1));
+    final yesterday = today.subtract(const Duration(days: 1));
 
     return groupBy(items, (ScannedItem item) {
       final date = item.createdAt;

@@ -5,9 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../model/scanned_item_model.dart';
-import '../../utils/enums/qr_type.dart';
 import '../../utils/snackbar.dart';
-import '../../utils/helper_functions/url_launch.dart';
 import '../history/provider.dart';
 
 class ImageScannerPage extends ConsumerStatefulWidget {
@@ -95,10 +93,10 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
     final iconColor = Theme.of(context).colorScheme.onSurface;
 
     return Scaffold(
-      appBar: AppBar(title: Text("Image Scanner")),
+      appBar: AppBar(title: const Text("Image Scanner")),
       body: Center(
         child: MaterialButton(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           onPressed: pickImage,
           color: Theme.of(context).colorScheme.surfaceContainer,
           shape: RoundedRectangleBorder(

@@ -26,7 +26,7 @@ Future<T?> showQRDataDialog<T>(BuildContext context, {required String data}) {
                 await Clipboard.setData(ClipboardData(text: data));
                 SnackBarUtils.showSnackBar("Content Copied");
               },
-              icon: Icon(Icons.copy),
+              icon: const Icon(Icons.copy),
             ),
             IconButton(
               onPressed: () async {
@@ -34,7 +34,7 @@ Future<T?> showQRDataDialog<T>(BuildContext context, {required String data}) {
                 if (!context.mounted) return;
                 Navigator.pop(context);
               },
-              icon: Icon(Icons.share_outlined),
+              icon: const Icon(Icons.share_outlined),
             ),
           ],
         ),
@@ -43,22 +43,22 @@ Future<T?> showQRDataDialog<T>(BuildContext context, {required String data}) {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: Text('CANCEL'),
+            child: const Text('CANCEL'),
           ),
           if (QrType
               .getQrType(data)
               .canOpen)
-            TextButton(onPressed: () => launchQRData(data), child: Text("OPEN"))
+            TextButton(onPressed: () => launchQRData(data), child: const Text("OPEN"))
           else
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
         ],
         content: Container(
-          padding: EdgeInsets.all(12.0),
+          padding: const EdgeInsets.all(12.0),
           decoration: BoxDecoration(
             border: Border.all(),
             borderRadius: BorderRadius.circular(8.0),

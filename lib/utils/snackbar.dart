@@ -31,7 +31,7 @@ class SnackBarUtils {
       ),
       backgroundColor: theme.colorScheme.primary,
       behavior: SnackBarBehavior.floating,
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
     );
 
     if (context != null && context.mounted) {
@@ -49,10 +49,10 @@ class SnackBarUtils {
 
   static void showSuccessBar(String message, {BuildContext? context}) {
     final snackBar = SnackBar(
-      content: Text(message, style: TextStyle(color: Colors.white)),
+      content: Text(message, style: const TextStyle(color: Colors.white)),
       backgroundColor: Colors.green,
       behavior: SnackBarBehavior.floating,
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
       showCloseIcon: true,
       closeIconColor: Colors.white,
     );
@@ -72,10 +72,10 @@ class SnackBarUtils {
 
   static void showErrorBar(String message, {BuildContext? context}) {
     final snackBar = SnackBar(
-      content: Text(message, style: TextStyle(color: Colors.white)),
+      content: Text(message, style: const TextStyle(color: Colors.white)),
       backgroundColor: Colors.red,
       behavior: SnackBarBehavior.floating,
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
       showCloseIcon: true,
       closeIconColor: Colors.white,
     );
