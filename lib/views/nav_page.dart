@@ -1,3 +1,5 @@
+import 'package:ez_qr/l10n/generated/app_localizations.dart';
+import 'package:ez_qr/utils/extensions/context_extension.dart';
 import 'package:ez_qr/utils/helper_functions/camera_permission_dialog.dart';
 import 'package:ez_qr/views/home/home_page.dart';
 import 'package:ez_qr/views/settings/settings_page.dart';
@@ -20,21 +22,23 @@ class _NavPageState extends State<NavPage> {
   @override
   void initState() {
     super.initState();
-    initializeQuickActions();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      initializeQuickActions();
+    });
   }
 
   void initializeQuickActions() {
     const QuickActions quickActions = QuickActions();
 
     quickActions.setShortcutItems([
-      const ShortcutItem(
+      ShortcutItem(
         type: 'action_camera_scan',
-        localizedTitle: "Scan QR",
+        localizedTitle: context.locale.scanQRCodeTitle,
         icon: "qr_scan",
       ),
-      const ShortcutItem(
+      ShortcutItem(
         type: 'action_generate',
-        localizedTitle: "Generate QR",
+        localizedTitle: context.locale.qrGeneratorTitle,
         icon: "qr_generate",
       ),
     ]);
@@ -70,12 +74,18 @@ class _NavPageState extends State<NavPage> {
           if (currentIndex == index) return;
           setState(() => currentIndex = index);
         },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: "History"),
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: "Settings",
+            icon: const Icon(Icons.home),
+            label: context.locale.home,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.history),
+            label: context.locale.history,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.settings),
+            label: context.locale.settings,
           ),
         ],
       ),

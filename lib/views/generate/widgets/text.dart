@@ -1,3 +1,4 @@
+import 'package:ez_qr/utils/extensions/context_extension.dart';
 import 'package:flutter/material.dart';
 
 class QRText extends StatefulWidget {
@@ -34,7 +35,9 @@ class _QRTextState extends State<QRText> {
         controller: textController,
         onChanged: onChanged,
         maxLines: 10,
-        decoration: const InputDecoration(hintText: "Text"),
+        decoration: InputDecoration(
+          hintText: context.locale.text,
+        ),
       ),
     );
   }

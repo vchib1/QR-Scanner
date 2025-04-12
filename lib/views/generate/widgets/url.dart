@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:ez_qr/l10n/generated/app_localizations.dart';
+import 'package:ez_qr/utils/extensions/context_extension.dart';
 import 'package:flutter/material.dart';
 
 class QRUrl extends StatefulWidget {
@@ -57,7 +59,7 @@ class _QRUrlState extends State<QRUrl> {
     debounce = Timer(const Duration(milliseconds: 500), () {
       setState(() {
         errorText =
-            value.isEmpty || isValidUrl(value) ? null : "Enter a valid URL";
+            value.isEmpty || isValidUrl(value) ? null : context.locale.urlError;
       });
     });
   }
@@ -69,7 +71,10 @@ class _QRUrlState extends State<QRUrl> {
       onChanged: onChanged,
       keyboardType: TextInputType.url,
       maxLines: 1,
-      decoration: InputDecoration(hintText: "URL", errorText: errorText),
+      decoration: InputDecoration(
+        hintText: context.locale.url,
+        errorText: errorText,
+      ),
     );
   }
 }

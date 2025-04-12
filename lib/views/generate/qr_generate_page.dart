@@ -1,4 +1,6 @@
 import 'package:ez_qr/utils/enums/qr_type.dart';
+import 'package:ez_qr/utils/extensions/context_extension.dart';
+import 'package:ez_qr/utils/extensions/qr_type_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:screenshot/screenshot.dart';
@@ -57,7 +59,7 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
           return GestureDetector(
             onTap: unFocusKeyboard,
             child: Scaffold(
-              appBar: AppBar(title: const Text("Generate QR")),
+              appBar: AppBar(title: Text(context.locale.qrGeneratorTitle)),
               bottomNavigationBar: Container(
                 padding: const EdgeInsets.all(8.0),
                 height: kBottomNavigationBarHeight + 8,
@@ -70,7 +72,7 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
                   ),
                   onPressed: navigateToEditor,
                   child: Text(
-                    "Generate",
+                    context.locale.next,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
@@ -95,7 +97,7 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
                               ),
                               showCheckmark: false,
                               selected: selectedOption == option,
-                              label: Text(option.getName),
+                              label: Text(option.localizedName(context)),
                               onSelected: (selected) {
                                 setState(() {
                                   selectedOption =

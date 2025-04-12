@@ -1,5 +1,7 @@
 import 'package:ez_qr/model/scanned_item_model.dart';
 import 'package:ez_qr/utils/enums/qr_type.dart';
+import 'package:ez_qr/utils/extensions/context_extension.dart';
+import 'package:ez_qr/utils/extensions/qr_type_extension.dart';
 import 'package:ez_qr/utils/helper_functions/qr_data_dialog.dart';
 import 'package:ez_qr/utils/helper_functions/share_qr_image.dart';
 import 'package:ez_qr/utils/snackbar.dart';
@@ -15,10 +17,9 @@ class HistoryPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final history = ref.watch(historyAsyncProvider);
-    final historyVM = ref.watch(historyAsyncProvider.notifier);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("History")),
+      appBar: AppBar(title: Text(context.locale.history)),
       body: history.when(
         data: (groupedHistory) {
           if (groupedHistory.isEmpty) {
@@ -29,7 +30,7 @@ class HistoryPage extends ConsumerWidget {
                 children: [
                   const Icon(Icons.history_sharp, size: 48.0),
                   Text(
-                    "No History",
+                    context.locale.noHistory,
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                 ],
@@ -78,7 +79,9 @@ class HistoryPage extends ConsumerWidget {
                               item: item,
                             ),
                         leading: const Icon(Icons.qr_code_rounded),
-                        title: Text(QrType.getQrType(item.data).getName),
+                        title: Text(
+                          QrType.getQrType(item.data).localizedName(context),
+                        ),
                         subtitle: Text(
                           item.data,
                           maxLines: 3,
@@ -138,18 +141,18 @@ class HistoryPage extends ConsumerWidget {
             children: [
               ListTile(
                 shape: noneBorder(),
-                title: const Text("Copy"),
+                title: Text(context.locale.copy),
                 leading: const Icon(Icons.copy_rounded),
                 onTap: () async {
                   await Clipboard.setData(ClipboardData(text: item.data));
-                  SnackBarUtils.showSnackBar("Copied");
                   if (!context.mounted) return;
+                  SnackBarUtils.showSnackBar(context.locale.copied);
                   Navigator.pop(context);
                 },
               ),
               ListTile(
                 shape: noneBorder(),
-                title: const Text("Share"),
+                title: Text(context.locale.share),
                 leading: const Icon(Icons.share_outlined),
                 onTap: () async {
                   await shareQRImage(context, data: item.data);
@@ -159,7 +162,7 @@ class HistoryPage extends ConsumerWidget {
               ),
               ListTile(
                 shape: noneBorder(),
-                title: const Text("Delete"),
+                title: Text(context.locale.delete),
                 leading: const Icon(Icons.delete),
                 onTap: () async {
                   if (!context.mounted) return;
@@ -183,12 +186,12 @@ class HistoryPage extends ConsumerWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Delete Item"),
-          content: const Text("Are you sure you want to delete this item?"),
+          title: Text(context.locale.deleteItem),
+          content: Text(context.locale.deleteItemConfirm),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text("Cancel"),
+              child: Text(context.locale.cancel),
             ),
             TextButton(
               onPressed: () async {
@@ -196,7 +199,7 @@ class HistoryPage extends ConsumerWidget {
                 if (!context.mounted) return;
                 Navigator.pop(context, true);
               },
-              child: const Text("Delete"),
+              child: Text(context.locale.delete),
             ),
           ],
         );

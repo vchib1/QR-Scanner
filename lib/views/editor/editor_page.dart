@@ -2,6 +2,9 @@ import 'dart:io';
 import 'dart:async';
 import 'package:ez_qr/utils/enums/qr_logo_size.dart';
 import 'package:ez_qr/utils/enums/qr_size.dart';
+import 'package:ez_qr/utils/extensions/context_extension.dart';
+import 'package:ez_qr/utils/extensions/eye_shape_extension.dart';
+import 'package:ez_qr/utils/extensions/pattern_shape_extension.dart';
 import 'package:ez_qr/utils/helper_functions/colorpicker_dialog.dart';
 import 'package:ez_qr/utils/helper_functions/loading_dialog.dart';
 import 'package:ez_qr/utils/snackbar.dart';
@@ -13,7 +16,6 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ez_qr/services/database/history/history_db.dart';
-
 import '../../utils/helper_functions/share_qr_image.dart';
 
 class EditorPage extends ConsumerStatefulWidget {
@@ -45,7 +47,6 @@ class _EditorPageState extends ConsumerState<EditorPage> {
 
       // save image to device
       String? result = await FilePicker.platform.saveFile(
-        dialogTitle: "Save QR Code",
         fileName: "$uid.png",
         type: FileType.image,
         bytes: image,
@@ -53,8 +54,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
 
       final fileSaved = result != null;
 
-      if (fileSaved) {
-        SnackBarUtils.showSuccessBar("QR Saved");
+      if (fileSaved && mounted) {
+        SnackBarUtils.showSuccessBar(context.locale.qrSaved);
       }
 
       return fileSaved;
@@ -73,8 +74,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     final imgPath = result["image"];
     final size = result["size"];
 
-    if (imgPath == null) {
-      SnackBarUtils.showErrorBar("Please pick a valid logo.");
+    if (imgPath == null && mounted) {
+      SnackBarUtils.showErrorBar(context.locale.pickLogoInvalidError);
       return;
     }
 
@@ -105,10 +106,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
               children: [
                 ListTile(
                   shape: topRoundedBorder(),
-                  title: const Text("Pick Logo"),
-                  subtitle: const Text(
-                    "Adding a logo could cause QR readability issues.",
-                  ),
+                  title: Text(context.locale.pickLogoTitle),
+                  subtitle: Text(context.locale.pickLogoWarning),
                   leading: const Icon(Icons.image),
                   onTap: () async {
                     FilePickerResult? res = await FilePicker.platform.pickFiles(
@@ -129,7 +128,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                 ),
                 ListTile(
                   shape: noneBorder(),
-                  title: const Text("Confirm Selection"),
+                  title: Text(context.locale.confirm),
                   leading: const Icon(Icons.check),
                   onTap: () {
                     Navigator.pop(context, {
@@ -157,15 +156,15 @@ class _EditorPageState extends ConsumerState<EditorPage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
         scrolledUnderElevation: 0.0,
-        title: const Text("QR Editor"),
+        title: Text(context.locale.qrEditor),
         actions: [
           IconButton(
-            tooltip: "Save QR Code",
+            tooltip: context.locale.saveQR,
             icon: const Icon(Icons.save),
             onPressed: () => saveQRImage(),
           ),
           IconButton(
-            tooltip: "Share QR Code",
+            tooltip: context.locale.shareQR,
             icon: const Icon(Icons.share),
             onPressed:
                 () => shareQRImage(
@@ -208,10 +207,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                           ),
                         );
                       },
-                      title: const Text("Background Color"),
-                      subtitle: const Text(
-                        "Choose a color that contrasts with the pattern to ensure clear scanning.",
-                      ),
+                      title: Text(context.locale.bgColorTitle),
+                      subtitle: Text(context.locale.bgColorSubtitle),
                       trailing: _buildColoredBox(context, state.bgColor),
                     ),
 
@@ -226,10 +223,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                           ),
                         );
                       },
-                      title: const Text("Pattern Color"),
-                      subtitle: const Text(
-                        "Set the main QR code color. Use a dark color for better scanning.",
-                      ),
+                      title: Text(context.locale.patternColorTitle),
+                      subtitle: Text(context.locale.patternColorSubtitle),
                       trailing: _buildColoredBox(context, state.patternColor),
                     ),
 
@@ -244,20 +239,16 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                           ),
                         );
                       },
-                      title: const Text("Eye Color"),
-                      subtitle: const Text(
-                        "Pick a color for the QR code's eye patterns (corner markers).",
-                      ),
+                      title: Text(context.locale.eyeColorTitle),
+                      subtitle: Text(context.locale.eyeColorSubtitle),
                       trailing: _buildColoredBox(context, state.eyeColor),
                     ),
 
                     // Background Color
                     ListTile(
                       onTap: processLogo,
-                      title: const Text("Pick Custom Logo"),
-                      subtitle: const Text(
-                        "Add a your custom logo in the center of the QR code.",
-                      ),
+                      title: Text(context.locale.pickLogoTitle),
+                      subtitle: Text(context.locale.pickLogoSubtitle),
                       trailing:
                           state.selectedLogo != null
                               ? IconButton(
@@ -274,10 +265,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                     // Export Size
                     ListTile(
                       isThreeLine: true,
-                      title: const Text("Export Size"),
-                      subtitle: const Text(
-                        "Larger sizes provide better quality.",
-                      ),
+                      title: Text(context.locale.exportSizeTitle),
+                      subtitle: Text(context.locale.exportSizeSubtitle),
                       trailing: SizedBox(
                         width: MediaQuery.sizeOf(context).width * .40,
                         child: Slider(
@@ -309,8 +298,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                           ),
                         );
                       },
-                      title: const Text("Enable Gap"),
-                      subtitle: const Text("Allows the squares to have some gap."),
+                      title: Text(context.locale.enableGapTitle),
+                      subtitle: Text(context.locale.enableGapSubtitle),
                       trailing: Switch(
                         value: state.allowGap,
                         onChanged: (value) {
@@ -325,7 +314,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                         width: double.infinity,
 
                         initialSelection: state.patternShape,
-                        label: const Text("Pattern Shape"),
+                        label: Text(context.locale.patternShape),
                         onSelected:
                             (value) => provider.changeState(
                               state.copyWith(patternShape: value),
@@ -335,7 +324,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                                 .map(
                                   (shape) => DropdownMenuEntry(
                                     value: shape,
-                                    label: shape.toString().split('.').last,
+                                    label: shape.localizedName(context),
                                   ),
                                 )
                                 .toList(),
@@ -348,7 +337,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                       title: DropdownMenu<QrEyeShape>(
                         width: double.infinity,
                         initialSelection: state.eyeShape,
-                        label: const Text("Eye Shape"),
+                        label: Text(context.locale.eyeShape),
                         onSelected:
                             (value) => provider.changeState(
                               state.copyWith(eyeShape: value),
@@ -358,7 +347,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                                 .map(
                                   (shape) => DropdownMenuEntry(
                                     value: shape,
-                                    label: shape.toString().split('.').last,
+                                    label: shape.localizedName(context),
                                   ),
                                 )
                                 .toList(),
@@ -401,7 +390,10 @@ class _EditorPageState extends ConsumerState<EditorPage> {
       color: color,
       elevation: 1.0,
       shadowColor: Theme.of(context).colorScheme.shadow,
-      child: ColoredBox(color: color, child: const SizedBox.square(dimension: 32.0)),
+      child: ColoredBox(
+        color: color,
+        child: const SizedBox.square(dimension: 32.0),
+      ),
     );
   }
 }

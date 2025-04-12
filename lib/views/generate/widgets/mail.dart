@@ -1,3 +1,4 @@
+import 'package:ez_qr/utils/extensions/context_extension.dart';
 import 'package:flutter/material.dart';
 
 class QRMail extends StatefulWidget {
@@ -51,13 +52,13 @@ class _QRMailState extends State<QRMail> {
           controller: emailController,
           onChanged: onChanged,
           maxLines: 1,
-          decoration: const InputDecoration(hintText: "Email"),
+          decoration: InputDecoration(hintText: context.locale.to),
         ),
         TextField(
           controller: subjectController,
           onChanged: onChanged,
           maxLines: 1,
-          decoration: const InputDecoration(hintText: "Subject"),
+          decoration: InputDecoration(hintText: context.locale.subject),
         ),
         SizedBox(
           height: maxLines * 24.0,
@@ -65,7 +66,7 @@ class _QRMailState extends State<QRMail> {
             controller: bodyController,
             onChanged: onChanged,
             maxLines: maxLines,
-            decoration: const InputDecoration(hintText: "Body"),
+            decoration: InputDecoration(hintText: context.locale.body),
           ),
         ),
       ],

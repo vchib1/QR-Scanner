@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'package:ez_qr/utils/enums/app_language.dart';
 import 'package:ez_qr/utils/enums/theme_contrast.dart';
+import 'package:ez_qr/utils/extensions/context_extension.dart';
 import 'package:ez_qr/utils/helper_functions/loading_dialog.dart';
 import 'package:ez_qr/utils/snackbar.dart';
 import 'package:ez_qr/utils/tile_shapes.dart';
 import 'package:ez_qr/views/history/provider/provider.dart';
+import 'package:ez_qr/views/settings/provider/language/language_provider.dart';
 import 'package:ez_qr/views/settings/provider/theme/provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -17,14 +20,14 @@ class SettingsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Settings")),
+      appBar: AppBar(title: Text(context.locale.settings)),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildTitle(context, "Theme"),
+              _buildTitle(context, context.locale.app),
               const SizedBox(height: 8.0),
 
               Consumer(
@@ -37,8 +40,8 @@ class SettingsPage extends ConsumerWidget {
                       ListTile(
                         shape: topRoundedBorder(),
                         leading: const Icon(Icons.brightness_6_outlined),
-                        title: const Text("Theme"),
-                        subtitle: const Text("Theme Mode"),
+                        title: Text(context.locale.themeTitle),
+                        subtitle: Text(context.locale.themeSubtitle),
                         trailing: SegmentedButton(
                           selected: {state.themeMode},
                           onSelectionChanged: (data) {
@@ -60,21 +63,21 @@ class SettingsPage extends ConsumerWidget {
                             visualDensity: VisualDensity(horizontal: -4),
                             enableFeedback: true,
                           ),
-                          segments: const [
+                          segments: [
                             ButtonSegment(
-                              tooltip: "System",
+                              tooltip: context.locale.system,
                               value: ThemeMode.system,
-                              icon: Icon(Icons.brightness_auto),
+                              icon: const Icon(Icons.brightness_auto),
                             ),
                             ButtonSegment(
-                              tooltip: "Light",
+                              tooltip: context.locale.light,
                               value: ThemeMode.light,
-                              icon: Icon(Icons.brightness_high_rounded),
+                              icon: const Icon(Icons.brightness_high_rounded),
                             ),
                             ButtonSegment(
-                              tooltip: "Dark",
+                              tooltip: context.locale.dark,
                               value: ThemeMode.dark,
-                              icon: Icon(Icons.dark_mode),
+                              icon: const Icon(Icons.dark_mode),
                             ),
                           ],
                         ),
@@ -82,10 +85,10 @@ class SettingsPage extends ConsumerWidget {
 
                       // Theme Contrast Mode
                       ListTile(
-                        shape: bottomRoundedBorder(),
+                        shape: noneBorder(),
                         leading: const Icon(Icons.contrast),
-                        title: const Text("Contrast"),
-                        subtitle: const Text("Theme contrast"),
+                        title: Text(context.locale.contrastTitle),
+                        subtitle: Text(context.locale.contrastSubtitle),
                         trailing: SegmentedButton(
                           selected: {state.contrastMode},
                           onSelectionChanged: (data) {
@@ -107,21 +110,21 @@ class SettingsPage extends ConsumerWidget {
                             visualDensity: VisualDensity(horizontal: -4),
                             enableFeedback: true,
                           ),
-                          segments: const [
+                          segments: [
                             ButtonSegment(
-                              tooltip: "Light",
+                              tooltip: context.locale.low,
                               value: ThemeContrastMode.light,
-                              label: Text("L"),
+                              label: const Text("L"),
                             ),
                             ButtonSegment(
-                              tooltip: "Medium",
+                              tooltip: context.locale.medium,
                               value: ThemeContrastMode.medium,
-                              label: Text("M"),
+                              label: const Text("M"),
                             ),
                             ButtonSegment(
-                              tooltip: "High",
+                              tooltip: context.locale.high,
                               value: ThemeContrastMode.high,
-                              label: Text("H"),
+                              label: const Text("H"),
                             ),
                           ],
                         ),
@@ -131,31 +134,56 @@ class SettingsPage extends ConsumerWidget {
                 },
               ),
 
+              // Language
+              Consumer(
+                builder: (context, ref, child) {
+                  final lang = ref.watch(languageNotifierProvider);
+
+                  return ListTile(
+                    onTap: () => _showLanguageDialog(context, ref),
+                    shape: bottomRoundedBorder(),
+                    leading: const Icon(Icons.language_sharp),
+                    title: Text(context.locale.languageTitle),
+                    subtitle: Text(context.locale.languageSubtitle),
+                    trailing: Text(lang.code.toUpperCase()),
+                  );
+                },
+              ),
+
               const SizedBox(height: 16.0),
 
-              _buildTitle(context, "Data"),
+              _buildTitle(context, context.locale.data),
               const SizedBox(height: 8.0),
 
               // Backup Data
               ListTile(
                 shape: topRoundedBorder(),
-                onTap: () => _backupDatabase(ref),
+                onTap: () => _backupDatabase(context, ref),
                 leading: const Icon(Icons.backup_table),
-                title: const Text("Backup Data"),
-                subtitle: const Text("Create a backup file in your device"),
+                title: Text(context.locale.backupDataTitle),
+                subtitle: Text(context.locale.backupDataSubtitle),
               ),
 
               // Restore Data
               ListTile(
-                shape: bottomRoundedBorder(),
+                shape: noneBorder(),
                 onTap: () => _showRestoreDBDialog(context, ref),
                 leading: const Icon(Icons.restore),
-                title: const Text("Restore Data"),
-                subtitle: const Text("Restore backup from your device"),
+                title: Text(context.locale.restoreDataTitle),
+                subtitle: Text(context.locale.restoreDataSubtitle),
+              ),
+
+              // Delete Data
+              ListTile(
+                shape: bottomRoundedBorder(),
+                onTap: () => _showDeleteDBDialog(context, ref),
+                leading: const Icon(Icons.delete_rounded),
+                title: Text(context.locale.deleteDataTitle),
+                subtitle: Text(context.locale.deleteDataSubtitle),
               ),
 
               const SizedBox(height: 16.0),
-              _buildTitle(context, "About"),
+              _buildTitle(context, context.locale.about),
               const SizedBox(height: 8.0),
 
               // Privacy Policy
@@ -166,12 +194,12 @@ class SettingsPage extends ConsumerWidget {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: const Text("Privacy Policy"),
-                        content: const Text("Read our privacy policy"),
+                        title: Text(context.locale.privacyPolicyTitle),
+                        content: Text(context.locale.privacyPolicySubtitle),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context),
-                            child: const Text("Close"),
+                            child: Text(context.locale.close),
                           ),
                         ],
                       );
@@ -179,8 +207,8 @@ class SettingsPage extends ConsumerWidget {
                   );
                 },
                 leading: const Icon(Icons.policy),
-                title: const Text("Privacy Policy"),
-                subtitle: const Text("Click here to read our privacy policy"),
+                title: Text(context.locale.privacyPolicyTitle),
+                subtitle: Text(context.locale.privacyPolicySubtitle),
               ),
 
               // Licenses
@@ -189,18 +217,23 @@ class SettingsPage extends ConsumerWidget {
                 onTap:
                     () => showDialog(
                       context: context,
-                      builder:
-                          (BuildContext context) => AboutDialog(
+                      builder: (BuildContext context) {
+                        return Theme(
+                          data: Theme.of(
+                            context,
+                          ).copyWith(listTileTheme: const ListTileThemeData()),
+                          child: AboutDialog(
                             applicationIcon: const Icon(Icons.code),
-                            applicationLegalese:
-                                '© ${DateTime.now().year} Only Flutter',
-                            applicationName: 'Licenses Demo',
+                            applicationLegalese: '© ${DateTime.now().year}',
+                            applicationName: context.locale.licensesTitle,
                             applicationVersion: '1.0',
                           ),
+                        );
+                      },
                     ),
                 leading: const Icon(Icons.library_books),
-                title: const Text("Licenses"),
-                subtitle: const Text("Click here to view the licenses"),
+                title: Text(context.locale.licensesTitle),
+                subtitle: Text(context.locale.licensesSubtitle),
               ),
 
               // Bug Report
@@ -208,8 +241,8 @@ class SettingsPage extends ConsumerWidget {
                 shape: bottomRoundedBorder(),
                 onTap: () => _reportBugDialog(context),
                 leading: const Icon(Icons.pest_control_sharp),
-                title: const Text("Bug Report"),
-                subtitle: const Text("Report a bug on GitHub"),
+                title: Text(context.locale.reportBugTitle),
+                subtitle: Text(context.locale.reportBugSubtitle),
               ),
             ],
           ),
@@ -228,7 +261,7 @@ class SettingsPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _backupDatabase(WidgetRef ref) async {
+  Future<void> _backupDatabase(BuildContext context, WidgetRef ref) async {
     try {
       final notifier = ref.read(dbBackupNotifier.notifier);
       final dbFile = await notifier.backupDatabase();
@@ -246,11 +279,14 @@ class SettingsPage extends ConsumerWidget {
 
       final state = ref.read(dbBackupNotifier);
 
+      if (!context.mounted) return;
+
       state.whenOrNull(
-        data: (_) => SnackBarUtils.showSuccessBar("Backup successful!"),
+        data: (_) => SnackBarUtils.showSuccessBar(context.locale.backupSuccess),
         error:
-            (e, _) =>
-                SnackBarUtils.showErrorBar("Backup failed: ${e.toString()}"),
+            (e, _) => SnackBarUtils.showErrorBar(
+              "${context.locale.backupFailed}: ${e.toString()}",
+            ),
       );
     } catch (e) {
       SnackBarUtils.showErrorBar(e.toString());
@@ -262,24 +298,23 @@ class SettingsPage extends ConsumerWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Row(
+          title: Wrap(
             spacing: 8.0,
+            runSpacing: 8.0,
             children: [
-              Icon(Icons.settings_backup_restore),
-              Text("Restore Data"),
+              const Icon(Icons.settings_backup_restore),
+              Text(context.locale.restoreDataTitle),
             ],
           ),
-          content: const Text(
-            "This process will overwrite the existing data. Are you sure you want to proceed?",
-          ),
+          content: Text(context.locale.restoreDataWarning),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text("Cancel"),
+              child: Text(context.locale.cancel),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text("Proceed"),
+              child: Text(context.locale.proceed),
             ),
           ],
         );
@@ -291,7 +326,7 @@ class SettingsPage extends ConsumerWidget {
     try {
       if (!context.mounted) return;
       showLoadingDialog(context);
-      await _restoreBackupDatabase(ref);
+      await _restoreBackupDatabase(context, ref);
     } finally {
       // pop loading dialog
       if (context.mounted) {
@@ -300,10 +335,12 @@ class SettingsPage extends ConsumerWidget {
     }
   }
 
-  Future<void> _restoreBackupDatabase(WidgetRef ref) async {
+  Future<void> _restoreBackupDatabase(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
     try {
       FilePickerResult? files = await FilePicker.platform.pickFiles(
-        dialogTitle: "Pick backup file",
         type: FileType.any,
       );
 
@@ -311,8 +348,8 @@ class SettingsPage extends ConsumerWidget {
 
       File pickedFile = File(files.files.first.path!);
 
-      if (pickedFile.path.split(".").last != "db") {
-        throw "Please pick a valid file with .db extension.";
+      if (pickedFile.path.split(".").last != "db" && context.mounted) {
+        throw context.locale.backupInvalidFile;
       }
 
       final notifier = ref.watch(dbBackupNotifier.notifier);
@@ -323,11 +360,13 @@ class SettingsPage extends ConsumerWidget {
 
       state.whenOrNull(
         data: (_) async {
-          SnackBarUtils.showSuccessBar("Backup Restored!");
+          if (context.mounted) {
+            SnackBarUtils.showSuccessBar(context.locale.restoreSuccess);
+          }
 
           await ref.watch(historyAsyncProvider.notifier).refresh();
         },
-        error: (e, _) => throw e,
+        error: (e, _) => throw "${context.locale.restoreFailed}: $e",
       );
     } catch (e) {
       SnackBarUtils.showErrorBar("$e");
@@ -339,29 +378,33 @@ class SettingsPage extends ConsumerWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Row(
+          title: Wrap(
             spacing: 8.0,
-            children: [Icon(Icons.bug_report_sharp), Text("Report a Bug")],
+            runSpacing: 8.0,
+            children: [
+              const Icon(Icons.bug_report_sharp),
+              Flexible(child: Text(context.locale.reportBugDialogHeading)),
+            ],
           ),
-          content: const Column(
+          content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Would you like to report a bug on GitHub?",
-                style: TextStyle(fontSize: 16),
+                context.locale.reportBugDialogTitle,
+                style: const TextStyle(fontSize: 16),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Text(
-                "This will open our GitHub issues page where you can describe the problem you encountered.",
-                style: TextStyle(fontSize: 12),
+                context.locale.reportBugDialogSubtitle,
+                style: const TextStyle(fontSize: 12),
               ),
             ],
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
+              child: Text(context.locale.cancel),
             ),
             TextButton(
               onPressed: () {
@@ -373,7 +416,103 @@ class SettingsPage extends ConsumerWidget {
                   mode: LaunchMode.externalApplication,
                 );
               },
-              child: const Text("Open"),
+              child: Text(context.locale.proceed),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showDeleteDBDialog(BuildContext context, WidgetRef ref) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            children: [
+              const Icon(Icons.warning_outlined),
+              Text(context.locale.deleteDataTitle),
+            ],
+          ),
+          content: Text(
+            context.locale.deleteDataWarning,
+            style: const TextStyle(fontSize: 16),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(context.locale.cancel),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(context.locale.ok),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showLanguageDialog(BuildContext context, WidgetRef ref) async {
+    AppLanguage selectedLanguage = ref.read(languageNotifierProvider);
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            spacing: 8.0,
+            children: [
+              const Icon(Icons.language),
+              Text(context.locale.languageTitle),
+            ],
+          ),
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return SizedBox(
+                height: MediaQuery.sizeOf(context).height * .50,
+                width: MediaQuery.sizeOf(context).width * .75,
+                child: ListView.builder(
+                  shrinkWrap: false,
+                  itemCount: AppLanguage.values.length,
+                  itemBuilder: (context, index) {
+                    final lang = AppLanguage.values[index];
+
+                    return RadioListTile<AppLanguage>(
+                      value: lang,
+                      groupValue: selectedLanguage,
+                      onChanged: (AppLanguage? newLang) {
+                        if (newLang == null) return;
+
+                        setState(() {
+                          selectedLanguage = newLang;
+                        });
+                      },
+                      title: Text(lang.nameCapitalized),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(context.locale.cancel),
+            ),
+            TextButton(
+              onPressed: () {
+                ref
+                    .read(languageNotifierProvider.notifier)
+                    .changeLanguage(selectedLanguage);
+                Navigator.pop(context);
+              },
+              child: Text(context.locale.ok),
             ),
           ],
         );

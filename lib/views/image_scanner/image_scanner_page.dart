@@ -1,3 +1,4 @@
+import 'package:ez_qr/utils/extensions/context_extension.dart';
 import 'package:ez_qr/utils/helper_functions/loading_dialog.dart';
 import 'package:ez_qr/utils/helper_functions/qr_data_dialog.dart';
 import 'package:file_picker/file_picker.dart';
@@ -39,32 +40,30 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
       try {
         result = await FilePicker.platform.pickFiles(type: FileType.image);
       } catch (e) {
+        if (mounted) throw "${context.locale.imagePickFailed}: ${e.toString()}";
+      } finally {
+        // pop loading
         if (mounted) Navigator.pop(context);
-        throw "Failed to pick image: ${e.toString()}";
       }
-
-      if (mounted) Navigator.pop(context);
 
       if (result == null) return;
 
       final imagePath = result.files.first.path;
-      if (imagePath == null) {
-        throw "Picked image does not exist";
+      if (imagePath == null && mounted) {
+        throw context.locale.imageNotExists;
       }
 
       final data = await controller.analyzeImage(
-        imagePath,
+        imagePath!,
         formats: [BarcodeFormat.all],
       );
 
-      if (data == null || data.barcodes.isEmpty) {
-        SnackBarUtils.showSnackBar("No QR code found in the image");
-        return;
+      if ((data == null || data.barcodes.isEmpty) && mounted) {
+        throw context.locale.noQRFound;
       }
 
-      await onDetect(data);
+      await onDetect(data!);
     } catch (e) {
-      if (mounted) Navigator.pop(context);
       SnackBarUtils.showSnackBar(e.toString());
     }
   }
@@ -93,7 +92,7 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
     final iconColor = Theme.of(context).colorScheme.onSurface;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Image Scanner")),
+      appBar: AppBar(title: Text(context.locale.scanImageTitle)),
       body: Center(
         child: MaterialButton(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
@@ -107,7 +106,10 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
             spacing: 10,
             children: [
               Icon(Icons.image, color: iconColor),
-              Text("pick from gallery", style: TextStyle(color: iconColor)),
+              Text(
+                context.locale.pickFromGallery,
+                style: TextStyle(color: iconColor),
+              ),
             ],
           ),
         ),

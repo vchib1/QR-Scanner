@@ -1,3 +1,4 @@
+import 'package:ez_qr/utils/extensions/context_extension.dart';
 import 'package:ez_qr/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -24,16 +25,20 @@ Future<void> showPermissionDialog(
     context: context,
     builder:
         (context) => AlertDialog(
-          title: const Text("Permission Required"),
+          title: Text(
+            isPermanentlyDenied
+                ? context.locale.cameraPermissionDeniedTitle
+                : context.locale.cameraPermissionRequiredTitle,
+          ),
           content: Text(
             isPermanentlyDenied
-                ? "Camera permission is required to scan QR codes. Please enable it in settings."
-                : "Camera permission is required to scan QR codes. Please allow access.",
+                ? context.locale.cameraPermissionDeniedSubtitle
+                : context.locale.cameraPermissionRequiredSubtitle,
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
+              child: Text(context.locale.cancel),
             ),
             TextButton(
               onPressed: () async {
@@ -53,7 +58,7 @@ Future<void> showPermissionDialog(
                     if (!context.mounted) return;
 
                     SnackBarUtils.showSnackBar(
-                      "Failed to open settings. Please open manually.",
+                      context.locale.openSettingsError,
                       context: context,
                     );
                   }
@@ -62,7 +67,9 @@ Future<void> showPermissionDialog(
                 }
               },
               child: Text(
-                isPermanentlyDenied ? "Open Settings" : "Allow Permission",
+                isPermanentlyDenied
+                    ? context.locale.openSettings
+                    : context.locale.allowPermission,
               ),
             ),
           ],
