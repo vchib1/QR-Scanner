@@ -72,6 +72,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get app => 'التطبيق';
 
   @override
+  String get today => 'اليوم';
+
+  @override
+  String get yesterday => 'أمس';
+
+  @override
   String get home => 'الرئيسية';
 
   @override

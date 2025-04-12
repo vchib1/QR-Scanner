@@ -20,6 +20,8 @@
   "medium": "Medio",
   "high": "Alto",
   "app": "App",
+  "today": "Hoy",
+  "yesterday": "Ayer",
 
   "home": "Inicio",
   "history": "Historial",

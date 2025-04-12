@@ -7,12 +7,41 @@ import 'package:ez_qr/utils/helper_functions/share_qr_image.dart';
 import 'package:ez_qr/utils/snackbar.dart';
 import 'package:ez_qr/utils/tile_shapes.dart';
 import 'package:ez_qr/views/history/provider/provider.dart';
+import 'package:ez_qr/views/settings/provider/language/language_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import "package:collection/collection.dart";
 
 class HistoryPage extends ConsumerWidget {
   const HistoryPage({super.key});
+
+  /// Groups items by "Today", "Yesterday", or "dd-MM-yyyy"
+  Map<String, List<ScannedItem>> _groupByDate(
+    BuildContext context,
+    WidgetRef ref,
+    List<ScannedItem> items,
+  ) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+
+    final locale = ref.watch(languageNotifierProvider);
+
+    return groupBy(items, (ScannedItem item) {
+      final date = item.createdAt;
+      final itemDate = DateTime(date.year, date.month, date.day);
+
+      if (itemDate == today) {
+        return "Today";
+      } else if (itemDate == yesterday) {
+        return "Yesterday";
+      } else {
+        return DateFormat("MMM d, yyyy", locale.code).format(itemDate);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -21,7 +50,9 @@ class HistoryPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(context.locale.history)),
       body: history.when(
-        data: (groupedHistory) {
+        data: (history) {
+          final groupedHistory = _groupByDate(context, ref, history);
+
           if (groupedHistory.isEmpty) {
             return Center(
               child: Column(

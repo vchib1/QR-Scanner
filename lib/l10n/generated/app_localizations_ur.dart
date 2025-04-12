@@ -72,6 +72,12 @@ class AppLocalizationsUr extends AppLocalizations {
   String get app => 'ایپ';
 
   @override
+  String get today => 'آج';
+
+  @override
+  String get yesterday => 'کل';
+
+  @override
   String get home => 'ہوم';
 
   @override

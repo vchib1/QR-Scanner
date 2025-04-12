@@ -72,6 +72,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get app => 'Приложение';
 
   @override
+  String get today => 'Сегодня';
+
+  @override
+  String get yesterday => 'Вчера';
+
+  @override
   String get home => 'Главная';
 
   @override
@@ -312,8 +318,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get openSettings => 'Открыть настройки';
 
   @override
-  String get openSettingsError => 'Failed to open settings. Please open manually.';
+  String get openSettingsError => 'Не удалось открыть настройки. Пожалуйста, откройте их вручную.';
 
   @override
-  String get allowPermission => 'Allow Permission';
+  String get allowPermission => 'Разрешить доступ';
 }

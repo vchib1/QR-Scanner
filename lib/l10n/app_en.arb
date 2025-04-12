@@ -20,6 +20,8 @@
     "medium": "Medium",
     "high": "High",
     "app": "App",
+    "today": "Today",
+    "yesterday": "Yesterday",
 
     "home": "Home",
     "history": "History",

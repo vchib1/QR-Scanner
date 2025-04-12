@@ -72,6 +72,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get app => 'App';
 
   @override
+  String get today => 'Hoje';
+
+  @override
+  String get yesterday => 'Ontem';
+
+  @override
   String get home => 'Início';
 
   @override

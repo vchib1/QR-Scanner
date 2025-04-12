@@ -72,6 +72,12 @@ class AppLocalizationsMr extends AppLocalizations {
   String get app => 'अ‍ॅप';
 
   @override
+  String get today => 'आज';
+
+  @override
+  String get yesterday => 'काल';
+
+  @override
   String get home => 'होम';
 
   @override
@@ -117,7 +123,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get body => 'शरीर';
 
   @override
-  String get url => 'URL';
+  String get url => 'यूआरएल';
 
   @override
   String get urlError => 'कृपया वैध URL प्रविष्ट करा.';
@@ -129,7 +135,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get message => 'संदेश';
 
   @override
-  String get sms => 'SMS';
+  String get sms => 'एसएमएस';
 
   @override
   String get qrEditor => 'QR संपादक';

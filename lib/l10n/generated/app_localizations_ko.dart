@@ -72,6 +72,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get app => '앱';
 
   @override
+  String get today => '오늘';
+
+  @override
+  String get yesterday => '어제';
+
+  @override
   String get home => '홈';
 
   @override

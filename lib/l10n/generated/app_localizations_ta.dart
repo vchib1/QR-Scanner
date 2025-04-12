@@ -72,6 +72,12 @@ class AppLocalizationsTa extends AppLocalizations {
   String get app => 'பயன்பாடு';
 
   @override
+  String get today => 'இன்று';
+
+  @override
+  String get yesterday => 'நேற்று';
+
+  @override
   String get home => 'முகப்பு';
 
   @override

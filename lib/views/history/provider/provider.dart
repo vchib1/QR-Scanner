@@ -1,20 +1,17 @@
 import 'package:ez_qr/model/scanned_item_model.dart';
 import 'package:ez_qr/repository/history_repo.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-import "package:collection/collection.dart";
 
 final historyAsyncProvider =
-    AsyncNotifierProvider<HistoryAsyncProvider, Map<String, List<ScannedItem>>>(
+    AsyncNotifierProvider<HistoryAsyncProvider, List<ScannedItem>>(
       HistoryAsyncProvider.new,
     );
 
-class HistoryAsyncProvider
-    extends AsyncNotifier<Map<String, List<ScannedItem>>> {
+class HistoryAsyncProvider extends AsyncNotifier<List<ScannedItem>> {
   late HistoryRepo _historyRepo;
 
   @override
-  Future<Map<String, List<ScannedItem>>> build() async {
+  Future<List<ScannedItem>> build() async {
     _historyRepo = ref.watch(historyRepoProvider);
 
     return init();
@@ -31,9 +28,9 @@ class HistoryAsyncProvider
   }
 
   // initialize history
-  Future<Map<String, List<ScannedItem>>> init() async {
+  Future<List<ScannedItem>> init() async {
     final items = await _historyRepo.getScannedItems();
-    return Future.value(_groupByDate(items));
+    return items;
   }
 
   Future<void> refresh() async {
@@ -44,25 +41,5 @@ class HistoryAsyncProvider
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
-  }
-
-  /// Groups items by "Today", "Yesterday", or "dd-MM-yyyy"
-  Map<String, List<ScannedItem>> _groupByDate(List<ScannedItem> items) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(const Duration(days: 1));
-
-    return groupBy(items, (ScannedItem item) {
-      final date = item.createdAt;
-      final itemDate = DateTime(date.year, date.month, date.day);
-
-      if (itemDate == today) {
-        return "Today";
-      } else if (itemDate == yesterday) {
-        return "Yesterday";
-      } else {
-        return DateFormat("MMM d, yyyy").format(itemDate);
-      }
-    });
   }
 }

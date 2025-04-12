@@ -72,6 +72,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get app => '应用';
 
   @override
+  String get today => '今天';
+
+  @override
+  String get yesterday => '昨天';
+
+  @override
   String get home => '首页';
 
   @override

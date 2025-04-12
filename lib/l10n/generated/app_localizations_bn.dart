@@ -72,6 +72,12 @@ class AppLocalizationsBn extends AppLocalizations {
   String get app => 'অ্যাপ';
 
   @override
+  String get today => 'আজ';
+
+  @override
+  String get yesterday => 'গতকাল';
+
+  @override
   String get home => 'হোম';
 
   @override

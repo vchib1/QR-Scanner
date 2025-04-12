@@ -72,6 +72,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get app => 'アプリ';
 
   @override
+  String get today => '今日';
+
+  @override
+  String get yesterday => '昨日';
+
+  @override
   String get home => 'ホーム';
 
   @override
