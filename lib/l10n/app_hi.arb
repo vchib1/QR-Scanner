@@ -38,11 +38,11 @@
   "to": "को",
   "subject": "विषय",
   "body": "संदेश",
-  "url": "URL",
+  "url": "यूआरएल",
   "urlError": "कृपया एक मान्य URL दर्ज करें।",
   "phone": "फोन",
   "message": "संदेश",
-  "sms": "SMS",
+  "sms": "एसएमएस",
 
   "qrEditor": "QR संपादक",
   "bgColorTitle": "पृष्ठभूमि रंग",

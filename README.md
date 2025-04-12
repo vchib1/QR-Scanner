@@ -1,16 +1,117 @@
-# ez_qr
+![Logo](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/th5xamgrr6se0x5ro4g6.png)
 
-A new Flutter project.
+### QR Scanner & Generator App
 
-## Getting Started
+An open source, fully-featured QR Code Scanner and Generator app with customization, backup,
+theming, and multilingual support follows Material 3 design.
 
-This project is a starting point for a Flutter application.
+## 📜 Features
 
-A few resources to get you started if this is your first Flutter project:
+✅ **Generate QR Codes**  
+• Text  
+• URL  
+• Email  
+• SMS  
+• Phone numbers
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+✅ **Customize QR Codes**  
+• Colors  
+• Backgrounds  
+• Shapes  
+• Add logos
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+✅ **Save & Share**  
+• Share QR codes with others  
+• Save generated or scanned QR codes
+
+✅ **Scanned History**  
+• View and manage previously scanned data  
+• Copy/share or delete history items
+
+✅ **Backup & Restore**  
+• Backup your local database to a file  
+• Restore it anytime
+
+✅ **Theme Customization**  
+• Light, dark, and high contrast themes  
+• System-based theme support
+
+✅ **Multi-Language Support**  
+• Supports 15+ languages (including English, Spanish, French, Hindi, Chinese, and more)
+
+## 🛠️ Tech Stack
+
+- Flutter (Dart)
+- Sqflite
+- Riverpod for state management
+- Shared Preferences for settings
+- Flutter Localization
+
+## 📸 Screenshots
+
+![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+
+## ⬇️ Installation
+
+- Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/qr-scanner-generator-app.git
+```
+
+- Update Depenencies
+
+```bash
+flutter pub get:
+```
+
+- Run the app on your local device or emulator:
+
+```bash
+flutter run
+```
+
+## 🤝 Contributing
+
+*Contributions are always welcomed!*
+
+#### Good first issues:
+
+- Add new language support
+- Improve UI themes
+- Add new QR formats (e.g., calendar, geo location)
+- Bug fixes & performance improvements
+
+***Check the issues tab for tasks you can pick up or raise one.****
+
+#### How to contribute:
+
+- Fork the repository
+- Create your branch for feature or bug-fix:
+
+```bash
+git checkout -b branch-name
+```
+
+- Commit your changes:
+
+```bash
+git commit -m "commit message"
+```
+
+- Push to the branch
+
+```bash
+git push origin branch-name
+```  
+
+- Create a Pull Request
+
+## 📃 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+## 👩🏻‍💻 Authors
+
+- [@vchib1](https://www.github.com/vchib1)
+

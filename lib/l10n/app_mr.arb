@@ -38,11 +38,11 @@
   "to": "प्राप्तकर्ता",
   "subject": "विषय",
   "body": "शरीर",
-  "url": "URL",
+  "url": "यूआरएल",
   "urlError": "कृपया वैध URL प्रविष्ट करा.",
   "phone": "फोन",
   "message": "संदेश",
-  "sms": "SMS",
+  "sms": "एसएमएस",
 
   "qrEditor": "QR संपादक",
   "bgColorTitle": "पार्श्वभूमी रंग",
