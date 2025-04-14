@@ -18,10 +18,8 @@ class HomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 16.0),
+            const SizedBox(height: kToolbarHeight),
             const Icon(Icons.qr_code_2_rounded, size: 200.0),
-
-            const SizedBox(height: 16.0),
             ListTile(
               shape: topRoundedBorder(),
               onTap: () async => await requestCameraPermission(context),

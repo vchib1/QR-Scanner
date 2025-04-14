@@ -1,4 +1,3 @@
-import 'package:ez_qr/l10n/generated/app_localizations.dart';
 import 'package:ez_qr/utils/extensions/context_extension.dart';
 import 'package:ez_qr/utils/helper_functions/camera_permission_dialog.dart';
 import 'package:ez_qr/views/home/home_page.dart';

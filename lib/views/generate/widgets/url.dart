@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:ez_qr/l10n/generated/app_localizations.dart';
 import 'package:ez_qr/utils/extensions/context_extension.dart';
 import 'package:flutter/material.dart';
 

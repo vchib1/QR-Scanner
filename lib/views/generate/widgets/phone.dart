@@ -12,6 +12,7 @@ class QRPhone extends StatefulWidget {
 
 class _QRPhoneState extends State<QRPhone> {
   late final TextEditingController phoneController;
+  String? errorText;
 
   @override
   void initState() {
@@ -26,9 +27,12 @@ class _QRPhoneState extends State<QRPhone> {
   }
 
   void onChanged(String value) {
-    final data = "tel:${phoneController.text.trim()}";
+    final phone = phoneController.text.trim();
 
-    widget.onChanged(data);
+    if (errorText == null) {
+      final data = "tel:$phone";
+      widget.onChanged(data);
+    }
   }
 
   @override

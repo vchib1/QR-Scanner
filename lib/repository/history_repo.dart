@@ -25,4 +25,6 @@ class HistoryRepo {
   // remove scanned item
   Future<void> removeScannedItem(ScannedItem item) =>
       historyDB.removeScannedItem(item);
+
+  Future<void> clearHistory() => historyDB.clearHistory();
 }

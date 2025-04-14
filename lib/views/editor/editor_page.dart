@@ -175,190 +175,194 @@ class _EditorPageState extends ConsumerState<EditorPage> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 24.0),
-            alignment: Alignment.center,
-            color: Theme.of(context).colorScheme.surface,
-            child: SizedBox.square(dimension: 200, child: _buildQRView(200)),
-          ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 24.0),
+              alignment: Alignment.center,
+              color: Theme.of(context).colorScheme.surface,
+              child: SizedBox.square(dimension: 200, child: _buildQRView(200)),
+            ),
 
-          Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).listTileTheme.tileColor,
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                child: Column(
-                  spacing: 8.0,
-                  children: [
-                    // Background Color
-                    ListTile(
-                      tileColor: Colors.transparent,
-                      onTap: () {
-                        colorPickerDialog(
-                          context,
-                          state.bgColor,
-                          (color) => provider.changeState(
-                            state.copyWith(bgColor: color),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Container(
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).listTileTheme.tileColor,
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  child: Column(
+                    spacing: 8.0,
+                    children: [
+                      // Background Color
+                      ListTile(
+                        tileColor: Colors.transparent,
+                        onTap: () {
+                          colorPickerDialog(
+                            context,
+                            state.bgColor,
+                            (color) => provider.changeState(
+                              state.copyWith(bgColor: color),
+                            ),
+                          );
+                        },
+                        title: Text(context.locale.bgColorTitle),
+                        subtitle: Text(context.locale.bgColorSubtitle),
+                        trailing: _buildColoredBox(context, state.bgColor),
+                      ),
+
+                      // Pattern Color
+                      ListTile(
+                        onTap: () {
+                          colorPickerDialog(
+                            context,
+                            state.patternColor,
+                            (color) => provider.changeState(
+                              state.copyWith(patternColor: color),
+                            ),
+                          );
+                        },
+                        title: Text(context.locale.patternColorTitle),
+                        subtitle: Text(context.locale.patternColorSubtitle),
+                        trailing: _buildColoredBox(context, state.patternColor),
+                      ),
+
+                      // Eye Color
+                      ListTile(
+                        onTap: () {
+                          colorPickerDialog(
+                            context,
+                            state.eyeColor,
+                            (color) => provider.changeState(
+                              state.copyWith(eyeColor: color),
+                            ),
+                          );
+                        },
+                        title: Text(context.locale.eyeColorTitle),
+                        subtitle: Text(context.locale.eyeColorSubtitle),
+                        trailing: _buildColoredBox(context, state.eyeColor),
+                      ),
+
+                      // Background Color
+                      ListTile(
+                        onTap: processLogo,
+                        title: Text(context.locale.pickLogoTitle),
+                        subtitle: Text(context.locale.pickLogoSubtitle),
+                        trailing:
+                            state.selectedLogo != null
+                                ? IconButton(
+                                  onPressed: () {
+                                    provider.changeState(
+                                      state.copyWith(clearLogo: true),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.delete),
+                                )
+                                : const Icon(Icons.image_outlined),
+                      ),
+
+                      // Export Size
+                      ListTile(
+                        isThreeLine: true,
+                        title: Text(context.locale.exportSizeTitle),
+                        subtitle: Text(context.locale.exportSizeSubtitle),
+                        trailing: SizedBox(
+                          width: MediaQuery.sizeOf(context).width * .40,
+                          child: Slider(
+                            padding: const EdgeInsets.symmetric(vertical: 0.0),
+                            //ignore: deprecated_member_use
+                            year2023: false,
+                            value: qrSize.value,
+                            label: qrSize.name.toUpperCase(),
+                            min: QrSize.values.first.value,
+                            max: QrSize.values.last.value,
+                            divisions: QrSize.values.length - 1,
+                            onChanged: (double newValue) {
+                              setState(() {
+                                qrSize = QrSize.parseValue(newValue);
+                              });
+                            },
                           ),
-                        );
-                      },
-                      title: Text(context.locale.bgColorTitle),
-                      subtitle: Text(context.locale.bgColorSubtitle),
-                      trailing: _buildColoredBox(context, state.bgColor),
-                    ),
+                        ),
+                      ),
 
-                    // Pattern Color
-                    ListTile(
-                      onTap: () {
-                        colorPickerDialog(
-                          context,
-                          state.patternColor,
-                          (color) => provider.changeState(
-                            state.copyWith(patternColor: color),
-                          ),
-                        );
-                      },
-                      title: Text(context.locale.patternColorTitle),
-                      subtitle: Text(context.locale.patternColorSubtitle),
-                      trailing: _buildColoredBox(context, state.patternColor),
-                    ),
-
-                    // Eye Color
-                    ListTile(
-                      onTap: () {
-                        colorPickerDialog(
-                          context,
-                          state.eyeColor,
-                          (color) => provider.changeState(
-                            state.copyWith(eyeColor: color),
-                          ),
-                        );
-                      },
-                      title: Text(context.locale.eyeColorTitle),
-                      subtitle: Text(context.locale.eyeColorSubtitle),
-                      trailing: _buildColoredBox(context, state.eyeColor),
-                    ),
-
-                    // Background Color
-                    ListTile(
-                      onTap: processLogo,
-                      title: Text(context.locale.pickLogoTitle),
-                      subtitle: Text(context.locale.pickLogoSubtitle),
-                      trailing:
-                          state.selectedLogo != null
-                              ? IconButton(
-                                onPressed: () {
-                                  provider.changeState(
-                                    state.copyWith(clearLogo: true),
-                                  );
-                                },
-                                icon: const Icon(Icons.delete),
-                              )
-                              : const Icon(Icons.image_outlined),
-                    ),
-
-                    // Export Size
-                    ListTile(
-                      isThreeLine: true,
-                      title: Text(context.locale.exportSizeTitle),
-                      subtitle: Text(context.locale.exportSizeSubtitle),
-                      trailing: SizedBox(
-                        width: MediaQuery.sizeOf(context).width * .40,
-                        child: Slider(
-                          padding: const EdgeInsets.symmetric(vertical: 0.0),
-                          //ignore: deprecated_member_use
-                          year2023: false,
-                          value: qrSize.value,
-                          label: qrSize.name.toUpperCase(),
-                          min: QrSize.values.first.value,
-                          max: QrSize.values.last.value,
-                          divisions: QrSize.values.length - 1,
-                          onChanged: (double newValue) {
-                            setState(() {
-                              qrSize = QrSize.parseValue(newValue);
-                            });
+                      // Gap
+                      ListTile(
+                        onTap: () {
+                          colorPickerDialog(
+                            context,
+                            state.eyeColor,
+                            (color) => provider.changeState(
+                              state.copyWith(eyeColor: color),
+                            ),
+                          );
+                        },
+                        title: Text(context.locale.enableGapTitle),
+                        subtitle: Text(context.locale.enableGapSubtitle),
+                        trailing: Switch(
+                          value: state.allowGap,
+                          onChanged: (value) {
+                            provider.changeState(
+                              state.copyWith(allowGap: value),
+                            );
                           },
                         ),
                       ),
-                    ),
 
-                    // Gap
-                    ListTile(
-                      onTap: () {
-                        colorPickerDialog(
-                          context,
-                          state.eyeColor,
-                          (color) => provider.changeState(
-                            state.copyWith(eyeColor: color),
-                          ),
-                        );
-                      },
-                      title: Text(context.locale.enableGapTitle),
-                      subtitle: Text(context.locale.enableGapSubtitle),
-                      trailing: Switch(
-                        value: state.allowGap,
-                        onChanged: (value) {
-                          provider.changeState(state.copyWith(allowGap: value));
-                        },
+                      // Pattern Shape
+                      ListTile(
+                        title: DropdownMenu<QrDataModuleShape>(
+                          width: double.infinity,
+
+                          initialSelection: state.patternShape,
+                          label: Text(context.locale.patternShape),
+                          onSelected:
+                              (value) => provider.changeState(
+                                state.copyWith(patternShape: value),
+                              ),
+                          dropdownMenuEntries:
+                              QrDataModuleShape.values
+                                  .map(
+                                    (shape) => DropdownMenuEntry(
+                                      value: shape,
+                                      label: shape.localizedName(context),
+                                    ),
+                                  )
+                                  .toList(),
+                        ),
                       ),
-                    ),
 
-                    // Pattern Shape
-                    ListTile(
-                      title: DropdownMenu<QrDataModuleShape>(
-                        width: double.infinity,
-
-                        initialSelection: state.patternShape,
-                        label: Text(context.locale.patternShape),
-                        onSelected:
-                            (value) => provider.changeState(
-                              state.copyWith(patternShape: value),
-                            ),
-                        dropdownMenuEntries:
-                            QrDataModuleShape.values
-                                .map(
-                                  (shape) => DropdownMenuEntry(
-                                    value: shape,
-                                    label: shape.localizedName(context),
-                                  ),
-                                )
-                                .toList(),
+                      // Eye Shape
+                      ListTile(
+                        tileColor: Colors.transparent,
+                        title: DropdownMenu<QrEyeShape>(
+                          width: double.infinity,
+                          initialSelection: state.eyeShape,
+                          label: Text(context.locale.eyeShape),
+                          onSelected:
+                              (value) => provider.changeState(
+                                state.copyWith(eyeShape: value),
+                              ),
+                          dropdownMenuEntries:
+                              QrEyeShape.values
+                                  .map(
+                                    (shape) => DropdownMenuEntry(
+                                      value: shape,
+                                      label: shape.localizedName(context),
+                                    ),
+                                  )
+                                  .toList(),
+                        ),
                       ),
-                    ),
-
-                    // Eye Shape
-                    ListTile(
-                      tileColor: Colors.transparent,
-                      title: DropdownMenu<QrEyeShape>(
-                        width: double.infinity,
-                        initialSelection: state.eyeShape,
-                        label: Text(context.locale.eyeShape),
-                        onSelected:
-                            (value) => provider.changeState(
-                              state.copyWith(eyeShape: value),
-                            ),
-                        dropdownMenuEntries:
-                            QrEyeShape.values
-                                .map(
-                                  (shape) => DropdownMenuEntry(
-                                    value: shape,
-                                    label: shape.localizedName(context),
-                                  ),
-                                )
-                                .toList(),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

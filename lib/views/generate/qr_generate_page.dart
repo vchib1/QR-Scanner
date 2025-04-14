@@ -60,24 +60,10 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
             onTap: unFocusKeyboard,
             child: Scaffold(
               appBar: AppBar(title: Text(context.locale.qrGeneratorTitle)),
-              bottomNavigationBar: Container(
-                padding: const EdgeInsets.all(8.0),
-                height: kBottomNavigationBarHeight + 8,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
-                  ),
-                  onPressed: navigateToEditor,
-                  child: Text(
-                    context.locale.next,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                  ),
-                ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: navigateToEditor,
+                tooltip: context.locale.next,
+                child: const Icon(Icons.arrow_forward),
               ),
               body: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),

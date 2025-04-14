@@ -1,4 +1,3 @@
-import 'package:ez_qr/l10n/generated/app_localizations.dart';
 import 'package:ez_qr/utils/enums/qr_type.dart';
 import 'package:ez_qr/utils/extensions/context_extension.dart';
 import 'package:ez_qr/utils/extensions/qr_type_extension.dart';

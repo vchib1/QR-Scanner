@@ -42,4 +42,9 @@ class HistoryAsyncProvider extends AsyncNotifier<List<ScannedItem>> {
       state = AsyncValue.error(error, stackTrace);
     }
   }
+
+  Future<void> clearHistory() async {
+    await _historyRepo.clearHistory();
+    await refresh();
+  }
 }

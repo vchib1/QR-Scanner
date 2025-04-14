@@ -42,21 +42,18 @@ class _QRSmsState extends State<QRSms> {
       children: [
         TextField(
           controller: phoneController,
+          keyboardType: TextInputType.phone,
           onChanged: onChanged,
           maxLines: 1,
-          decoration: InputDecoration(
-            hintText: context.locale.phone,
-          ),
+          decoration: InputDecoration(hintText: context.locale.phone),
         ),
         SizedBox(
           height: 5 * 24.0,
-          child: TextField(
+          child: TextFormField(
             controller: msgController,
             onChanged: onChanged,
             maxLines: 10,
-            decoration: InputDecoration(
-              hintText: context.locale.message,
-            ),
+            decoration: InputDecoration(hintText: context.locale.message),
           ),
         ),
       ],

@@ -47,6 +47,11 @@ class LocalDatabase {
     return dbFile;
   }
 
+  Future<void> clearHistory() async {
+    final db = await database;
+    await db.delete(history);
+  }
+
   Future<void> restoreDatabase(String backupPath) async {
     final backupFile = File(backupPath);
 

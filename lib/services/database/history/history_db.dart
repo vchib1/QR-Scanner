@@ -55,4 +55,14 @@ class HistoryDB {
       rethrow;
     }
   }
+
+  Future<void> clearHistory() async {
+    try {
+      final db = await database;
+
+      await db.delete(history);
+    } catch (_) {
+      rethrow;
+    }
+  }
 }

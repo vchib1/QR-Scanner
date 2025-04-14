@@ -301,6 +301,7 @@ class SettingsPage extends ConsumerWidget {
           title: Wrap(
             spacing: 8.0,
             runSpacing: 8.0,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               const Icon(Icons.settings_backup_restore),
               Text(context.locale.restoreDataTitle),
@@ -381,6 +382,7 @@ class SettingsPage extends ConsumerWidget {
           title: Wrap(
             spacing: 8.0,
             runSpacing: 8.0,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               const Icon(Icons.bug_report_sharp),
               Flexible(child: Text(context.locale.reportBugDialogHeading)),
@@ -430,6 +432,7 @@ class SettingsPage extends ConsumerWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
             spacing: 8.0,
             runSpacing: 8.0,
             children: [
@@ -448,6 +451,7 @@ class SettingsPage extends ConsumerWidget {
             ),
             TextButton(
               onPressed: () {
+                ref.read(historyAsyncProvider.notifier).clearHistory();
                 Navigator.pop(context);
               },
               child: Text(context.locale.ok),
