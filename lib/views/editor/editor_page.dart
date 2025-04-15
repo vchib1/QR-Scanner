@@ -370,7 +370,6 @@ class _EditorPageState extends ConsumerState<EditorPage> {
   Widget _buildQRView([double? size]) {
     final state = ref.read(qrEditorProvider);
 
-    print(state.logoSize.name);
 
     return QrImageView(
       data: widget.qrData,
