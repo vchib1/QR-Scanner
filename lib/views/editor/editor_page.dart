@@ -72,7 +72,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     if (result == null) return;
 
     final imgPath = result["image"];
-    final size = result["size"];
+    //final size = result["size"];
 
     if (imgPath == null && mounted) {
       SnackBarUtils.showErrorBar(context.locale.pickLogoInvalidError);
@@ -80,7 +80,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     }
 
     File file = File(imgPath as String);
-    QRLogoSize logoSize = size as QRLogoSize;
+    //QRLogoSize logoSize = size as QRLogoSize;
 
     Uint8List bytes = await file.readAsBytes();
 
@@ -88,7 +88,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
 
     ref
         .read(qrEditorProvider.notifier)
-        .changeState(state.copyWith(selectedLogo: bytes, logoSize: logoSize));
+        .changeState(state.copyWith(selectedLogo: bytes, logoSize: null));
   }
 
   Future<Map<String, dynamic>?> showLogoPickerModal() async {
@@ -369,6 +369,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
 
   Widget _buildQRView([double? size]) {
     final state = ref.read(qrEditorProvider);
+
+    print(state.logoSize.name);
 
     return QrImageView(
       data: widget.qrData,

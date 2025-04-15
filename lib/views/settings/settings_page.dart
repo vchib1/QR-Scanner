@@ -8,6 +8,7 @@ import 'package:ez_qr/utils/tile_shapes.dart';
 import 'package:ez_qr/views/history/provider/provider.dart';
 import 'package:ez_qr/views/settings/provider/language/language_provider.dart';
 import 'package:ez_qr/views/settings/provider/theme/provider.dart';
+import 'package:ez_qr/views/settings/widgets/privacy_policy.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -194,8 +195,11 @@ class SettingsPage extends ConsumerWidget {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: Text(context.locale.privacyPolicyTitle),
-                        content: Text(context.locale.privacyPolicySubtitle),
+                        content: SizedBox(
+                          height: MediaQuery.sizeOf(context).height * .75,
+                          width: MediaQuery.sizeOf(context).width * .75,
+                          child: const PrivacyPolicyScreen(),
+                        ),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context),
@@ -385,7 +389,7 @@ class SettingsPage extends ConsumerWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               const Icon(Icons.bug_report_sharp),
-              Flexible(child: Text(context.locale.reportBugDialogHeading)),
+              Text(context.locale.reportBugDialogHeading),
             ],
           ),
           content: Column(
@@ -477,7 +481,7 @@ class SettingsPage extends ConsumerWidget {
             ],
           ),
           content: StatefulBuilder(
-            builder: (context, setState) {
+            builder: (context, setLanguage) {
               return SizedBox(
                 height: MediaQuery.sizeOf(context).height * .50,
                 width: MediaQuery.sizeOf(context).width * .75,
@@ -489,13 +493,13 @@ class SettingsPage extends ConsumerWidget {
 
                     return RadioListTile<AppLanguage>(
                       value: lang,
+                      tileColor:
+                          Theme.of(context).colorScheme.surfaceContainerHigh,
                       groupValue: selectedLanguage,
                       onChanged: (AppLanguage? newLang) {
                         if (newLang == null) return;
 
-                        setState(() {
-                          selectedLanguage = newLang;
-                        });
+                        setLanguage(() => selectedLanguage = newLang);
                       },
                       title: Text(lang.nameCapitalized),
                     );

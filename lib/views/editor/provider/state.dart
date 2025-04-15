@@ -35,7 +35,7 @@ class QREditState {
     this.version = QrVersions.auto,
     this.allowGap = true,
     this.selectedLogo,
-    this.logoSize = QRLogoSize.large,
+    this.logoSize = QRLogoSize.medium,
   });
 
   QREditState copyWith({

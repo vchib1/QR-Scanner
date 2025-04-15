@@ -34,9 +34,9 @@ class HistoryPage extends ConsumerWidget {
       final itemDate = DateTime(date.year, date.month, date.day);
 
       if (itemDate == today) {
-        return "Today";
+        return context.locale.today;
       } else if (itemDate == yesterday) {
-        return "Yesterday";
+        return context.locale.yesterday;
       } else {
         return DateFormat("MMM d, yyyy", locale.code).format(itemDate);
       }

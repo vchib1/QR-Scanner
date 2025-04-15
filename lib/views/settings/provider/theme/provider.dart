@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:ez_qr/services/shared_pref.dart';
 import 'package:ez_qr/views/settings/provider/theme/state.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final themeProvider = NotifierProvider<ThemeProvider, ThemeState>(
@@ -18,6 +19,8 @@ class ThemeProvider extends Notifier<ThemeState> {
     final pref = ref.watch(sharedPrefProvider);
 
     String? data = pref.getString("preferences");
+
+    debugPrint("Initialized: Theme State Notifier");
 
     if (data != null) {
       return ThemeState.fromJson(jsonDecode(data));

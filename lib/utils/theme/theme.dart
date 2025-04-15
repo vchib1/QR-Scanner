@@ -346,7 +346,7 @@ class MaterialTheme {
     scaffoldBackgroundColor: colorScheme.surface,
     canvasColor: colorScheme.surface,
     listTileTheme: ListTileThemeData(
-      tileColor: colorScheme.surfaceContainerHigh,
+      tileColor: colorScheme.surfaceContainer,
       iconColor: colorScheme.primary,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
     ),

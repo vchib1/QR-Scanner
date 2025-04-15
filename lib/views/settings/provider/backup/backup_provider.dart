@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:ez_qr/repository/db_backup_repo.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final dbBackupNotifier = AsyncNotifierProvider<DBBackupNotifier, void>(
@@ -9,7 +10,9 @@ final dbBackupNotifier = AsyncNotifierProvider<DBBackupNotifier, void>(
 
 class DBBackupNotifier extends AsyncNotifier<void> {
   @override
-  Future<void> build() async {}
+  Future<void> build() async {
+    debugPrint("Initialized: Database Backup Notifier");
+  }
 
   Future<File?> backupDatabase() async {
     File? file;
