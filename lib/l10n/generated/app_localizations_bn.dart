@@ -159,16 +159,16 @@ class AppLocalizationsBn extends AppLocalizations {
   String get eyeColorSubtitle => 'QR কোডের কোণার আই মার্কের জন্য একটি রঙ বেছে নিন।';
 
   @override
-  String get pickLogoTitle => 'লোগো বেছে নিন';
+  String get addLogoTitle => 'লোগো বেছে নিন';
 
   @override
-  String get pickLogoSubtitle => 'QR কোডের কেন্দ্রে একটি কাস্টম লোগো যুক্ত করুন।';
+  String get addLogoSubtitle => 'QR কোডের কেন্দ্রে একটি কাস্টম লোগো যুক্ত করুন।';
 
   @override
-  String get pickLogoWarning => 'লোগো যুক্ত করলে স্ক্যানে সমস্যা হতে পারে।';
+  String get addLogoWarning => 'লোগো যুক্ত করলে স্ক্যানে সমস্যা হতে পারে।';
 
   @override
-  String get pickLogoInvalidError => 'একটি বৈধ লোগো নির্বাচন করুন।';
+  String get addLogoInvalidError => 'একটি বৈধ লোগো নির্বাচন করুন।';
 
   @override
   String get exportSizeTitle => 'রপ্তানি আকার';

@@ -159,16 +159,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get eyeColorSubtitle => 'Choisissez une couleur pour les coins du QR Code.';
 
   @override
-  String get pickLogoTitle => 'Choisir un logo';
+  String get addLogoTitle => 'Choisir un logo';
 
   @override
-  String get pickLogoSubtitle => 'Ajoutez votre logo personnalisé au centre du QR Code.';
+  String get addLogoSubtitle => 'Ajoutez votre logo personnalisé au centre du QR Code.';
 
   @override
-  String get pickLogoWarning => 'L\'ajout d\'un logo peut rendre le QR Code plus difficile à scanner.';
+  String get addLogoWarning => 'L\'ajout d\'un logo peut rendre le QR Code plus difficile à scanner.';
 
   @override
-  String get pickLogoInvalidError => 'Veuillez choisir un logo valide.';
+  String get addLogoInvalidError => 'Veuillez choisir un logo valide.';
 
   @override
   String get exportSizeTitle => 'Taille d’exportation';

@@ -159,16 +159,16 @@ class AppLocalizationsHi extends AppLocalizations {
   String get eyeColorSubtitle => 'QR कोड के कोनों के लिए रंग चुनें।';
 
   @override
-  String get pickLogoTitle => 'लोगो चुनें';
+  String get addLogoTitle => 'लोगो चुनें';
 
   @override
-  String get pickLogoSubtitle => 'QR के बीच में अपना कस्टम लोगो जोड़ें।';
+  String get addLogoSubtitle => 'QR के बीच में अपना कस्टम लोगो जोड़ें।';
 
   @override
-  String get pickLogoWarning => 'लोगो जोड़ने से स्कैन करने में समस्या हो सकती है।';
+  String get addLogoWarning => 'लोगो जोड़ने से स्कैन करने में समस्या हो सकती है।';
 
   @override
-  String get pickLogoInvalidError => 'कृपया एक मान्य लोगो चुनें।';
+  String get addLogoInvalidError => 'कृपया एक मान्य लोगो चुनें।';
 
   @override
   String get exportSizeTitle => 'निर्यात आकार';

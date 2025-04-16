@@ -75,7 +75,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     //final size = result["size"];
 
     if (imgPath == null && mounted) {
-      SnackBarUtils.showErrorBar(context.locale.pickLogoInvalidError);
+      SnackBarUtils.showErrorBar(context.locale.addLogoInvalidError);
       return;
     }
 
@@ -93,7 +93,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
 
   Future<Map<String, dynamic>?> showLogoPickerModal() async {
     String? imgPath;
-    QRLogoSize logoSize = QRLogoSize.large;
+    QRLogoSize logoSize = QRLogoSize.medium;
 
     final result = await showModalBottomSheet(
       context: context,
@@ -106,9 +106,17 @@ class _EditorPageState extends ConsumerState<EditorPage> {
               children: [
                 ListTile(
                   shape: topRoundedBorder(),
-                  title: Text(context.locale.pickLogoTitle),
-                  subtitle: Text(context.locale.pickLogoWarning),
-                  leading: const Icon(Icons.image),
+                  title: Text(context.locale.addLogoTitle),
+                  subtitle: Text(context.locale.addLogoWarning),
+                  leading:
+                      imgPath == null
+                          ? const Icon(Icons.image)
+                          : SizedBox.square(
+                            dimension: 24,
+                            child: Image.memory(
+                              File(imgPath!).readAsBytesSync(),
+                            ),
+                          ),
                   onTap: () async {
                     FilePickerResult? res = await FilePicker.platform.pickFiles(
                       allowedExtensions: ["png", "jpg", "jpeg"],
@@ -248,8 +256,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                       // Background Color
                       ListTile(
                         onTap: processLogo,
-                        title: Text(context.locale.pickLogoTitle),
-                        subtitle: Text(context.locale.pickLogoSubtitle),
+                        title: Text(context.locale.addLogoTitle),
+                        subtitle: Text(context.locale.addLogoSubtitle),
                         trailing:
                             state.selectedLogo != null
                                 ? IconButton(
@@ -370,12 +378,18 @@ class _EditorPageState extends ConsumerState<EditorPage> {
   Widget _buildQRView([double? size]) {
     final state = ref.read(qrEditorProvider);
 
+    final config = calculateQRConfig(
+      data: widget.qrData,
+      withLogo: state.selectedLogo != null,
+    );
+
     return QrImageView(
       data: widget.qrData,
+      errorCorrectionLevel: config.errorCorrectionLevel,
+      version: config.version,
       size: size ?? qrSize.value,
       gapless: !state.allowGap,
       backgroundColor: state.bgColor,
-      version: state.version,
       embeddedImageStyle: QrEmbeddedImageStyle(
         size: Size.square(state.logoSize.size),
       ),
@@ -399,5 +413,38 @@ class _EditorPageState extends ConsumerState<EditorPage> {
         child: const SizedBox.square(dimension: 32.0),
       ),
     );
+  }
+
+  // calculate QR Version and Error Correction Level based in QR Data
+  ({int version, int errorCorrectionLevel}) calculateQRConfig({
+    required String data,
+    bool withLogo = false,
+  }) {
+    final length = data.length;
+    int version;
+    int errorCorrectionLevel;
+
+    if (length <= 50) {
+      version = withLogo ? 5 : 3;
+      errorCorrectionLevel =
+          withLogo ? QrErrorCorrectLevel.H : QrErrorCorrectLevel.M;
+    } else if (length <= 100) {
+      version = withLogo ? 7 : 5;
+      errorCorrectionLevel =
+          withLogo ? QrErrorCorrectLevel.H : QrErrorCorrectLevel.M;
+    } else if (length <= 200) {
+      version = withLogo ? 10 : 7;
+      errorCorrectionLevel =
+          withLogo ? QrErrorCorrectLevel.H : QrErrorCorrectLevel.Q;
+    } else if (length <= 400) {
+      version = withLogo ? 15 : 10;
+      errorCorrectionLevel =
+          withLogo ? QrErrorCorrectLevel.Q : QrErrorCorrectLevel.M;
+    } else {
+      version = 15;
+      errorCorrectionLevel = QrErrorCorrectLevel.L;
+    }
+
+    return (version: version, errorCorrectionLevel: errorCorrectionLevel);
   }
 }

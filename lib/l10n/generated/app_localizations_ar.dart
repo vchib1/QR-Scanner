@@ -159,16 +159,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get eyeColorSubtitle => 'اختر لونًا لنمط عين رمز QR (علامات الزاوية).';
 
   @override
-  String get pickLogoTitle => 'اختر شعارًا';
+  String get addLogoTitle => 'اختر شعارًا';
 
   @override
-  String get pickLogoSubtitle => 'أضف شعارك المخصص في وسط رمز QR.';
+  String get addLogoSubtitle => 'أضف شعارك المخصص في وسط رمز QR.';
 
   @override
-  String get pickLogoWarning => 'قد يؤدي إضافة شعار إلى مشاكل في القراءة عند المسح.';
+  String get addLogoWarning => 'قد يؤدي إضافة شعار إلى مشاكل في القراءة عند المسح.';
 
   @override
-  String get pickLogoInvalidError => 'يرجى اختيار شعار صالح.';
+  String get addLogoInvalidError => 'يرجى اختيار شعار صالح.';
 
   @override
   String get exportSizeTitle => 'حجم التصدير';

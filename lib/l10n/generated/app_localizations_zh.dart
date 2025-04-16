@@ -159,16 +159,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get eyeColorSubtitle => '选择二维码眼睛图案的颜色（角标）。';
 
   @override
-  String get pickLogoTitle => '选择Logo';
+  String get addLogoTitle => '选择Logo';
 
   @override
-  String get pickLogoSubtitle => '在二维码中心添加您的自定义Logo。';
+  String get addLogoSubtitle => '在二维码中心添加您的自定义Logo。';
 
   @override
-  String get pickLogoWarning => '添加Logo可能会导致扫描时可读性问题。';
+  String get addLogoWarning => '添加Logo可能会导致扫描时可读性问题。';
 
   @override
-  String get pickLogoInvalidError => '请选择有效的Logo。';
+  String get addLogoInvalidError => '请选择有效的Logo。';
 
   @override
   String get exportSizeTitle => '导出大小';

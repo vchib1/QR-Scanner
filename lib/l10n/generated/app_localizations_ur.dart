@@ -159,16 +159,16 @@ class AppLocalizationsUr extends AppLocalizations {
   String get eyeColorSubtitle => 'کیو آر کے کونے کے نشانات کے لیے رنگ منتخب کریں۔';
 
   @override
-  String get pickLogoTitle => 'لوگو منتخب کریں';
+  String get addLogoTitle => 'لوگو منتخب کریں';
 
   @override
-  String get pickLogoSubtitle => 'اپنا مخصوص لوگو کیو آر کے درمیان میں شامل کریں۔';
+  String get addLogoSubtitle => 'اپنا مخصوص لوگو کیو آر کے درمیان میں شامل کریں۔';
 
   @override
-  String get pickLogoWarning => 'لوگو شامل کرنے سے اسکین کرنے میں دشواری ہو سکتی ہے۔';
+  String get addLogoWarning => 'لوگو شامل کرنے سے اسکین کرنے میں دشواری ہو سکتی ہے۔';
 
   @override
-  String get pickLogoInvalidError => 'براہ کرم درست لوگو منتخب کریں۔';
+  String get addLogoInvalidError => 'براہ کرم درست لوگو منتخب کریں۔';
 
   @override
   String get exportSizeTitle => 'ایکسپورٹ سائز';

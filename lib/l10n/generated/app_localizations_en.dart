@@ -159,16 +159,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eyeColorSubtitle => 'Pick a color for the QR eye pattern (corner markers).';
 
   @override
-  String get pickLogoTitle => 'Pick Logo';
+  String get addLogoTitle => 'Add Logo';
 
   @override
-  String get pickLogoSubtitle => 'Add your custom logo in the center of the QR.';
+  String get addLogoSubtitle => 'Add your custom logo in the center of the QR.';
 
   @override
-  String get pickLogoWarning => 'Adding a logo could cause readability issues on scan.';
+  String get addLogoWarning => 'Adding a logo could cause readability issues on scan.';
 
   @override
-  String get pickLogoInvalidError => 'Please pick a valid logo.';
+  String get addLogoInvalidError => 'Please pick a valid logo.';
 
   @override
   String get exportSizeTitle => 'Export Size';

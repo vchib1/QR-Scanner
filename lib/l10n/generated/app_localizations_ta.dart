@@ -159,16 +159,16 @@ class AppLocalizationsTa extends AppLocalizations {
   String get eyeColorSubtitle => 'QR குறியீட்டின் மூலைக் குறிகளுக்கு (கண்) வண்ணத்தைத் தேர்ந்தெடுக்கவும்.';
 
   @override
-  String get pickLogoTitle => 'லோகோவைத் தேர்ந்தெடுக்கவும்';
+  String get addLogoTitle => 'லோகோவைத் தேர்ந்தெடுக்கவும்';
 
   @override
-  String get pickLogoSubtitle => 'QR குறியீட்டின் நடுவில் உங்கள் சொந்த லோகோவைச் சேர்க்கவும்.';
+  String get addLogoSubtitle => 'QR குறியீட்டின் நடுவில் உங்கள் சொந்த லோகோவைச் சேர்க்கவும்.';
 
   @override
-  String get pickLogoWarning => 'லோகோ சேர்ப்பதால் ஸ்கேனிங்கின் போது படிக்க சிரமமாக இருக்கலாம்.';
+  String get addLogoWarning => 'லோகோ சேர்ப்பதால் ஸ்கேனிங்கின் போது படிக்க சிரமமாக இருக்கலாம்.';
 
   @override
-  String get pickLogoInvalidError => 'தயவுசெய்து செல்லுபடியாகும் லோகோவைத் தேர்ந்தெடுக்கவும்.';
+  String get addLogoInvalidError => 'தயவுசெய்து செல்லுபடியாகும் லோகோவைத் தேர்ந்தெடுக்கவும்.';
 
   @override
   String get exportSizeTitle => 'ஏற்றுமதி அளவு';

@@ -32,7 +32,7 @@ class QREditState {
     this.eyeColor = Colors.black,
     this.patternShape = QrDataModuleShape.square,
     this.eyeShape = QrEyeShape.square,
-    this.version = QrVersions.auto,
+    this.version = QrVersions.min,
     this.allowGap = true,
     this.selectedLogo,
     this.logoSize = QRLogoSize.medium,

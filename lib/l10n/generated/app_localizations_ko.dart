@@ -159,16 +159,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get eyeColorSubtitle => 'QR 코드의 코너 마커 색상을 선택하세요.';
 
   @override
-  String get pickLogoTitle => '로고 선택';
+  String get addLogoTitle => '로고 선택';
 
   @override
-  String get pickLogoSubtitle => 'QR 코드 중앙에 로고를 추가하세요.';
+  String get addLogoSubtitle => 'QR 코드 중앙에 로고를 추가하세요.';
 
   @override
-  String get pickLogoWarning => '로고를 추가하면 스캔에 문제가 발생할 수 있습니다.';
+  String get addLogoWarning => '로고를 추가하면 스캔에 문제가 발생할 수 있습니다.';
 
   @override
-  String get pickLogoInvalidError => '유효한 로고를 선택하세요.';
+  String get addLogoInvalidError => '유효한 로고를 선택하세요.';
 
   @override
   String get exportSizeTitle => '내보내기 크기';

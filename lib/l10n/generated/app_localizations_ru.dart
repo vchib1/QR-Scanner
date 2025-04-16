@@ -159,16 +159,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get eyeColorSubtitle => 'Выберите цвет для углов QR-кода (угловых маркеров).';
 
   @override
-  String get pickLogoTitle => 'Выбрать логотип';
+  String get addLogoTitle => 'Выбрать логотип';
 
   @override
-  String get pickLogoSubtitle => 'Добавьте свой логотип в центр QR-кода.';
+  String get addLogoSubtitle => 'Добавьте свой логотип в центр QR-кода.';
 
   @override
-  String get pickLogoWarning => 'Добавление логотипа может вызвать проблемы с читаемостью при сканировании.';
+  String get addLogoWarning => 'Добавление логотипа может вызвать проблемы с читаемостью при сканировании.';
 
   @override
-  String get pickLogoInvalidError => 'Пожалуйста, выберите корректный логотип.';
+  String get addLogoInvalidError => 'Пожалуйста, выберите корректный логотип.';
 
   @override
   String get exportSizeTitle => 'Размер экспорта';

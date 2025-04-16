@@ -159,16 +159,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get eyeColorSubtitle => 'QRコードの四隅の色。';
 
   @override
-  String get pickLogoTitle => 'ロゴを選択';
+  String get addLogoTitle => 'ロゴを選択';
 
   @override
-  String get pickLogoSubtitle => '中央にカスタムロゴを追加します。';
+  String get addLogoSubtitle => '中央にカスタムロゴを追加します。';
 
   @override
-  String get pickLogoWarning => 'ロゴを追加するとスキャンに影響する可能性があります。';
+  String get addLogoWarning => 'ロゴを追加するとスキャンに影響する可能性があります。';
 
   @override
-  String get pickLogoInvalidError => '有効なロゴを選択してください。';
+  String get addLogoInvalidError => '有効なロゴを選択してください。';
 
   @override
   String get exportSizeTitle => '出力サイズ';

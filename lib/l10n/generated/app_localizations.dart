@@ -423,29 +423,29 @@ abstract class AppLocalizations {
   /// **'Pick a color for the QR eye pattern (corner markers).'**
   String get eyeColorSubtitle;
 
-  /// No description provided for @pickLogoTitle.
+  /// No description provided for @addLogoTitle.
   ///
   /// In en, this message translates to:
-  /// **'Pick Logo'**
-  String get pickLogoTitle;
+  /// **'Add Logo'**
+  String get addLogoTitle;
 
-  /// No description provided for @pickLogoSubtitle.
+  /// No description provided for @addLogoSubtitle.
   ///
   /// In en, this message translates to:
   /// **'Add your custom logo in the center of the QR.'**
-  String get pickLogoSubtitle;
+  String get addLogoSubtitle;
 
-  /// No description provided for @pickLogoWarning.
+  /// No description provided for @addLogoWarning.
   ///
   /// In en, this message translates to:
   /// **'Adding a logo could cause readability issues on scan.'**
-  String get pickLogoWarning;
+  String get addLogoWarning;
 
-  /// No description provided for @pickLogoInvalidError.
+  /// No description provided for @addLogoInvalidError.
   ///
   /// In en, this message translates to:
   /// **'Please pick a valid logo.'**
-  String get pickLogoInvalidError;
+  String get addLogoInvalidError;
 
   /// No description provided for @exportSizeTitle.
   ///

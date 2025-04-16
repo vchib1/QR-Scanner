@@ -36,18 +36,16 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
   void initState() {
     super.initState();
 
-    const Duration duration = kThemeAnimationDuration;
-
     scaleController = AnimationController(
       vsync: this,
-      duration: duration,
-      reverseDuration: duration,
+      duration: const Duration(milliseconds: 150),
+      reverseDuration: const Duration(milliseconds: 150),
     );
 
     slideController = AnimationController(
       vsync: this,
-      duration: duration,
-      reverseDuration: duration,
+      duration: const Duration(milliseconds: 150),
+      reverseDuration: const Duration(milliseconds: 150),
     );
 
     scaleAnimation = CurvedAnimation(
@@ -227,9 +225,10 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
                             }
                           },
                           selected: isSelected,
-                          selectedTileColor: Colors.blue.withValues(
-                            alpha: 0.15,
-                          ),
+                          selectedTileColor: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest
+                              .withValues(alpha: 0.85),
                           leading: AnimatedSwitcher(
                             duration: const Duration(milliseconds: 200),
                             transitionBuilder:
