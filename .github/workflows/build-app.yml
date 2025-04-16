@@ -12,15 +12,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Clone repository
+        uses: actions/checkout@v4
 
-      - name: Set up Flutter
+      - name: Setting up Flutter Environment
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.0'
+          channel: "stable"
 
-      - name: Install dependencies
+      - name: Flutter Version
+        run: flutter --version
+
+      - name: Cleaning Project
+        run: flutter clean
+
+      - name: Installing Dependencies
         run: flutter pub get
 
       - name: Build APK (Split per ABI)
