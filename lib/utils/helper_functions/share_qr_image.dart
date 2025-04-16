@@ -53,7 +53,16 @@ Future<Uint8List> captureQRScreenshot(
     child: child ?? QrImageView(data: data, backgroundColor: Colors.white),
   );
 
-  final imageBytes = await screenshotController.captureFromWidget(qrWidget);
+  // Workaround for inverted image in debugMode
+  final imageBytes = await screenshotController.captureFromWidget(
+    kDebugMode
+        ? Transform(
+          alignment: Alignment.center,
+          transform: Matrix4.identity()..scale(1.0, -1.0),
+          child: qrWidget,
+        )
+        : qrWidget,
+  );
 
   return imageBytes;
 }
