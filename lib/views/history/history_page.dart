@@ -5,7 +5,6 @@ import 'package:ez_qr/utils/extensions/qr_type_extension.dart';
 import 'package:ez_qr/utils/helper_functions/qr_data_dialog.dart';
 import 'package:ez_qr/utils/helper_functions/share_qr_image.dart';
 import 'package:ez_qr/utils/snackbar.dart';
-import 'package:ez_qr/utils/tile_shapes.dart';
 import 'package:ez_qr/views/history/provider/provider.dart';
 import 'package:ez_qr/views/settings/provider/language/language_provider.dart';
 import 'package:flutter/material.dart';
@@ -14,13 +13,97 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import "package:collection/collection.dart";
 
-class HistoryPage extends ConsumerWidget {
+class HistoryPage extends ConsumerStatefulWidget {
   const HistoryPage({super.key});
 
-  /// Groups items by "Today", "Yesterday", or "dd-MM-yyyy"
+  @override
+  ConsumerState<HistoryPage> createState() => _HistoryPageState();
+}
+
+class _HistoryPageState extends ConsumerState<HistoryPage>
+    with TickerProviderStateMixin {
+  //
+  late AnimationController scaleController;
+  late AnimationController slideController;
+  late Animation<double> scaleAnimation;
+  late Animation<Offset> slideUpAnimation;
+
+  final Set<ScannedItem> _selectedItems = {};
+
+  bool get selectionMode => _selectedItems.isNotEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+
+    const Duration duration = kThemeAnimationDuration;
+
+    scaleController = AnimationController(
+      vsync: this,
+      duration: duration,
+      reverseDuration: duration,
+    );
+
+    slideController = AnimationController(
+      vsync: this,
+      duration: duration,
+      reverseDuration: duration,
+    );
+
+    scaleAnimation = CurvedAnimation(
+      parent: scaleController,
+      curve: Curves.easeIn,
+      reverseCurve: Curves.easeOut,
+    );
+
+    slideUpAnimation = Tween(
+      begin: const Offset(0, 1),
+      end: const Offset(0, 0),
+    ).animate(
+      CurvedAnimation(
+        parent: slideController,
+        curve: Curves.easeIn,
+        reverseCurve: Curves.easeOut,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    scaleController.dispose();
+    slideController.dispose();
+    super.dispose();
+  }
+
+  Future<void> playForwardAnimation() async {
+    await scaleController.forward();
+    await slideController.forward();
+  }
+
+  Future<void> playReverseAnimation() async {
+    await slideController.reverse();
+    await scaleController.reverse();
+  }
+
+  void _toggleSelection(ScannedItem item) {
+    setState(() {
+      if (_selectedItems.contains(item)) {
+        _selectedItems.remove(item);
+      } else {
+        _selectedItems.add(item);
+      }
+    });
+
+    selectionMode ? playForwardAnimation() : playReverseAnimation();
+  }
+
+  void _clearSelection() {
+    setState(() => _selectedItems.clear());
+    playReverseAnimation();
+  }
+
   Map<String, List<ScannedItem>> _groupByDate(
     BuildContext context,
-    WidgetRef ref,
     List<ScannedItem> items,
   ) {
     final now = DateTime.now();
@@ -43,127 +126,174 @@ class HistoryPage extends ConsumerWidget {
     });
   }
 
+  Future<void> _deleteSelectedItems() async {
+    ref
+        .read(historyAsyncProvider.notifier)
+        .removeSelectedItems(_selectedItems.map((e) => e.id!).toList());
+
+    _clearSelection();
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final history = ref.watch(historyAsyncProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: Text(context.locale.history)),
-      body: history.when(
-        data: (history) {
-          final groupedHistory = _groupByDate(context, ref, history);
-
-          if (groupedHistory.isEmpty) {
-            return Center(
-              child: Column(
-                spacing: 8.0,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.history_sharp, size: 48.0),
-                  Text(
-                    context.locale.noHistory,
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                ],
+    return PopScope(
+      canPop: !selectionMode,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          _clearSelection();
+          return;
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(title: Text(context.locale.history)),
+        floatingActionButtonAnimator: FloatingActionButtonAnimator.noAnimation,
+        floatingActionButton: ScaleTransition(
+          scale: scaleAnimation,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SlideTransition(
+                position: slideUpAnimation,
+                child: FloatingActionButton(
+                  mini: true,
+                  onPressed: _clearSelection,
+                  child: const Icon(Icons.clear),
+                ),
               ),
-            );
-          }
+              FloatingActionButton(
+                onPressed: _deleteSelectedItems,
+                child: const Icon(Icons.delete),
+              ),
+            ],
+          ),
+        ),
 
-          return ListView.builder(
-            shrinkWrap: true,
-            itemCount: groupedHistory.length,
-            itemBuilder: (context, index) {
-              final date = groupedHistory.keys.elementAt(index);
-              final items = groupedHistory[date]!;
+        body: history.when(
+          data: (history) {
+            final groupedHistory = _groupByDate(context, history);
 
-              final firstIdx = index == 0;
+            if (groupedHistory.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.history_sharp, size: 48.0),
+                    Text(
+                      context.locale.noHistory,
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                  ],
+                ),
+              );
+            }
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Section Header (Date)
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(8, firstIdx ? 0 : 12, 8, 8),
-                    child: Text(
-                      date,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+            return ListView.builder(
+              itemCount: groupedHistory.length,
+              itemBuilder: (context, index) {
+                final date = groupedHistory.keys.elementAt(index);
+                final items = groupedHistory[date]!;
+                final firstIdx = index == 0;
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(8, firstIdx ? 0 : 12, 8, 8),
+                      child: Text(
+                        date,
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
-                  // List of Items for this Date
-                  ...items.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final item = entry.value;
-                    final isFirst = index == 0;
-                    final isLast = index == items.length - 1;
-                    final isSingle = items.length == 1;
+                    ...items.asMap().entries.map((entry) {
+                      final item = entry.value;
+                      final isSelected = _selectedItems.contains(item);
+                      final isFirst = entry.key == 0;
+                      final isLast = entry.key == items.length - 1;
+                      final isSingle = items.length == 1;
 
-                    return Padding(
-                      padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0.0),
-                      child: ListTile(
-                        onTap: () => showQRDataDialog(context, data: item.data),
-                        onLongPress:
-                            () => _showLongPressTileDialog(
-                              context,
-                              ref,
-                              item: item,
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: ListTile(
+                          onLongPress: () => _toggleSelection(item),
+                          onTap: () {
+                            if (selectionMode) {
+                              _toggleSelection(item);
+                            } else {
+                              _showOptions(context, ref, item: item);
+                            }
+                          },
+                          selected: isSelected,
+                          selectedTileColor: Colors.blue.withValues(
+                            alpha: 0.15,
+                          ),
+                          leading: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 200),
+                            transitionBuilder:
+                                (child, anim) =>
+                                    ScaleTransition(scale: anim, child: child),
+                            child: CircleAvatar(
+                              key: ValueKey<bool>(isSelected),
+                              child:
+                                  isSelected
+                                      ? const Icon(Icons.check)
+                                      : const Icon(Icons.qr_code_2),
                             ),
-                        leading: const Icon(Icons.qr_code_rounded),
-                        title: Text(
-                          QrType.getQrType(item.data).localizedName(context),
-                        ),
-                        subtitle: Text(
-                          item.data,
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        trailing: IconButton(
-                          onPressed:
-                              () => _deleteItemDialog(context, ref, item),
-                          icon: const Icon(Icons.delete),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(
-                              isFirst || isSingle ? 8.0 : 0,
-                            ),
-                            topRight: Radius.circular(
-                              isFirst || isSingle ? 8.0 : 0,
-                            ),
-                            bottomLeft: Radius.circular(
-                              isLast || isSingle ? 8.0 : 0,
-                            ),
-                            bottomRight: Radius.circular(
-                              isLast || isSingle ? 8.0 : 0,
+                          ),
+                          title: Text(
+                            QrType.getQrType(item.data).localizedName(context),
+                          ),
+                          subtitle: Text(
+                            item.data,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(
+                                isFirst || isSingle ? 8.0 : 0,
+                              ),
+                              topRight: Radius.circular(
+                                isFirst || isSingle ? 8.0 : 0,
+                              ),
+                              bottomLeft: Radius.circular(
+                                isLast || isSingle ? 8.0 : 0,
+                              ),
+                              bottomRight: Radius.circular(
+                                isLast || isSingle ? 8.0 : 0,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }),
-                  const SizedBox(height: 8.0),
-                ],
-              );
-            },
-          );
-        },
-        error: (error, stackTrace) => Center(child: Text(error.toString())),
-        loading: () => const Center(child: CircularProgressIndicator()),
+                      );
+                    }),
+                    const SizedBox(height: 8.0),
+                  ],
+                );
+              },
+            );
+          },
+          error: (error, stackTrace) => Center(child: Text(error.toString())),
+          loading: () => const Center(child: CircularProgressIndicator()),
+        ),
       ),
     );
   }
 
-  void _showLongPressTileDialog(
+  void _showOptions(
     BuildContext context,
     WidgetRef ref, {
     required ScannedItem item,
-  }) async {
+  }) {
     showDialog(
       context: context,
       builder: (context) {
         return Dialog(
           clipBehavior: Clip.antiAlias,
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
           ),
@@ -171,7 +301,14 @@ class HistoryPage extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                shape: noneBorder(),
+                title: Text(context.locale.open),
+                leading: const Icon(Icons.remove_red_eye_outlined),
+                onTap: () {
+                  Navigator.pop(context);
+                  showQRDataDialog(context, data: item.data);
+                },
+              ),
+              ListTile(
                 title: Text(context.locale.copy),
                 leading: const Icon(Icons.copy_rounded),
                 onTap: () async {
@@ -182,7 +319,6 @@ class HistoryPage extends ConsumerWidget {
                 },
               ),
               ListTile(
-                shape: noneBorder(),
                 title: Text(context.locale.share),
                 leading: const Icon(Icons.share_outlined),
                 onTap: () async {
@@ -192,11 +328,9 @@ class HistoryPage extends ConsumerWidget {
                 },
               ),
               ListTile(
-                shape: noneBorder(),
                 title: Text(context.locale.delete),
                 leading: const Icon(Icons.delete),
-                onTap: () async {
-                  if (!context.mounted) return;
+                onTap: () {
                   Navigator.pop(context);
                   _deleteItemDialog(context, ref, item);
                 },
@@ -212,7 +346,7 @@ class HistoryPage extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     ScannedItem item,
-  ) async {
+  ) {
     return showDialog(
       context: context,
       builder: (context) {

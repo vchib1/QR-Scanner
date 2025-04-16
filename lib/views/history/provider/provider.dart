@@ -47,4 +47,9 @@ class HistoryAsyncProvider extends AsyncNotifier<List<ScannedItem>> {
     await _historyRepo.clearHistory();
     await refresh();
   }
+
+  Future<void> removeSelectedItems(List<String> ids) async {
+    await _historyRepo.removeSelectedScannedItems(ids);
+    await refresh();
+  }
 }

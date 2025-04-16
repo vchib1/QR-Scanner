@@ -56,6 +56,19 @@ class HistoryDB {
     }
   }
 
+  // ✅ remove selected scanned items (by id list)
+  Future<void> removeSelectedScannedItems(List<String> ids) async {
+    if (ids.isEmpty) return;
+
+    try {
+      final db = await database;
+      final placeholders = List.filled(ids.length, '?').join(', ');
+      await db.delete(history, where: 'id IN ($placeholders)', whereArgs: ids);
+    } catch (_) {
+      rethrow;
+    }
+  }
+
   Future<void> clearHistory() async {
     try {
       final db = await database;
