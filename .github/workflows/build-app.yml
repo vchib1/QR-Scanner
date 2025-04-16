@@ -33,7 +33,7 @@ jobs:
         run: flutter build apk --split-per-abi
 
       - name: Upload APKs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.2
         with:
           name: APKs
           path: build/app/outputs/flutter-apk/*.apk
