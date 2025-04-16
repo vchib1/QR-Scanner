@@ -33,8 +33,10 @@ jobs:
       - name: Build APK (Split per ABI)
         run: flutter build apk --split-per-abi
 
-      - name: Upload APKs
-        uses: actions/upload-artifact@v4
+      - name: Create GitHub Release and Upload APKs
+        uses: ncipollo/release-action@v1
         with:
-          name: APKs
-          path: build/app/outputs/flutter-apk/*.apk
+          tag: v1.0.0
+          name: "Release v1.0.0"
+          artifacts: build/app/outputs/flutter-apk/*.apk
+          token: ${{ secrets.GITHUB_TOKEN }}
