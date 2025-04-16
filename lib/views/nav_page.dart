@@ -18,9 +18,12 @@ class _NavPageState extends State<NavPage> {
   bool quickActionLaunched = false;
   final pages = [const HomePage(), const HistoryPage(), const SettingsPage()];
 
+  late PageController pageController;
+
   @override
   void initState() {
     super.initState();
+    pageController = PageController(initialPage: 0);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       initializeQuickActions();
     });
@@ -62,20 +65,30 @@ class _NavPageState extends State<NavPage> {
     }
   }
 
+  void updatePageIndex(int index) {
+    if (currentIndex == index) return;
+    setState(() => currentIndex = index);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: pages[currentIndex],
+      body: PageView(
+        controller: pageController,
+        onPageChanged: updatePageIndex,
+        children: pages,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         enableFeedback: true,
         onTap: (index) {
-          if (currentIndex == index) return;
-          setState(() => currentIndex = index);
+          updatePageIndex(index);
+          pageController.jumpToPage(index);
         },
+        selectedItemColor: Theme.of(context).colorScheme.primary,
         items: [
           BottomNavigationBarItem(
-            icon: const Icon(Icons.home),
+            icon: const Icon(Icons.home_filled),
             label: context.locale.home,
           ),
           BottomNavigationBarItem(
