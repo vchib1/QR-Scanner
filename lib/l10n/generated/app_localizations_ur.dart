@@ -9,6 +9,12 @@ class AppLocalizationsUr extends AppLocalizations {
   AppLocalizationsUr([String locale = 'ur']) : super(locale);
 
   @override
+  String get yes => 'ہاں';
+
+  @override
+  String get no => 'نہیں';
+
+  @override
   String get ok => 'ٹھیک ہے';
 
   @override
@@ -30,7 +36,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get copy => 'نقل کریں';
 
   @override
-  String get copied => 'نقل ہو گیا';
+  String get copied => 'نقل ہوگیا';
 
   @override
   String get delete => 'حذف کریں';
@@ -54,7 +60,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get system => 'سسٹم';
 
   @override
-  String get light => 'ہلکا';
+  String get light => 'روشن';
 
   @override
   String get dark => 'تاریک';
@@ -78,6 +84,17 @@ class AppLocalizationsUr extends AppLocalizations {
   String get yesterday => 'کل';
 
   @override
+  String itemCount(Object count) {
+    return '$count آئٹمز';
+  }
+
+  @override
+  String get deleteAllItems => 'تمام آئٹمز حذف کریں';
+
+  @override
+  String get deleteAllItemsWarning => 'کیا آپ واقعی تمام آئٹمز حذف کرنا چاہتے ہیں؟';
+
+  @override
   String get home => 'ہوم';
 
   @override
@@ -90,22 +107,22 @@ class AppLocalizationsUr extends AppLocalizations {
   String get settings => 'ترتیبات';
 
   @override
-  String get scanQRCodeTitle => 'کیو آر کوڈ اسکین کریں';
+  String get scanQRCodeTitle => 'QR کوڈ اسکین کریں';
 
   @override
-  String get scanQRCodeSubtitle => 'ڈیوائس کیمرہ استعمال کر کے کیو آر اسکین کریں۔';
+  String get scanQRCodeSubtitle => 'QR کوڈ اسکین کرنے کے لیے کیمرے کا استعمال کریں۔';
 
   @override
   String get scanImageTitle => 'تصویر اسکین کریں';
 
   @override
-  String get scanImageSubtitle => 'تصویر میں سے کیو آر کوڈ تلاش کریں۔';
+  String get scanImageSubtitle => 'تصویر سے QR کوڈ اسکین کریں۔';
 
   @override
-  String get qrGeneratorTitle => 'کیو آر جنریٹر';
+  String get qrGeneratorTitle => 'QR کوڈ جنریٹر';
 
   @override
-  String get qrGeneratorSubtitle => 'اپنا خود کا کیو آر کوڈ بنائیں۔';
+  String get qrGeneratorSubtitle => 'اپنا QR کوڈ بنائیں';
 
   @override
   String get text => 'متن';
@@ -117,16 +134,16 @@ class AppLocalizationsUr extends AppLocalizations {
   String get to => 'موصول کنندہ';
 
   @override
-  String get subject => 'عنوان';
+  String get subject => 'موضوع';
 
   @override
-  String get body => 'پیغام';
+  String get body => 'مواد';
 
   @override
-  String get url => 'لنک';
+  String get url => 'یو آر ایل';
 
   @override
-  String get urlError => 'براہ کرم درست یو آر ایل درج کریں۔';
+  String get urlError => 'براہ کرم ایک درست یو آر ایل درج کریں';
 
   @override
   String get phone => 'فون';
@@ -138,91 +155,97 @@ class AppLocalizationsUr extends AppLocalizations {
   String get sms => 'ایس ایم ایس';
 
   @override
-  String get qrEditor => 'کیو آر ایڈیٹر';
+  String get qrEditor => 'QR کوڈ ایڈیٹر';
 
   @override
   String get bgColorTitle => 'پس منظر کا رنگ';
 
   @override
-  String get bgColorSubtitle => 'ایک ایسا رنگ منتخب کریں جو پیٹرن کے ساتھ تضاد رکھے تاکہ اسکین واضح ہو۔';
+  String get bgColorSubtitle => 'بہتر مرئیت کے لیے متضاد رنگ منتخب کریں';
 
   @override
   String get patternColorTitle => 'پیٹرن کا رنگ';
 
   @override
-  String get patternColorSubtitle => 'پیٹرن (ڈاٹس) کے لیے رنگ منتخب کریں۔ واضح اسکین کے لیے گہرا رنگ استعمال کریں۔';
+  String get patternColorSubtitle => 'QR کوڈ نقطوں کا رنگ منتخب کریں (گہرے رنگ بہتر ہوتے ہیں)';
 
   @override
-  String get eyeColorTitle => 'آنکھ کا رنگ';
+  String get eyeColorTitle => 'آئی کلر';
 
   @override
-  String get eyeColorSubtitle => 'کیو آر کے کونے کے نشانات کے لیے رنگ منتخب کریں۔';
+  String get eyeColorSubtitle => 'QR کوڈ کے کونوں کا رنگ منتخب کریں';
 
   @override
-  String get addLogoTitle => 'لوگو منتخب کریں';
+  String get addLogoTitle => 'لوگو شامل کریں';
 
   @override
-  String get addLogoSubtitle => 'اپنا مخصوص لوگو کیو آر کے درمیان میں شامل کریں۔';
+  String get addLogoSubtitle => 'QR کوڈ کے بیچ میں لوگو شامل کریں';
 
   @override
-  String get addLogoWarning => 'لوگو شامل کرنے سے اسکین کرنے میں دشواری ہو سکتی ہے۔';
+  String get addLogoWarning => 'لوگو شامل کرنے سے اسکیننگ میں دشواری ہو سکتی ہے';
 
   @override
-  String get addLogoInvalidError => 'براہ کرم درست لوگو منتخب کریں۔';
+  String get addLogoInvalidError => 'براہ کرم ایک درست لوگو فائل منتخب کریں';
+
+  @override
+  String get logoSizeTitle => 'لوگو کا سائز';
+
+  @override
+  String get logoSizeSubtitle => 'لوگو کا سائز ترتیب دیں';
 
   @override
   String get exportSizeTitle => 'ایکسپورٹ سائز';
 
   @override
-  String get exportSizeSubtitle => 'بڑا سائز بہتر کوالٹی فراہم کرتا ہے۔';
+  String get exportSizeSubtitle => 'زیادہ سائز بہتر معیار فراہم کرتا ہے';
 
   @override
-  String get enableGapTitle => 'فاصلہ فعال کریں';
+  String get enableGapTitle => 'گیپ فعال کریں';
 
   @override
-  String get enableGapSubtitle => 'پیٹرن میں کچھ فاصلہ شامل کرنے کی اجازت دیتا ہے۔';
+  String get enableGapSubtitle => 'نکتوں کے درمیان خلا شامل کریں';
 
   @override
   String get patternShape => 'پیٹرن کی شکل';
 
   @override
-  String get eyeShape => 'آنکھ کی شکل';
+  String get eyeShape => 'آئی کی شکل';
 
   @override
-  String get square => 'چوکور';
+  String get square => 'مربع';
 
   @override
-  String get circle => 'گول';
+  String get circle => 'دایرہ';
 
   @override
-  String get saveQR => 'کیو آر محفوظ کریں';
+  String get saveQR => 'QR کوڈ محفوظ کریں';
 
   @override
-  String get shareQR => 'کیو آر شیئر کریں';
+  String get shareQR => 'QR کوڈ شیئر کریں';
 
   @override
-  String get qrSaved => 'کیو آر محفوظ ہو گیا';
+  String get qrSaved => 'QR کوڈ محفوظ ہوگیا ہے';
 
   @override
-  String get imageNotExists => 'تصویر موجود نہیں ہے۔';
+  String get imageNotExists => 'تصویر موجود نہیں';
 
   @override
   String get imagePickFailed => 'تصویر منتخب کرنے میں ناکامی';
 
   @override
-  String get noQRFound => 'کوئی کیو آر نہیں ملا۔';
+  String get noQRFound => 'کوئی QR کوڈ نہیں ملا';
 
   @override
   String get themeTitle => 'تھیم';
 
   @override
-  String get themeSubtitle => 'تھیم موڈ';
+  String get themeSubtitle => 'تھیم موڈ منتخب کریں';
 
   @override
-  String get contrastTitle => 'تضاد';
+  String get contrastTitle => 'کنٹراسٹ';
 
   @override
-  String get contrastSubtitle => 'تھیم تضاد';
+  String get contrastSubtitle => 'تھیم کنٹراسٹ سیٹ کریں';
 
   @override
   String get languageTitle => 'زبان';
@@ -234,19 +257,19 @@ class AppLocalizationsUr extends AppLocalizations {
   String get data => 'ڈیٹا';
 
   @override
-  String get backupDataTitle => 'ڈیٹا کا بیک اپ';
+  String get backupDataTitle => 'ڈیٹا بیک اپ';
 
   @override
-  String get backupDataSubtitle => 'اپنے آلے میں بیک اپ فائل بنائیں۔';
+  String get backupDataSubtitle => 'اپنے ڈیٹا کو محفوظ رکھیں';
 
   @override
   String get restoreDataTitle => 'ڈیٹا بحال کریں';
 
   @override
-  String get restoreDataSubtitle => 'اپنے آلے سے بیک اپ بحال کریں۔';
+  String get restoreDataSubtitle => 'پچھلے بیک اپ سے ڈیٹا بحال کریں';
 
   @override
-  String get restoreDataWarning => 'یہ عمل موجودہ ڈیٹا کو اووررائٹ کر دے گا۔ کیا آپ واقعی جاری رکھنا چاہتے ہیں؟';
+  String get restoreDataWarning => 'یہ موجودہ ڈیٹا کو اوور رائٹ کردے گا۔ کیا آپ جاری رکھنا چاہتے ہیں؟';
 
   @override
   String get backupSuccess => 'بیک اپ کامیاب';
@@ -255,43 +278,43 @@ class AppLocalizationsUr extends AppLocalizations {
   String get backupFailed => 'بیک اپ ناکام';
 
   @override
-  String get restoreSuccess => 'بیک اپ کامیابی سے بحال ہو گیا';
+  String get restoreSuccess => 'بحالی کامیاب';
 
   @override
-  String get restoreFailed => 'بیک اپ بحال کرنے میں ناکامی';
+  String get restoreFailed => 'بحالی ناکام';
 
   @override
-  String get backupInvalidFile => 'براہ کرم .db ایکسٹینشن والی درست بیک اپ فائل منتخب کریں۔';
+  String get backupInvalidFile => 'براہ کرم درست .db بیک اپ فائل منتخب کریں';
 
   @override
   String get deleteDataTitle => 'ڈیٹا حذف کریں';
 
   @override
-  String get deleteDataSubtitle => 'اسکین کردہ آئٹمز کا ڈیٹا صاف کریں۔';
+  String get deleteDataSubtitle => 'تمام ریکارڈ حذف کریں';
 
   @override
-  String get deleteDataWarning => 'تمام تاریخ مستقل طور پر ڈیٹا بیس سے حذف ہو جائے گی۔ یہ عمل واپس نہیں کیا جا سکتا۔';
+  String get deleteDataWarning => 'تمام ریکارڈ مستقل طور پر حذف ہو جائیں گے اور واپس نہیں لائے جا سکتے';
 
   @override
-  String get about => 'تعارف';
+  String get about => 'ایپ کے بارے میں';
 
   @override
   String get privacyPolicyTitle => 'رازداری کی پالیسی';
 
   @override
-  String get privacyPolicySubtitle => 'ہماری رازداری کی پالیسی پڑھنے کے لیے یہاں کلک کریں۔';
+  String get privacyPolicySubtitle => 'رازداری کی پالیسی دیکھیں';
 
   @override
-  String get licensesTitle => 'لائسنسز';
+  String get licensesTitle => 'لائسنس';
 
   @override
-  String get licensesSubtitle => 'لائسنسز دیکھنے کے لیے یہاں کلک کریں۔';
+  String get licensesSubtitle => 'استعمال شدہ لائسنس دیکھیں';
 
   @override
   String get reportBugTitle => 'بگ رپورٹ کریں';
 
   @override
-  String get reportBugSubtitle => 'گِٹ ہب پر بگ رپورٹ کریں۔';
+  String get reportBugSubtitle => 'GitHub پر مسئلہ رپورٹ کریں';
 
   @override
   String get reportBugDialogHeading => 'بگ رپورٹ کریں';
@@ -300,25 +323,25 @@ class AppLocalizationsUr extends AppLocalizations {
   String get reportBugDialogTitle => 'کیا آپ بگ رپورٹ کرنا چاہتے ہیں؟';
 
   @override
-  String get reportBugDialogSubtitle => 'یہ ہمارے گِٹ ہب کے ایشوز پیج کو کھولے گا جہاں آپ مسئلہ بیان کر سکتے ہیں۔';
+  String get reportBugDialogSubtitle => 'GitHub پر نیا مسئلہ کھلے گا، براہ کرم تفصیل فراہم کریں';
 
   @override
   String get cameraPermissionRequiredTitle => 'کیمرہ اجازت درکار ہے';
 
   @override
-  String get cameraPermissionRequiredSubtitle => 'کیو آر کوڈ اسکین کرنے کے لیے کیمرہ اجازت ضروری ہے۔ براہ کرم اجازت دیں۔';
+  String get cameraPermissionRequiredSubtitle => 'QR کوڈ اسکین کرنے کے لیے کیمرہ اجازت درکار ہے';
 
   @override
-  String get cameraPermissionDeniedTitle => 'کیمرہ اجازت مستقل طور پر مسترد کر دی گئی';
+  String get cameraPermissionDeniedTitle => 'کیمرہ اجازت مستقل طور پر مسترد';
 
   @override
-  String get cameraPermissionDeniedSubtitle => 'کیو آر کوڈ اسکین کرنے کے لیے کیمرہ اجازت درکار ہے۔ براہ کرم ایپ سیٹنگز سے اجازت دیں۔';
+  String get cameraPermissionDeniedSubtitle => 'براہ کرم ایپ سیٹنگز میں جا کر اجازت دیں';
 
   @override
-  String get openSettings => 'سیٹنگز کھولیں';
+  String get openSettings => 'ترتیبات کھولیں';
 
   @override
-  String get openSettingsError => 'سیٹنگز کھولنے میں ناکامی۔ براہ کرم دستی طور پر کھولیں۔';
+  String get openSettingsError => 'ترتیبات نہیں کھول سکے۔ براہ کرم دستی طور پر کھولیں';
 
   @override
   String get allowPermission => 'اجازت دیں';

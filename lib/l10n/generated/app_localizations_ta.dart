@@ -9,6 +9,12 @@ class AppLocalizationsTa extends AppLocalizations {
   AppLocalizationsTa([String locale = 'ta']) : super(locale);
 
   @override
+  String get yes => 'ஆம்';
+
+  @override
+  String get no => 'இல்லை';
+
+  @override
   String get ok => 'சரி';
 
   @override
@@ -21,13 +27,13 @@ class AppLocalizationsTa extends AppLocalizations {
   String get open => 'திற';
 
   @override
-  String get proceed => 'தொடர்';
+  String get proceed => 'தொடரவும்';
 
   @override
   String get share => 'பகிர்';
 
   @override
-  String get copy => 'நகல் எடு';
+  String get copy => 'நகலெடு';
 
   @override
   String get copied => 'நகலெடுக்கப்பட்டது';
@@ -36,10 +42,10 @@ class AppLocalizationsTa extends AppLocalizations {
   String get delete => 'அழி';
 
   @override
-  String get deleteItem => 'பொருளை அழி';
+  String get deleteItem => 'உருப்படியை அழி';
 
   @override
-  String get deleteItemConfirm => 'இந்தப் பொருளை அழிக்க உறுதியாக இருக்கிறீர்களா?';
+  String get deleteItemConfirm => 'இந்த உருப்படியை நிச்சயமாக அழிக்க விரும்புகிறீர்களா?';
 
   @override
   String get confirm => 'உறுதிப்படுத்து';
@@ -48,25 +54,25 @@ class AppLocalizationsTa extends AppLocalizations {
   String get next => 'அடுத்தது';
 
   @override
-  String get pickFromGallery => 'கேலரியிலிருந்து தேர்ந்தெடுக்கவும்';
+  String get pickFromGallery => 'கேலரியிலிருந்து தேர்வுசெய்';
 
   @override
-  String get system => 'அமைப்பு';
+  String get system => 'கணினி அமைப்பு';
 
   @override
-  String get light => 'வெளிச்சம்';
+  String get light => 'ஒளி';
 
   @override
   String get dark => 'இருள்';
 
   @override
-  String get low => 'குறைந்த';
+  String get low => 'குறைவு';
 
   @override
-  String get medium => 'நடுத்தர';
+  String get medium => 'மधியம்';
 
   @override
-  String get high => 'உயர்ந்த';
+  String get high => 'அதிகம்';
 
   @override
   String get app => 'பயன்பாடு';
@@ -76,6 +82,17 @@ class AppLocalizationsTa extends AppLocalizations {
 
   @override
   String get yesterday => 'நேற்று';
+
+  @override
+  String itemCount(Object count) {
+    return '$count உருப்படிகள்';
+  }
+
+  @override
+  String get deleteAllItems => 'அனைத்து உருப்படிகளையும் அழி';
+
+  @override
+  String get deleteAllItemsWarning => 'நீங்கள் நிச்சயமாக அனைத்து உருப்படிகளையும் அழிக்க விரும்புகிறீர்களா?';
 
   @override
   String get home => 'முகப்பு';
@@ -90,43 +107,43 @@ class AppLocalizationsTa extends AppLocalizations {
   String get settings => 'அமைப்புகள்';
 
   @override
-  String get scanQRCodeTitle => 'QR குறியீட்டைச் சுட்டி';
+  String get scanQRCodeTitle => 'QR குறியீட்டை ஸ்கேன் செய்யவும்';
 
   @override
-  String get scanQRCodeSubtitle => 'சாதனத்தின் புகைப்படக் கருவியைப் பயன்படுத்தி QR குறியீட்டைச் சுட்டி.';
+  String get scanQRCodeSubtitle => 'சாதனத்தின் கேமராவை பயன்படுத்தி QR குறியீட்டை ஸ்கேன் செய்யவும்.';
 
   @override
-  String get scanImageTitle => 'படத்தைச் சுட்டி';
+  String get scanImageTitle => 'படத்தை ஸ்கேன் செய்';
 
   @override
-  String get scanImageSubtitle => 'ஒரு படத்தில் QR குறியீடுகளைத் தேடு.';
+  String get scanImageSubtitle => 'படத்திலிருந்து QR குறியீட்டை கண்டறிக.';
 
   @override
-  String get qrGeneratorTitle => 'QR குறியீட்டு உருவாக்கி';
+  String get qrGeneratorTitle => 'QR உருவாக்கி';
 
   @override
-  String get qrGeneratorSubtitle => 'உங்கள் சொந்த QR குறியீட்டை உருவாக்கு.';
+  String get qrGeneratorSubtitle => 'உங்கள் சொந்த QR குறியீட்டை உருவாக்குங்கள்.';
 
   @override
-  String get text => 'வரி';
+  String get text => 'உரை';
 
   @override
   String get mail => 'மின்னஞ்சல்';
 
   @override
-  String get to => 'அனுப்புவதற்கு';
+  String get to => 'பெறுநர்';
 
   @override
   String get subject => 'தலைப்பு';
 
   @override
-  String get body => 'உள்ளடக்கம்';
+  String get body => 'உடல்';
 
   @override
   String get url => 'இணைப்பு';
 
   @override
-  String get urlError => 'தயவுசெய்து செல்லுபடியாகும் ஒரு URL ஐ உள்ளிடவும்.';
+  String get urlError => 'தயவுசெய்து செல்லுபடியாகும் இணையதள முகவரியை உள்ளிடவும்.';
 
   @override
   String get phone => 'தொலைபேசி';
@@ -135,58 +152,64 @@ class AppLocalizationsTa extends AppLocalizations {
   String get message => 'செய்தி';
 
   @override
-  String get sms => 'சுருக்கச் செய்தி';
+  String get sms => 'எஸ்.எம்.எஸ்.';
 
   @override
-  String get qrEditor => 'QR குறியீட்டு ஆசிரியர்';
+  String get qrEditor => 'QR தொகுப்பி';
 
   @override
-  String get bgColorTitle => 'பின்னணி வண்ணம்';
+  String get bgColorTitle => 'பின்னணி நிறம்';
 
   @override
-  String get bgColorSubtitle => 'தெளிவான ஸ்கேனிங்குக்காக வடிவத்துடன் முரண்படும் வண்ணத்தைத் தேர்ந்தெடுக்கவும்.';
+  String get bgColorSubtitle => 'ஸ்கேன் செய்ய எளிதாக இருக்கும் எதிர்மறை நிறத்தை தேர்ந்தெடுக்கவும்.';
 
   @override
-  String get patternColorTitle => 'வடிவ வண்ணம்';
+  String get patternColorTitle => 'வடிவத்தின் நிறம்';
 
   @override
-  String get patternColorSubtitle => 'வடிவத்திற்கு (புள்ளிகள்) வண்ணத்தைத் தேர்ந்தெடுக்கவும். தெளிவான ஸ்கேனிங்குக்காக இருண்ட வண்ணத்தைப் பயன்படுத்தவும்.';
+  String get patternColorSubtitle => 'புள்ளிகளுக்கான நிறத்தை தேர்ந்தெடுக்கவும். ஸ்கேன் செய்யும் போது இருண்ட நிறங்கள் சிறந்தது.';
 
   @override
-  String get eyeColorTitle => 'கண் வண்ணம்';
+  String get eyeColorTitle => 'கண்ணின் நிறம்';
 
   @override
-  String get eyeColorSubtitle => 'QR குறியீட்டின் மூலைக் குறிகளுக்கு (கண்) வண்ணத்தைத் தேர்ந்தெடுக்கவும்.';
+  String get eyeColorSubtitle => 'QR குறியீட்டின் மூலைகளில் உள்ள கண்களுக்கு நிறத்தை தேர்ந்தெடுக்கவும்.';
 
   @override
-  String get addLogoTitle => 'லோகோவைத் தேர்ந்தெடுக்கவும்';
+  String get addLogoTitle => 'லோகோ சேர்க்கவும்';
 
   @override
-  String get addLogoSubtitle => 'QR குறியீட்டின் நடுவில் உங்கள் சொந்த லோகோவைச் சேர்க்கவும்.';
+  String get addLogoSubtitle => 'QR குறியீட்டின் மையத்தில் தனிப்பயன் லோகோவை சேர்க்கவும்.';
 
   @override
-  String get addLogoWarning => 'லோகோ சேர்ப்பதால் ஸ்கேனிங்கின் போது படிக்க சிரமமாக இருக்கலாம்.';
+  String get addLogoWarning => 'லோகோ சேர்ப்பது ஸ்கேன் செய்வதில் சிக்கலாக இருக்கலாம்.';
 
   @override
-  String get addLogoInvalidError => 'தயவுசெய்து செல்லுபடியாகும் லோகோவைத் தேர்ந்தெடுக்கவும்.';
+  String get addLogoInvalidError => 'தயவுசெய்து செல்லுபடியாகும் லோகோவை தேர்வுசெய்யவும்.';
+
+  @override
+  String get logoSizeTitle => 'லோகோ அளவு';
+
+  @override
+  String get logoSizeSubtitle => 'லோகோவின் அளவை தேர்ந்தெடுக்கவும்.';
 
   @override
   String get exportSizeTitle => 'ஏற்றுமதி அளவு';
 
   @override
-  String get exportSizeSubtitle => 'பெரிய அளவு சிறந்த தரத்தை வழங்குகிறது.';
+  String get exportSizeSubtitle => 'உயர் தரத்திற்கு பெரிய அளவு சிறந்தது.';
 
   @override
-  String get enableGapTitle => 'இடைவெளியை இயக்கு';
+  String get enableGapTitle => 'இடைவை இயக்கவும்';
 
   @override
-  String get enableGapSubtitle => 'வடிவத்திற்கு இடையில் இடைவெளியை அனுமதிக்கவும்.';
+  String get enableGapSubtitle => 'புள்ளிகள் இடையே இடைவெளி சேர்க்கவும்.';
 
   @override
-  String get patternShape => 'வடிவ வடிவம்';
+  String get patternShape => 'வடிவத்தின் அமைப்பு';
 
   @override
-  String get eyeShape => 'கண் வடிவம்';
+  String get eyeShape => 'கண்ணின் அமைப்பு';
 
   @override
   String get square => 'சதுரம்';
@@ -195,10 +218,10 @@ class AppLocalizationsTa extends AppLocalizations {
   String get circle => 'வட்டம்';
 
   @override
-  String get saveQR => 'QR ஐ சேமிக்கவும்';
+  String get saveQR => 'QR சேமிக்கவும்';
 
   @override
-  String get shareQR => 'QR ஐ பகிர்க';
+  String get shareQR => 'QR பகிரவும்';
 
   @override
   String get qrSaved => 'QR சேமிக்கப்பட்டது';
@@ -207,118 +230,118 @@ class AppLocalizationsTa extends AppLocalizations {
   String get imageNotExists => 'படம் இல்லை.';
 
   @override
-  String get imagePickFailed => 'படத்தைத் தேர்ந்தெடுப்பதில் தோல்வி';
+  String get imagePickFailed => 'படத்தை தேர்வு செய்ய முடியவில்லை.';
 
   @override
-  String get noQRFound => 'QR குறியீடு காணப்படவில்லை.';
+  String get noQRFound => 'QR குறியீடு இல்லை.';
 
   @override
   String get themeTitle => 'தீம்';
 
   @override
-  String get themeSubtitle => 'தீம் வகை';
+  String get themeSubtitle => 'தீம் நிலை';
 
   @override
-  String get contrastTitle => 'எதிரொளி';
+  String get contrastTitle => 'மாறுபாடு';
 
   @override
-  String get contrastSubtitle => 'தீமின் எதிரொளி';
+  String get contrastSubtitle => 'தீம் மாறுபாடு அளவு';
 
   @override
   String get languageTitle => 'மொழி';
 
   @override
-  String get languageSubtitle => 'உங்கள் விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்';
+  String get languageSubtitle => 'உங்கள் விருப்பமான மொழியை தேர்ந்தெடுக்கவும்';
 
   @override
   String get data => 'தரவு';
 
   @override
-  String get backupDataTitle => 'தரவுகளை நகலெடுக்கவும்';
+  String get backupDataTitle => 'தரவு காப்புப்பிரதி';
 
   @override
-  String get backupDataSubtitle => 'உங்கள் சாதனத்தில் நகலெடுக்கப்பட்ட கோப்பை உருவாக்கவும்.';
+  String get backupDataSubtitle => 'உங்கள் சாதனத்தில் ஒரு காப்புப்பிரதி கோப்பை உருவாக்கவும்.';
 
   @override
-  String get restoreDataTitle => 'தரவுகளை மீட்டெடுக்கவும்';
+  String get restoreDataTitle => 'தரவை மீட்டெடு';
 
   @override
-  String get restoreDataSubtitle => 'உங்கள் சாதனத்திலிருந்து நகலெடுக்கப்பட்டதை மீட்டெடுக்கவும்.';
+  String get restoreDataSubtitle => 'உங்கள் சாதனத்திலிருந்து காப்புப்பிரதியை மீட்டெடுக்கவும்.';
 
   @override
-  String get restoreDataWarning => 'இந்த செயல்முறை மூலத் தரவுகளை மீள்மதிப்பீடு செய்யும். தொடர உறுதியாக இருக்கிறீர்களா?';
+  String get restoreDataWarning => 'இந்தச் செயல் தற்போதைய தரவை மாற்றும். தொடர விரும்புகிறீர்களா?';
 
   @override
-  String get backupSuccess => 'நகலெடுக்கப்பட்டது வெற்றி';
+  String get backupSuccess => 'காப்புப்பிரதி வெற்றிகரமாக நிறைவடைந்தது';
 
   @override
-  String get backupFailed => 'நகலெடுக்கப்பட்டது தோல்வி';
+  String get backupFailed => 'காப்புப்பிரதி தோல்வியுற்றது';
 
   @override
-  String get restoreSuccess => 'நகலெடுக்கப்பட்டதை மீட்டெடுத்தல் வெற்றி';
+  String get restoreSuccess => 'தரவு வெற்றிகரமாக மீட்டெடுக்கப்பட்டது';
 
   @override
-  String get restoreFailed => 'நகலெடுக்கப்பட்டதை மீட்டெடுத்தல் தோல்வி';
+  String get restoreFailed => 'தரவை மீட்டெடுக்க முடியவில்லை';
 
   @override
-  String get backupInvalidFile => 'தயவுசெய்து .db கோப்பு விரிவாக்கத்துடன் செல்லுபடியாகும் நகலெடுக்கப்பட்ட கோப்பைத் தேர்ந்தெடுக்கவும்.';
+  String get backupInvalidFile => 'தயவுசெய்து .db நீட்சியுடன் செல்லுபடியாகும் கோப்பை தேர்ந்தெடுக்கவும்.';
 
   @override
-  String get deleteDataTitle => 'தரவுகளை அழி';
+  String get deleteDataTitle => 'தரவை அழிக்கவும்';
 
   @override
-  String get deleteDataSubtitle => 'ஸ்கேன் செய்யப்பட்ட பொருட்களின் தரவுகளை அழி.';
+  String get deleteDataSubtitle => 'ஸ்கேன் செய்யப்பட்ட உருப்படிகளின் தரவை அழிக்கவும்.';
 
   @override
-  String get deleteDataWarning => 'அனைத்து வரலாறும் தரவுத்தளத்திலிருந்து நிரந்தரமாக அழிக்கப்படும். இந்த செயல்முறை மீளமுடியாது.';
+  String get deleteDataWarning => 'அனைத்து வரலாறும் நிரந்தரமாக அழிக்கப்படும் மற்றும் மீட்டெடுக்க முடியாது.';
 
   @override
-  String get about => 'எங்களைப் பற்றி';
+  String get about => 'பற்றி';
 
   @override
   String get privacyPolicyTitle => 'தனியுரிமைக் கொள்கை';
 
   @override
-  String get privacyPolicySubtitle => 'எங்கள் தனியுரிமைக் கொள்கையைப் படிக்க இங்கு கிளிக் செய்யவும்.';
+  String get privacyPolicySubtitle => 'எங்கள் தனியுரிமைக் கொள்கையை வாசிக்க இங்கே தட்டவும்.';
 
   @override
   String get licensesTitle => 'உரிமங்கள்';
 
   @override
-  String get licensesSubtitle => 'உரிமங்களைப் பார்க்க இங்கு கிளிக் செய்யவும்.';
+  String get licensesSubtitle => 'உரிமங்களை காண இங்கே தட்டவும்.';
 
   @override
-  String get reportBugTitle => 'பிழையை அறிவிக்கவும்';
+  String get reportBugTitle => 'பிழையை தெரிவிக்கவும்';
 
   @override
-  String get reportBugSubtitle => 'GitHub இல் பிழையை அறிவிக்கவும்.';
+  String get reportBugSubtitle => 'GitHub இல் பிழையை தெரிவிக்கவும்.';
 
   @override
-  String get reportBugDialogHeading => 'பிழையை அறிவிக்கவும்';
+  String get reportBugDialogHeading => 'பிழையை தெரிவிக்கவும்';
 
   @override
-  String get reportBugDialogTitle => 'பிழையை அறிவிக்க விரும்புகிறீர்களா?';
+  String get reportBugDialogTitle => 'நீங்கள் பிழையை தெரிவிக்க விரும்புகிறீர்களா?';
 
   @override
-  String get reportBugDialogSubtitle => 'இது எங்கள் GitHub பிரச்சினைகள் பக்கத்தைத் திறக்கும், அங்கு நீங்கள் எதிர்கொண்ட பிரச்சினையை வ';
+  String get reportBugDialogSubtitle => 'இது உங்களை GitHub இல் உள்ள வழக்கு பக்கத்திற்கு அழைத்துச் செல்லும், அங்கு விவரங்களைப் பதிவு செய்யலாம்.';
 
   @override
   String get cameraPermissionRequiredTitle => 'கேமரா அனுமதி தேவை';
 
   @override
-  String get cameraPermissionRequiredSubtitle => 'QR குறியீடுகளைச் சுட்டி அளவதாக கேமரா அனுமதி தேவை. தயவுசெய்து அணுகலை அனுமதிக்கவும்.';
+  String get cameraPermissionRequiredSubtitle => 'QR ஸ்கேன் செய்ய கேமரா அனுமதி தேவை. தயவுசெய்து அனுமதி வழங்கவும்.';
 
   @override
   String get cameraPermissionDeniedTitle => 'கேமரா அனுமதி நிரந்தரமாக மறுக்கப்பட்டது';
 
   @override
-  String get cameraPermissionDeniedSubtitle => 'QR குறியீடுகளைச் சுட்டி அளவதாக கேமரா அனுமதி தேவை. தயவுசெய்து பயன்பாட்டு அமைப்புகளிலிருந்து அனுமதியை அளிக்கவும்.';
+  String get cameraPermissionDeniedSubtitle => 'QR குறியீட்டை ஸ்கேன் செய்ய கேமரா அனுமதி தேவை. தயவுசெய்து பயன்பாட்டு அமைப்புகளில் அனுமதியை வழங்கவும்.';
 
   @override
   String get openSettings => 'அமைப்புகளை திறக்கவும்';
 
   @override
-  String get openSettingsError => 'அமைப்புகளை திறக்க முடியவில்லை. தயவுசெய்து கையேடு மூலம் திறக்கவும்.';
+  String get openSettingsError => 'அமைப்புகளை திறக்க முடியவில்லை. தயவுசெய்து கைமுறையாக திறக்கவும்.';
 
   @override
   String get allowPermission => 'அனுமதியை வழங்கவும்';

@@ -9,6 +9,12 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
+  String get yes => 'نعم';
+
+  @override
+  String get no => 'لا';
+
+  @override
   String get ok => 'موافق';
 
   @override
@@ -69,13 +75,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get high => 'مرتفع';
 
   @override
-  String get app => 'التطبيق';
+  String get app => 'تطبيق';
 
   @override
   String get today => 'اليوم';
 
   @override
   String get yesterday => 'أمس';
+
+  @override
+  String itemCount(Object count) {
+    return '$count عناصر';
+  }
+
+  @override
+  String get deleteAllItems => 'حذف جميع العناصر';
+
+  @override
+  String get deleteAllItemsWarning => 'هل أنت متأكد أنك تريد حذف جميع العناصر؟';
 
   @override
   String get home => 'الرئيسية';
@@ -93,16 +110,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get scanQRCodeTitle => 'مسح رمز QR';
 
   @override
-  String get scanQRCodeSubtitle => 'امسح رمز QR باستخدام كاميرا الجهاز.';
+  String get scanQRCodeSubtitle => 'مسح رمز QR باستخدام كاميرا الجهاز.';
 
   @override
   String get scanImageTitle => 'مسح صورة';
 
   @override
-  String get scanImageSubtitle => 'ابحث عن رموز QR في صورة.';
+  String get scanImageSubtitle => 'البحث عن رموز QR من صورة.';
 
   @override
-  String get qrGeneratorTitle => 'مولد رمز QR';
+  String get qrGeneratorTitle => 'مولد QR';
 
   @override
   String get qrGeneratorSubtitle => 'أنشئ رمز QR الخاص بك.';
@@ -111,7 +128,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get text => 'نص';
 
   @override
-  String get mail => 'بريد إلكتروني';
+  String get mail => 'بريد';
 
   @override
   String get to => 'إلى';
@@ -123,7 +140,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get body => 'المحتوى';
 
   @override
-  String get url => 'الرابط';
+  String get url => 'رابط';
 
   @override
   String get urlError => 'يرجى إدخال رابط صالح.';
@@ -138,7 +155,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sms => 'رسالة نصية';
 
   @override
-  String get qrEditor => 'محرر رمز QR';
+  String get qrEditor => 'محرر QR';
 
   @override
   String get bgColorTitle => 'لون الخلفية';
@@ -156,19 +173,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get eyeColorTitle => 'لون العين';
 
   @override
-  String get eyeColorSubtitle => 'اختر لونًا لنمط عين رمز QR (علامات الزاوية).';
+  String get eyeColorSubtitle => 'اختر لونًا لنمط عين QR (علامات الزوايا).';
 
   @override
-  String get addLogoTitle => 'اختر شعارًا';
+  String get addLogoTitle => 'إضافة شعار';
 
   @override
-  String get addLogoSubtitle => 'أضف شعارك المخصص في وسط رمز QR.';
+  String get addLogoSubtitle => 'أضف شعارك المخصص في مركز رمز QR.';
 
   @override
   String get addLogoWarning => 'قد يؤدي إضافة شعار إلى مشاكل في القراءة عند المسح.';
 
   @override
   String get addLogoInvalidError => 'يرجى اختيار شعار صالح.';
+
+  @override
+  String get logoSizeTitle => 'حجم الشعار';
+
+  @override
+  String get logoSizeSubtitle => 'اختر حجمًا للشعار.';
 
   @override
   String get exportSizeTitle => 'حجم التصدير';
@@ -195,13 +218,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get circle => 'دائرة';
 
   @override
-  String get saveQR => 'حفظ رمز QR';
+  String get saveQR => 'حفظ QR';
 
   @override
-  String get shareQR => 'مشاركة رمز QR';
+  String get shareQR => 'مشاركة QR';
 
   @override
-  String get qrSaved => 'تم حفظ رمز QR';
+  String get qrSaved => 'تم حفظ QR';
 
   @override
   String get imageNotExists => 'الصورة غير موجودة.';
@@ -234,19 +257,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get data => 'البيانات';
 
   @override
-  String get backupDataTitle => 'نسخ البيانات احتياطيًا';
+  String get backupDataTitle => 'نسخ احتياطي للبيانات';
 
   @override
-  String get backupDataSubtitle => 'أنشئ ملف نسخ احتياطي على جهازك.';
+  String get backupDataSubtitle => 'إنشاء ملف نسخ احتياطي في جهازك.';
 
   @override
   String get restoreDataTitle => 'استعادة البيانات';
 
   @override
-  String get restoreDataSubtitle => 'استعادة النسخة الاحتياطية من جهازك.';
+  String get restoreDataSubtitle => 'استعادة النسخ الاحتياطي من جهازك.';
 
   @override
-  String get restoreDataWarning => 'سيؤدي هذا الإجراء إلى استبدال البيانات الحالية. هل أنت متأكد أنك تريد المتابعة؟';
+  String get restoreDataWarning => 'ستؤدي هذه العملية إلى استبدال البيانات الحالية. هل أنت متأكد أنك تريد المتابعة؟';
 
   @override
   String get backupSuccess => 'تم النسخ الاحتياطي بنجاح';
@@ -255,10 +278,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get backupFailed => 'فشل النسخ الاحتياطي';
 
   @override
-  String get restoreSuccess => 'تم استعادة النسخة الاحتياطية بنجاح';
+  String get restoreSuccess => 'تم استعادة النسخ الاحتياطي بنجاح';
 
   @override
-  String get restoreFailed => 'فشل في استعادة النسخة الاحتياطية';
+  String get restoreFailed => 'فشل استعادة النسخ الاحتياطي';
 
   @override
   String get backupInvalidFile => 'يرجى اختيار ملف نسخ احتياطي صالح بامتداد .db.';
@@ -270,7 +293,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get deleteDataSubtitle => 'مسح بيانات العناصر الممسوحة.';
 
   @override
-  String get deleteDataWarning => 'سيتم حذف جميع السجلات نهائيًا من قاعدة البيانات. لا يمكن التراجع عن هذا الإجراء.';
+  String get deleteDataWarning => 'سيتم إزالة جميع السجل نهائيًا من قاعدة البيانات. لا يمكن التراجع عن هذا الإجراء.';
 
   @override
   String get about => 'حول';
@@ -300,7 +323,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get reportBugDialogTitle => 'هل ترغب في الإبلاغ عن خطأ؟';
 
   @override
-  String get reportBugDialogSubtitle => 'سيؤدي هذا إلى فتح صفحة المشكلات على GitHub حيث يمكنك وصف المشكلة التي واجهتها.';
+  String get reportBugDialogSubtitle => 'سيفتح هذا صفحة المشكلات الخاصة بنا على GitHub حيث يمكنك وصف المشكلة التي واجهتها.';
 
   @override
   String get cameraPermissionRequiredTitle => 'مطلوب إذن الكاميرا';
@@ -309,7 +332,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cameraPermissionRequiredSubtitle => 'مطلوب إذن الكاميرا لمسح رموز QR. يرجى السماح بالوصول.';
 
   @override
-  String get cameraPermissionDeniedTitle => 'تم رفض إذن الكاميرا بشكل دائم';
+  String get cameraPermissionDeniedTitle => 'تم رفض إذن الكاميرا نهائيًا';
 
   @override
   String get cameraPermissionDeniedSubtitle => 'مطلوب إذن الكاميرا لمسح رموز QR. يرجى السماح بالإذن من إعدادات التطبيق.';

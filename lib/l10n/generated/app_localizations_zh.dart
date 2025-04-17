@@ -9,6 +9,12 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
+  String get yes => '是';
+
+  @override
+  String get no => '否';
+
+  @override
   String get ok => '确定';
 
   @override
@@ -39,25 +45,25 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deleteItem => '删除项目';
 
   @override
-  String get deleteItemConfirm => '您确定要删除这个项目吗？';
+  String get deleteItemConfirm => '您确定要删除此项目吗？';
 
   @override
   String get confirm => '确认';
 
   @override
-  String get next => '下一个';
+  String get next => '下一步';
 
   @override
-  String get pickFromGallery => '从相册中选择';
+  String get pickFromGallery => '从图库选择';
 
   @override
   String get system => '系统';
 
   @override
-  String get light => '明亮';
+  String get light => '浅色';
 
   @override
-  String get dark => '黑暗';
+  String get dark => '深色';
 
   @override
   String get low => '低';
@@ -78,13 +84,24 @@ class AppLocalizationsZh extends AppLocalizations {
   String get yesterday => '昨天';
 
   @override
+  String itemCount(Object count) {
+    return '$count 项';
+  }
+
+  @override
+  String get deleteAllItems => '删除所有项目';
+
+  @override
+  String get deleteAllItemsWarning => '您确定要删除所有项目吗？';
+
+  @override
   String get home => '首页';
 
   @override
   String get history => '历史';
 
   @override
-  String get noHistory => '没有历史';
+  String get noHistory => '没有历史记录';
 
   @override
   String get settings => '设置';
@@ -93,13 +110,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get scanQRCodeTitle => '扫描二维码';
 
   @override
-  String get scanQRCodeSubtitle => '使用设备相机扫描二维码。';
+  String get scanQRCodeSubtitle => '使用您的设备摄像头扫描二维码。';
 
   @override
   String get scanImageTitle => '扫描图片';
 
   @override
-  String get scanImageSubtitle => '从图片中查找二维码。';
+  String get scanImageSubtitle => '从图片中识别二维码。';
 
   @override
   String get qrGeneratorTitle => '二维码生成器';
@@ -120,7 +137,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get subject => '主题';
 
   @override
-  String get body => '正文';
+  String get body => '内容';
 
   @override
   String get url => '网址';
@@ -132,7 +149,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get phone => '电话';
 
   @override
-  String get message => '信息';
+  String get message => '消息';
 
   @override
   String get sms => '短信';
@@ -144,49 +161,55 @@ class AppLocalizationsZh extends AppLocalizations {
   String get bgColorTitle => '背景颜色';
 
   @override
-  String get bgColorSubtitle => '选择与图案对比明显的颜色以确保清晰扫描。';
+  String get bgColorSubtitle => '选择对比强烈的颜色以增强可读性。';
 
   @override
   String get patternColorTitle => '图案颜色';
 
   @override
-  String get patternColorSubtitle => '选择图案的颜色（点）。使用深色以确保清晰扫描。';
+  String get patternColorSubtitle => '选择二维码点的颜色。深色更容易被识别。';
 
   @override
-  String get eyeColorTitle => '眼睛颜色';
+  String get eyeColorTitle => '定位点颜色';
 
   @override
-  String get eyeColorSubtitle => '选择二维码眼睛图案的颜色（角标）。';
+  String get eyeColorSubtitle => '选择二维码角落的颜色。';
 
   @override
-  String get addLogoTitle => '选择Logo';
+  String get addLogoTitle => '添加标志';
 
   @override
-  String get addLogoSubtitle => '在二维码中心添加您的自定义Logo。';
+  String get addLogoSubtitle => '在二维码中心添加您的标志。';
 
   @override
-  String get addLogoWarning => '添加Logo可能会导致扫描时可读性问题。';
+  String get addLogoWarning => '添加标志可能会降低二维码的可识别性。';
 
   @override
-  String get addLogoInvalidError => '请选择有效的Logo。';
+  String get addLogoInvalidError => '请选择有效的标志文件。';
+
+  @override
+  String get logoSizeTitle => '标志大小';
+
+  @override
+  String get logoSizeSubtitle => '选择标志的大小。';
 
   @override
   String get exportSizeTitle => '导出大小';
 
   @override
-  String get exportSizeSubtitle => '较大的尺寸提供更好的质量。';
+  String get exportSizeSubtitle => '尺寸越大，质量越好。';
 
   @override
   String get enableGapTitle => '启用间隙';
 
   @override
-  String get enableGapSubtitle => '允许图案之间有一定间隙。';
+  String get enableGapSubtitle => '在二维码点之间添加间隙。';
 
   @override
   String get patternShape => '图案形状';
 
   @override
-  String get eyeShape => '眼睛形状';
+  String get eyeShape => '定位点形状';
 
   @override
   String get square => '方形';
@@ -204,13 +227,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get qrSaved => '二维码已保存';
 
   @override
-  String get imageNotExists => '图片不存在。';
+  String get imageNotExists => '图像不存在。';
 
   @override
-  String get imagePickFailed => '选择图片失败';
+  String get imagePickFailed => '图片选择失败';
 
   @override
-  String get noQRFound => '未找到二维码。';
+  String get noQRFound => '未检测到二维码。';
 
   @override
   String get themeTitle => '主题';
@@ -237,16 +260,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get backupDataTitle => '备份数据';
 
   @override
-  String get backupDataSubtitle => '在设备中创建备份文件。';
+  String get backupDataSubtitle => '将数据备份到您的设备。';
 
   @override
   String get restoreDataTitle => '恢复数据';
 
   @override
-  String get restoreDataSubtitle => '从设备中恢复备份。';
+  String get restoreDataSubtitle => '从备份中恢复数据。';
 
   @override
-  String get restoreDataWarning => '此过程将覆盖现有数据。您确定要继续吗？';
+  String get restoreDataWarning => '这将覆盖现有数据。是否继续？';
 
   @override
   String get backupSuccess => '备份成功';
@@ -255,22 +278,22 @@ class AppLocalizationsZh extends AppLocalizations {
   String get backupFailed => '备份失败';
 
   @override
-  String get restoreSuccess => '备份恢复成功';
+  String get restoreSuccess => '恢复成功';
 
   @override
-  String get restoreFailed => '备份恢复失败';
+  String get restoreFailed => '恢复失败';
 
   @override
-  String get backupInvalidFile => '请选择一个有效的备份文件，扩展名为.db。';
+  String get backupInvalidFile => '请选择有效的 .db 备份文件。';
 
   @override
   String get deleteDataTitle => '删除数据';
 
   @override
-  String get deleteDataSubtitle => '清除扫描的项目数据。';
+  String get deleteDataSubtitle => '删除所有扫描历史记录。';
 
   @override
-  String get deleteDataWarning => '所有历史记录将从数据库中永久删除。此操作无法撤销。';
+  String get deleteDataWarning => '所有历史记录将被永久删除，无法恢复。';
 
   @override
   String get about => '关于';
@@ -279,46 +302,46 @@ class AppLocalizationsZh extends AppLocalizations {
   String get privacyPolicyTitle => '隐私政策';
 
   @override
-  String get privacyPolicySubtitle => '点击这里阅读我们的隐私政策。';
+  String get privacyPolicySubtitle => '点击查看我们的隐私政策。';
 
   @override
   String get licensesTitle => '许可证';
 
   @override
-  String get licensesSubtitle => '点击这里查看许可证。';
+  String get licensesSubtitle => '点击查看使用的许可证。';
 
   @override
   String get reportBugTitle => '报告错误';
 
   @override
-  String get reportBugSubtitle => '在GitHub上报告错误。';
+  String get reportBugSubtitle => '在 GitHub 上报告错误。';
 
   @override
   String get reportBugDialogHeading => '报告错误';
 
   @override
-  String get reportBugDialogTitle => '您想要报告一个错误吗？';
+  String get reportBugDialogTitle => '是否要报告错误？';
 
   @override
-  String get reportBugDialogSubtitle => '这将打开我们的GitHub问题页面，您可以在其中描述遇到的问题。';
+  String get reportBugDialogSubtitle => '这将打开 GitHub 的问题页面，您可以在此描述错误。';
 
   @override
   String get cameraPermissionRequiredTitle => '需要相机权限';
 
   @override
-  String get cameraPermissionRequiredSubtitle => '扫描二维码需要相机权限。请允许访问。';
+  String get cameraPermissionRequiredSubtitle => '需要授予相机权限才能扫描二维码。';
 
   @override
   String get cameraPermissionDeniedTitle => '相机权限已被永久拒绝';
 
   @override
-  String get cameraPermissionDeniedSubtitle => '扫描二维码需要相机权限。请从应用设置中允许权限。';
+  String get cameraPermissionDeniedSubtitle => '请在应用设置中手动启用相机权限。';
 
   @override
   String get openSettings => '打开设置';
 
   @override
-  String get openSettingsError => '无法打开设置，请手动打开。';
+  String get openSettingsError => '无法打开设置，请手动操作。';
 
   @override
   String get allowPermission => '允许权限';

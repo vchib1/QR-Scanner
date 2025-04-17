@@ -19,6 +19,7 @@ import 'app_localizations_mr.dart';
 import 'app_localizations_pt.dart';
 import 'app_localizations_ru.dart';
 import 'app_localizations_ta.dart';
+import 'app_localizations_te.dart';
 import 'app_localizations_ur.dart';
 import 'app_localizations_zh.dart';
 
@@ -119,9 +120,22 @@ abstract class AppLocalizations {
     Locale('pt'),
     Locale('ru'),
     Locale('ta'),
+    Locale('te'),
     Locale('ur'),
     Locale('zh')
   ];
+
+  /// No description provided for @yes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get yes;
+
+  /// No description provided for @no.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get no;
 
   /// No description provided for @ok.
   ///
@@ -260,6 +274,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Yesterday'**
   String get yesterday;
+
+  /// No description provided for @itemCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} items'**
+  String itemCount(Object count);
+
+  /// No description provided for @deleteAllItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete All Items'**
+  String get deleteAllItems;
+
+  /// No description provided for @deleteAllItemsWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete all items?'**
+  String get deleteAllItemsWarning;
 
   /// No description provided for @home.
   ///
@@ -446,6 +478,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please pick a valid logo.'**
   String get addLogoInvalidError;
+
+  /// No description provided for @logoSizeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Logo Size'**
+  String get logoSizeTitle;
+
+  /// No description provided for @logoSizeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a size for the logo.'**
+  String get logoSizeSubtitle;
 
   /// No description provided for @exportSizeTitle.
   ///
@@ -763,7 +807,7 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['ar', 'bn', 'de', 'en', 'es', 'fr', 'hi', 'it', 'ja', 'ko', 'mr', 'pt', 'ru', 'ta', 'ur', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['ar', 'bn', 'de', 'en', 'es', 'fr', 'hi', 'it', 'ja', 'ko', 'mr', 'pt', 'ru', 'ta', 'te', 'ur', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -788,6 +832,7 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
     case 'pt': return AppLocalizationsPt();
     case 'ru': return AppLocalizationsRu();
     case 'ta': return AppLocalizationsTa();
+    case 'te': return AppLocalizationsTe();
     case 'ur': return AppLocalizationsUr();
     case 'zh': return AppLocalizationsZh();
   }

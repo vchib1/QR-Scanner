@@ -1,4 +1,4 @@
-enum QrSize {
+enum QRSize {
   xs(100),
   s(150),
   m(200),
@@ -7,12 +7,12 @@ enum QrSize {
 
   final double value;
 
-  const QrSize(this.value);
+  const QRSize(this.value);
 
-  static QrSize parseValue(double value) {
-    return QrSize.values.firstWhere(
+  static QRSize parseValue(double value) {
+    return QRSize.values.firstWhere(
       (e) => (e.value == value),
-      orElse: () => QrSize.m,
+      orElse: () => QRSize.m,
     );
   }
 }

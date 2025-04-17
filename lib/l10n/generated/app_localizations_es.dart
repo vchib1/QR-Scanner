@@ -9,6 +9,12 @@ class AppLocalizationsEs extends AppLocalizations {
   AppLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
+  String get yes => 'Sí';
+
+  @override
+  String get no => 'No';
+
+  @override
   String get ok => 'OK';
 
   @override
@@ -21,7 +27,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get open => 'Abrir';
 
   @override
-  String get proceed => 'Continuar';
+  String get proceed => 'Proceder';
 
   @override
   String get share => 'Compartir';
@@ -36,10 +42,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get delete => 'Eliminar';
 
   @override
-  String get deleteItem => 'Eliminar elemento';
+  String get deleteItem => 'Eliminar artículo';
 
   @override
-  String get deleteItemConfirm => '¿Estás seguro de que deseas eliminar este elemento?';
+  String get deleteItemConfirm => '¿Estás seguro de que deseas eliminar este artículo?';
 
   @override
   String get confirm => 'Confirmar';
@@ -48,7 +54,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get next => 'Siguiente';
 
   @override
-  String get pickFromGallery => 'Elegir de la galería';
+  String get pickFromGallery => 'Seleccionar desde la galería';
 
   @override
   String get system => 'Sistema';
@@ -69,7 +75,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get high => 'Alto';
 
   @override
-  String get app => 'App';
+  String get app => 'Aplicación';
 
   @override
   String get today => 'Hoy';
@@ -78,13 +84,24 @@ class AppLocalizationsEs extends AppLocalizations {
   String get yesterday => 'Ayer';
 
   @override
+  String itemCount(Object count) {
+    return '$count artículos';
+  }
+
+  @override
+  String get deleteAllItems => 'Eliminar todos los artículos';
+
+  @override
+  String get deleteAllItemsWarning => '¿Estás seguro de que deseas eliminar todos los artículos?';
+
+  @override
   String get home => 'Inicio';
 
   @override
   String get history => 'Historial';
 
   @override
-  String get noHistory => 'Sin historial';
+  String get noHistory => 'No hay historial';
 
   @override
   String get settings => 'Configuración';
@@ -93,7 +110,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get scanQRCodeTitle => 'Escanear código QR';
 
   @override
-  String get scanQRCodeSubtitle => 'Escanea un código QR usando la cámara del dispositivo.';
+  String get scanQRCodeSubtitle => 'Usa la cámara del dispositivo para escanear un código QR.';
 
   @override
   String get scanImageTitle => 'Escanear imagen';
@@ -120,13 +137,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get subject => 'Asunto';
 
   @override
-  String get body => 'Mensaje';
+  String get body => 'Cuerpo';
 
   @override
   String get url => 'URL';
 
   @override
-  String get urlError => 'Por favor ingresa una URL válida.';
+  String get urlError => 'Por favor, ingresa una URL válida.';
 
   @override
   String get phone => 'Teléfono';
@@ -144,7 +161,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get bgColorTitle => 'Color de fondo';
 
   @override
-  String get bgColorSubtitle => 'Elige un color que contraste con el patrón para garantizar una lectura clara.';
+  String get bgColorSubtitle => 'Elige un color que contraste con el patrón para asegurar un escaneo claro.';
 
   @override
   String get patternColorTitle => 'Color del patrón';
@@ -153,40 +170,46 @@ class AppLocalizationsEs extends AppLocalizations {
   String get patternColorSubtitle => 'Elige un color para el patrón (puntos). Usa un color oscuro para un escaneo claro.';
 
   @override
-  String get eyeColorTitle => 'Color del ojo';
+  String get eyeColorTitle => 'Color de los ojos';
 
   @override
-  String get eyeColorSubtitle => 'Elige un color para los ojos del código QR (marcadores de esquina).';
+  String get eyeColorSubtitle => 'Elige un color para el patrón ocular (marcadores de esquina).';
 
   @override
-  String get addLogoTitle => 'Elegir logotipo';
+  String get addLogoTitle => 'Agregar logo';
 
   @override
-  String get addLogoSubtitle => 'Agrega tu logotipo personalizado en el centro del código QR.';
+  String get addLogoSubtitle => 'Agrega tu logo personalizado en el centro del QR.';
 
   @override
-  String get addLogoWarning => 'Agregar un logotipo puede dificultar la lectura del código.';
+  String get addLogoWarning => 'Agregar un logo podría causar problemas de legibilidad al escanear.';
 
   @override
-  String get addLogoInvalidError => 'Por favor, elige un logotipo válido.';
+  String get addLogoInvalidError => 'Por favor, selecciona un logo válido.';
+
+  @override
+  String get logoSizeTitle => 'Tamaño del logo';
+
+  @override
+  String get logoSizeSubtitle => 'Elige un tamaño para el logo.';
 
   @override
   String get exportSizeTitle => 'Tamaño de exportación';
 
   @override
-  String get exportSizeSubtitle => 'Un tamaño mayor proporciona mejor calidad.';
+  String get exportSizeSubtitle => 'El tamaño más grande ofrece mejor calidad.';
 
   @override
-  String get enableGapTitle => 'Activar espacio';
+  String get enableGapTitle => 'Habilitar espacio';
 
   @override
-  String get enableGapSubtitle => 'Permite que el patrón tenga espacio entre sus partes.';
+  String get enableGapSubtitle => 'Permite que el patrón tenga un espacio entre los puntos.';
 
   @override
   String get patternShape => 'Forma del patrón';
 
   @override
-  String get eyeShape => 'Forma del ojo';
+  String get eyeShape => 'Forma de los ojos';
 
   @override
   String get square => 'Cuadrado';
@@ -210,7 +233,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get imagePickFailed => 'No se pudo seleccionar la imagen';
 
   @override
-  String get noQRFound => 'No se encontró ningún QR.';
+  String get noQRFound => 'No se encontró un QR.';
 
   @override
   String get themeTitle => 'Tema';
@@ -234,43 +257,43 @@ class AppLocalizationsEs extends AppLocalizations {
   String get data => 'Datos';
 
   @override
-  String get backupDataTitle => 'Hacer copia de seguridad';
+  String get backupDataTitle => 'Respaldar datos';
 
   @override
-  String get backupDataSubtitle => 'Crear un archivo de respaldo en tu dispositivo.';
+  String get backupDataSubtitle => 'Crea un archivo de respaldo en tu dispositivo.';
 
   @override
   String get restoreDataTitle => 'Restaurar datos';
 
   @override
-  String get restoreDataSubtitle => 'Restaurar copia de seguridad desde tu dispositivo.';
+  String get restoreDataSubtitle => 'Restaurar un respaldo desde tu dispositivo.';
 
   @override
-  String get restoreDataWarning => 'Este proceso sobrescribirá los datos existentes. ¿Estás seguro de continuar?';
+  String get restoreDataWarning => 'Este proceso sobrescribirá los datos existentes. ¿Estás seguro de que deseas continuar?';
 
   @override
-  String get backupSuccess => 'Copia de seguridad exitosa';
+  String get backupSuccess => 'Respaldo exitoso';
 
   @override
-  String get backupFailed => 'Error al hacer copia de seguridad';
+  String get backupFailed => 'Fallo en el respaldo';
 
   @override
-  String get restoreSuccess => 'Copia de seguridad restaurada exitosamente';
+  String get restoreSuccess => 'Restauración exitosa';
 
   @override
-  String get restoreFailed => 'Fallo al restaurar la copia de seguridad';
+  String get restoreFailed => 'Fallo en la restauración';
 
   @override
-  String get backupInvalidFile => 'Por favor, elige un archivo de respaldo válido con extensión .db.';
+  String get backupInvalidFile => 'Por favor, selecciona un archivo de respaldo válido con extensión .db.';
 
   @override
   String get deleteDataTitle => 'Eliminar datos';
 
   @override
-  String get deleteDataSubtitle => 'Borrar datos de elementos escaneados.';
+  String get deleteDataSubtitle => 'Eliminar todos los datos escaneados.';
 
   @override
-  String get deleteDataWarning => 'Todo el historial se eliminará permanentemente. Esta acción no se puede deshacer.';
+  String get deleteDataWarning => 'Todo el historial se eliminará permanentemente de la base de datos. Esta acción no puede deshacerse.';
 
   @override
   String get about => 'Acerca de';
@@ -288,19 +311,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get licensesSubtitle => 'Haz clic aquí para ver las licencias.';
 
   @override
-  String get reportBugTitle => 'Reportar error';
+  String get reportBugTitle => 'Reportar un error';
 
   @override
-  String get reportBugSubtitle => 'Reportar un error en GitHub.';
+  String get reportBugSubtitle => 'Reporta un error en GitHub.';
 
   @override
   String get reportBugDialogHeading => 'Reportar un error';
 
   @override
-  String get reportBugDialogTitle => '¿Deseas reportar un error?';
+  String get reportBugDialogTitle => '¿Te gustaría reportar un error?';
 
   @override
-  String get reportBugDialogSubtitle => 'Esto abrirá nuestra página de problemas en GitHub donde puedes describir el problema que encontraste.';
+  String get reportBugDialogSubtitle => 'Esto abrirá nuestra página de problemas en GitHub donde podrás describir el problema que encontraste.';
 
   @override
   String get cameraPermissionRequiredTitle => 'Permiso de cámara requerido';
@@ -309,16 +332,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get cameraPermissionRequiredSubtitle => 'Se requiere permiso de cámara para escanear códigos QR. Por favor, permite el acceso.';
 
   @override
-  String get cameraPermissionDeniedTitle => 'Permiso de cámara denegado permanentemente';
+  String get cameraPermissionDeniedTitle => 'Permiso de cámara permanentemente denegado';
 
   @override
-  String get cameraPermissionDeniedSubtitle => 'Se requiere permiso de cámara para escanear códigos QR. Activa el permiso desde los ajustes de la app.';
+  String get cameraPermissionDeniedSubtitle => 'Se requiere permiso de cámara para escanear códigos QR. Por favor, permite el acceso desde la configuración de la app.';
 
   @override
   String get openSettings => 'Abrir configuración';
 
   @override
-  String get openSettingsError => 'No se pudo abrir la configuración. Ábrela manualmente.';
+  String get openSettingsError => 'No se pudo abrir la configuración. Por favor, abre manualmente.';
 
   @override
   String get allowPermission => 'Permitir permiso';

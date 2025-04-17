@@ -9,6 +9,12 @@ class AppLocalizationsJa extends AppLocalizations {
   AppLocalizationsJa([String locale = 'ja']) : super(locale);
 
   @override
+  String get yes => 'はい';
+
+  @override
+  String get no => 'いいえ';
+
+  @override
   String get ok => 'OK';
 
   @override
@@ -36,10 +42,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get delete => '削除';
 
   @override
-  String get deleteItem => '項目を削除';
+  String get deleteItem => 'アイテムを削除';
 
   @override
-  String get deleteItemConfirm => 'この項目を削除してもよろしいですか？';
+  String get deleteItemConfirm => 'このアイテムを削除してもよろしいですか？';
 
   @override
   String get confirm => '確認';
@@ -78,6 +84,17 @@ class AppLocalizationsJa extends AppLocalizations {
   String get yesterday => '昨日';
 
   @override
+  String itemCount(Object count) {
+    return '$count 件';
+  }
+
+  @override
+  String get deleteAllItems => 'すべてのアイテムを削除';
+
+  @override
+  String get deleteAllItemsWarning => 'すべてのアイテムを削除してもよろしいですか？';
+
+  @override
   String get home => 'ホーム';
 
   @override
@@ -93,19 +110,19 @@ class AppLocalizationsJa extends AppLocalizations {
   String get scanQRCodeTitle => 'QRコードをスキャン';
 
   @override
-  String get scanQRCodeSubtitle => 'カメラを使ってQRコードをスキャンします。';
+  String get scanQRCodeSubtitle => 'デバイスのカメラを使用してQRコードをスキャンします。';
 
   @override
   String get scanImageTitle => '画像をスキャン';
 
   @override
-  String get scanImageSubtitle => '画像内のQRコードを探します。';
+  String get scanImageSubtitle => '画像からQRコードを検出します。';
 
   @override
-  String get qrGeneratorTitle => 'QRコード生成';
+  String get qrGeneratorTitle => 'QRコード生成器';
 
   @override
-  String get qrGeneratorSubtitle => 'カスタムQRコードを作成します。';
+  String get qrGeneratorSubtitle => '自分だけのQRコードを作成します。';
 
   @override
   String get text => 'テキスト';
@@ -129,7 +146,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get urlError => '有効なURLを入力してください。';
 
   @override
-  String get phone => '電話';
+  String get phone => '電話番号';
 
   @override
   String get message => 'メッセージ';
@@ -138,55 +155,61 @@ class AppLocalizationsJa extends AppLocalizations {
   String get sms => 'SMS';
 
   @override
-  String get qrEditor => 'QRエディター';
+  String get qrEditor => 'QRコードエディター';
 
   @override
   String get bgColorTitle => '背景色';
 
   @override
-  String get bgColorSubtitle => 'スキャンしやすいように、パターンと対照的な色を選択してください。';
+  String get bgColorSubtitle => '可読性を高めるにはコントラストの高い色を選択してください。';
 
   @override
   String get patternColorTitle => 'パターンの色';
 
   @override
-  String get patternColorSubtitle => 'パターン（ドット）の色。濃い色を選ぶとスキャンしやすくなります。';
+  String get patternColorSubtitle => 'QRコードのドットの色を選択します。濃い色が推奨されます。';
 
   @override
-  String get eyeColorTitle => 'コーナーの色';
+  String get eyeColorTitle => 'アイの色';
 
   @override
-  String get eyeColorSubtitle => 'QRコードの四隅の色。';
+  String get eyeColorSubtitle => 'QRコードの角の部分の色を選択します。';
 
   @override
-  String get addLogoTitle => 'ロゴを選択';
+  String get addLogoTitle => 'ロゴを追加';
 
   @override
-  String get addLogoSubtitle => '中央にカスタムロゴを追加します。';
+  String get addLogoSubtitle => 'QRコードの中央にロゴを追加します。';
 
   @override
-  String get addLogoWarning => 'ロゴを追加するとスキャンに影響する可能性があります。';
+  String get addLogoWarning => 'ロゴを追加すると、QRコードの読み取り精度が下がる場合があります。';
 
   @override
-  String get addLogoInvalidError => '有効なロゴを選択してください。';
+  String get addLogoInvalidError => '有効なロゴファイルを選択してください。';
 
   @override
-  String get exportSizeTitle => '出力サイズ';
+  String get logoSizeTitle => 'ロゴのサイズ';
 
   @override
-  String get exportSizeSubtitle => '大きいサイズの方が高品質になります。';
+  String get logoSizeSubtitle => 'ロゴの大きさを選択します。';
 
   @override
-  String get enableGapTitle => '間隔を有効にする';
+  String get exportSizeTitle => 'エクスポートサイズ';
 
   @override
-  String get enableGapSubtitle => 'パターン間のスペースを有効にします。';
+  String get exportSizeSubtitle => '大きいサイズほど高画質になります。';
 
   @override
-  String get patternShape => 'パターンの形';
+  String get enableGapTitle => 'ギャップを有効にする';
 
   @override
-  String get eyeShape => 'コーナーの形';
+  String get enableGapSubtitle => 'QRコードのドットの間にギャップを追加します。';
+
+  @override
+  String get patternShape => 'パターンの形状';
+
+  @override
+  String get eyeShape => 'アイの形状';
 
   @override
   String get square => '四角形';
@@ -195,13 +218,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get circle => '円形';
 
   @override
-  String get saveQR => 'QRを保存';
+  String get saveQR => 'QRコードを保存';
 
   @override
-  String get shareQR => 'QRを共有';
+  String get shareQR => 'QRコードを共有';
 
   @override
-  String get qrSaved => 'QRを保存しました';
+  String get qrSaved => 'QRコードを保存しました';
 
   @override
   String get imageNotExists => '画像が存在しません。';
@@ -222,13 +245,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get contrastTitle => 'コントラスト';
 
   @override
-  String get contrastSubtitle => 'テーマのコントラスト';
+  String get contrastSubtitle => 'テーマのコントラスト設定';
 
   @override
   String get languageTitle => '言語';
 
   @override
-  String get languageSubtitle => '使用する言語を選択してください';
+  String get languageSubtitle => '希望の言語を選択してください';
 
   @override
   String get data => 'データ';
@@ -237,13 +260,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get backupDataTitle => 'データのバックアップ';
 
   @override
-  String get backupDataSubtitle => '端末にバックアップファイルを作成します。';
+  String get backupDataSubtitle => 'デバイスにデータをバックアップします。';
 
   @override
-  String get restoreDataTitle => 'データを復元';
+  String get restoreDataTitle => 'データの復元';
 
   @override
-  String get restoreDataSubtitle => '端末からバックアップを復元します。';
+  String get restoreDataSubtitle => 'バックアップからデータを復元します。';
 
   @override
   String get restoreDataWarning => '現在のデータが上書きされます。続行しますか？';
@@ -261,31 +284,31 @@ class AppLocalizationsJa extends AppLocalizations {
   String get restoreFailed => '復元に失敗しました';
 
   @override
-  String get backupInvalidFile => '.db拡張子の有効なバックアップファイルを選択してください';
+  String get backupInvalidFile => '有効な .db バックアップファイルを選択してください。';
 
   @override
-  String get deleteDataTitle => 'データを削除';
+  String get deleteDataTitle => 'データの削除';
 
   @override
-  String get deleteDataSubtitle => 'スキャンしたデータを削除します。';
+  String get deleteDataSubtitle => 'すべての履歴を削除します。';
 
   @override
-  String get deleteDataWarning => '履歴が完全に削除されます。この操作は取り消せません。';
+  String get deleteDataWarning => 'すべての履歴が永久に削除され、元に戻すことはできません。';
 
   @override
-  String get about => 'アプリ情報';
+  String get about => 'アバウト';
 
   @override
   String get privacyPolicyTitle => 'プライバシーポリシー';
 
   @override
-  String get privacyPolicySubtitle => 'クリックしてプライバシーポリシーを確認してください。';
+  String get privacyPolicySubtitle => 'プライバシーポリシーをご覧ください。';
 
   @override
   String get licensesTitle => 'ライセンス';
 
   @override
-  String get licensesSubtitle => 'クリックしてライセンスを確認してください。';
+  String get licensesSubtitle => '使用中のライセンスをご覧ください。';
 
   @override
   String get reportBugTitle => 'バグを報告';
@@ -294,25 +317,25 @@ class AppLocalizationsJa extends AppLocalizations {
   String get reportBugSubtitle => 'GitHubでバグを報告します。';
 
   @override
-  String get reportBugDialogHeading => 'バグ報告';
+  String get reportBugDialogHeading => 'バグを報告';
 
   @override
   String get reportBugDialogTitle => 'バグを報告しますか？';
 
   @override
-  String get reportBugDialogSubtitle => 'GitHubのページに移動し、問題を報告できます。';
+  String get reportBugDialogSubtitle => 'GitHubのIssueページが開きます。詳細を記入してください。';
 
   @override
   String get cameraPermissionRequiredTitle => 'カメラの許可が必要です';
 
   @override
-  String get cameraPermissionRequiredSubtitle => 'QRコードをスキャンするにはカメラの許可が必要です。許可してください。';
+  String get cameraPermissionRequiredSubtitle => 'QRコードをスキャンするにはカメラの許可が必要です。';
 
   @override
   String get cameraPermissionDeniedTitle => 'カメラの許可が永久に拒否されました';
 
   @override
-  String get cameraPermissionDeniedSubtitle => 'QRコードをスキャンするにはカメラの許可が必要です。アプリの設定から許可を有効にしてください。';
+  String get cameraPermissionDeniedSubtitle => 'アプリの設定でカメラの許可を手動で有効にしてください。';
 
   @override
   String get openSettings => '設定を開く';

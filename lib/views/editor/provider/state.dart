@@ -1,4 +1,5 @@
 import 'package:ez_qr/utils/enums/qr_logo_size.dart';
+import 'package:ez_qr/utils/enums/qr_size.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -13,6 +14,7 @@ class QREditState {
   final bool allowGap;
   final Uint8List? selectedLogo;
   final QRLogoSize logoSize;
+  final QRSize qrSize;
 
   const QREditState({
     required this.bgColor,
@@ -24,6 +26,7 @@ class QREditState {
     required this.allowGap,
     required this.selectedLogo,
     required this.logoSize,
+    required this.qrSize,
   });
 
   const QREditState.init({
@@ -35,7 +38,8 @@ class QREditState {
     this.version = QrVersions.min,
     this.allowGap = true,
     this.selectedLogo,
-    this.logoSize = QRLogoSize.medium,
+    this.logoSize = QRLogoSize.m,
+    this.qrSize = QRSize.l,
   });
 
   QREditState copyWith({
@@ -47,6 +51,7 @@ class QREditState {
     int? version,
     bool? allowGap,
     QRLogoSize? logoSize,
+    QRSize? qrSize,
     Uint8List? selectedLogo,
     bool clearLogo = false,
   }) => QREditState(
@@ -58,6 +63,7 @@ class QREditState {
     version: version ?? this.version,
     allowGap: allowGap ?? this.allowGap,
     logoSize: logoSize ?? this.logoSize,
+    qrSize: qrSize ?? this.qrSize,
     selectedLogo: clearLogo ? null : (selectedLogo ?? this.selectedLogo),
   );
 }

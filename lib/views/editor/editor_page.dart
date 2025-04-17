@@ -28,8 +28,6 @@ class EditorPage extends ConsumerStatefulWidget {
 }
 
 class _EditorPageState extends ConsumerState<EditorPage> {
-  QrSize qrSize = QrSize.m;
-
   /// Save QR code image to device
   Future<bool> saveQRImage() async {
     try {
@@ -72,7 +70,6 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     if (result == null) return;
 
     final imgPath = result["image"];
-    //final size = result["size"];
 
     if (imgPath == null && mounted) {
       SnackBarUtils.showErrorBar(context.locale.addLogoInvalidError);
@@ -80,7 +77,6 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     }
 
     File file = File(imgPath as String);
-    //QRLogoSize logoSize = size as QRLogoSize;
 
     Uint8List bytes = await file.readAsBytes();
 
@@ -93,7 +89,6 @@ class _EditorPageState extends ConsumerState<EditorPage> {
 
   Future<Map<String, dynamic>?> showLogoPickerModal() async {
     String? imgPath;
-    QRLogoSize logoSize = QRLogoSize.medium;
 
     final result = await showModalBottomSheet(
       context: context,
@@ -139,10 +134,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                   title: Text(context.locale.confirm),
                   leading: const Icon(Icons.check),
                   onTap: () {
-                    Navigator.pop(context, {
-                      "image": imgPath,
-                      "size": logoSize,
-                    });
+                    Navigator.pop(context, {"image": imgPath});
                   },
                 ),
               ],
@@ -190,7 +182,10 @@ class _EditorPageState extends ConsumerState<EditorPage> {
               padding: const EdgeInsets.symmetric(vertical: 24.0),
               alignment: Alignment.center,
               color: Theme.of(context).colorScheme.surface,
-              child: SizedBox.square(dimension: 200, child: _buildQRView(200)),
+              child: SizedBox.square(
+                dimension: state.qrSize.value,
+                child: Center(child: _buildQRView()),
+              ),
             ),
 
             Expanded(
@@ -253,14 +248,18 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                         trailing: _buildColoredBox(context, state.eyeColor),
                       ),
 
-                      // Background Color
+                      // Add Logo
                       ListTile(
                         onTap: processLogo,
                         title: Text(context.locale.addLogoTitle),
                         subtitle: Text(context.locale.addLogoSubtitle),
                         trailing:
-                            state.selectedLogo != null
+                            (state.selectedLogo != null)
                                 ? IconButton(
+                                  visualDensity: const VisualDensity(
+                                    horizontal: -4,
+                                    vertical: -4,
+                                  ),
                                   onPressed: () {
                                     provider.changeState(
                                       state.copyWith(clearLogo: true),
@@ -269,6 +268,39 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                                   icon: const Icon(Icons.delete),
                                 )
                                 : const Icon(Icons.image_outlined),
+                      ),
+
+                      // Logo Size
+                      ListTile(
+                        enabled: (state.selectedLogo != null),
+                        onTap: processLogo,
+                        title: Text(context.locale.logoSizeTitle),
+                        subtitle: Text(context.locale.logoSizeSubtitle),
+                        trailing: SizedBox(
+                          width: MediaQuery.sizeOf(context).width * .40,
+                          child: Slider(
+                            padding: const EdgeInsets.symmetric(vertical: 0.0),
+                            //ignore: deprecated_member_use
+                            year2023: false,
+                            value: state.logoSize.size,
+                            label: state.logoSize.name.toUpperCase(),
+                            min: QRLogoSize.values.first.size,
+                            max: QRLogoSize.values.last.size,
+                            divisions: QRLogoSize.values.length - 1,
+                            onChanged:
+                                (state.selectedLogo != null)
+                                    ? (double newValue) {
+                                      provider.changeState(
+                                        state.copyWith(
+                                          logoSize: QRLogoSize.parseValue(
+                                            newValue,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    : null,
+                          ),
+                        ),
                       ),
 
                       // Export Size
@@ -282,15 +314,17 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                             padding: const EdgeInsets.symmetric(vertical: 0.0),
                             //ignore: deprecated_member_use
                             year2023: false,
-                            value: qrSize.value,
-                            label: qrSize.name.toUpperCase(),
-                            min: QrSize.values.first.value,
-                            max: QrSize.values.last.value,
-                            divisions: QrSize.values.length - 1,
+                            value: state.qrSize.value,
+                            label: state.qrSize.name.toUpperCase(),
+                            min: QRSize.values.first.value,
+                            max: QRSize.values.last.value,
+                            divisions: QRSize.values.length - 1,
                             onChanged: (double newValue) {
-                              setState(() {
-                                qrSize = QrSize.parseValue(newValue);
-                              });
+                              provider.changeState(
+                                state.copyWith(
+                                  qrSize: QRSize.parseValue(newValue),
+                                ),
+                              );
                             },
                           ),
                         ),
@@ -383,16 +417,16 @@ class _EditorPageState extends ConsumerState<EditorPage> {
       withLogo: state.selectedLogo != null,
     );
 
+    final logoSize = (size ?? state.qrSize.value) * (state.logoSize.size / 100);
+
     return QrImageView(
       data: widget.qrData,
       errorCorrectionLevel: config.errorCorrectionLevel,
       version: config.version,
-      size: size ?? qrSize.value,
+      size: size ?? state.qrSize.value,
       gapless: !state.allowGap,
       backgroundColor: state.bgColor,
-      embeddedImageStyle: QrEmbeddedImageStyle(
-        size: Size.square(state.logoSize.size),
-      ),
+      embeddedImageStyle: QrEmbeddedImageStyle(size: Size.square(logoSize)),
       embeddedImage:
           state.selectedLogo != null ? MemoryImage(state.selectedLogo!) : null,
       dataModuleStyle: QrDataModuleStyle(

@@ -14,6 +14,7 @@ enum AppLanguage {
   russian('ru'),
   spanish('es'),
   tamil('ta'),
+  telugu('te'),
   urdu('ur');
 
   final String code;

@@ -9,7 +9,13 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
-  String get ok => 'OK';
+  String get yes => 'Да';
+
+  @override
+  String get no => 'Нет';
+
+  @override
+  String get ok => 'ОК';
 
   @override
   String get cancel => 'Отмена';
@@ -48,10 +54,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get next => 'Далее';
 
   @override
-  String get pickFromGallery => 'выбрать из галереи';
+  String get pickFromGallery => 'Выбрать из галереи';
 
   @override
-  String get system => 'Системная';
+  String get system => 'Система';
 
   @override
   String get light => 'Светлая';
@@ -78,13 +84,24 @@ class AppLocalizationsRu extends AppLocalizations {
   String get yesterday => 'Вчера';
 
   @override
+  String itemCount(Object count) {
+    return '$count элементов';
+  }
+
+  @override
+  String get deleteAllItems => 'Удалить все элементы';
+
+  @override
+  String get deleteAllItemsWarning => 'Вы уверены, что хотите удалить все элементы?';
+
+  @override
   String get home => 'Главная';
 
   @override
   String get history => 'История';
 
   @override
-  String get noHistory => 'Нет истории';
+  String get noHistory => 'История пуста';
 
   @override
   String get settings => 'Настройки';
@@ -93,19 +110,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String get scanQRCodeTitle => 'Сканировать QR-код';
 
   @override
-  String get scanQRCodeSubtitle => 'Сканируйте QR с помощью камеры устройства.';
+  String get scanQRCodeSubtitle => 'Используйте камеру устройства для сканирования QR-кода.';
 
   @override
   String get scanImageTitle => 'Сканировать изображение';
 
   @override
-  String get scanImageSubtitle => 'Найти QR-коды на изображении.';
+  String get scanImageSubtitle => 'Искать QR-коды в изображении.';
 
   @override
   String get qrGeneratorTitle => 'Генератор QR';
 
   @override
-  String get qrGeneratorSubtitle => 'Создайте свой собственный QR-код.';
+  String get qrGeneratorSubtitle => 'Создайте собственный QR-код.';
 
   @override
   String get text => 'Текст';
@@ -123,10 +140,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get body => 'Сообщение';
 
   @override
-  String get url => 'Url';
+  String get url => 'URL';
 
   @override
-  String get urlError => 'Пожалуйста, введите корректный URL.';
+  String get urlError => 'Введите действительный URL.';
 
   @override
   String get phone => 'Телефон';
@@ -144,49 +161,55 @@ class AppLocalizationsRu extends AppLocalizations {
   String get bgColorTitle => 'Цвет фона';
 
   @override
-  String get bgColorSubtitle => 'Выберите цвет, контрастирующий с узором для обеспечения четкого сканирования.';
+  String get bgColorSubtitle => 'Выберите контрастный цвет для фона для лучшей читаемости.';
 
   @override
-  String get patternColorTitle => 'Цвет узора';
+  String get patternColorTitle => 'Цвет шаблона';
 
   @override
-  String get patternColorSubtitle => 'Выберите цвет для узора (точек). Используйте тёмный цвет для четкого сканирования.';
+  String get patternColorSubtitle => 'Выберите цвет для точек QR. Тёмные цвета предпочтительнее.';
 
   @override
-  String get eyeColorTitle => 'Цвет углов';
+  String get eyeColorTitle => 'Цвет глаз';
 
   @override
-  String get eyeColorSubtitle => 'Выберите цвет для углов QR-кода (угловых маркеров).';
+  String get eyeColorSubtitle => 'Выберите цвет углов QR-кода.';
 
   @override
-  String get addLogoTitle => 'Выбрать логотип';
+  String get addLogoTitle => 'Добавить логотип';
 
   @override
   String get addLogoSubtitle => 'Добавьте свой логотип в центр QR-кода.';
 
   @override
-  String get addLogoWarning => 'Добавление логотипа может вызвать проблемы с читаемостью при сканировании.';
+  String get addLogoWarning => 'Добавление логотипа может затруднить сканирование кода.';
 
   @override
-  String get addLogoInvalidError => 'Пожалуйста, выберите корректный логотип.';
+  String get addLogoInvalidError => 'Выберите допустимый логотип.';
+
+  @override
+  String get logoSizeTitle => 'Размер логотипа';
+
+  @override
+  String get logoSizeSubtitle => 'Выберите размер логотипа.';
 
   @override
   String get exportSizeTitle => 'Размер экспорта';
 
   @override
-  String get exportSizeSubtitle => 'Больший размер обеспечивает лучшее качество.';
+  String get exportSizeSubtitle => 'Больший размер — лучшее качество.';
 
   @override
-  String get enableGapTitle => 'Включить отступ';
+  String get enableGapTitle => 'Включить промежутки';
 
   @override
-  String get enableGapSubtitle => 'Позволяет узору иметь небольшой отступ между элементами.';
+  String get enableGapSubtitle => 'Добавить промежутки между точками шаблона.';
 
   @override
-  String get patternShape => 'Форма узора';
+  String get patternShape => 'Форма шаблона';
 
   @override
-  String get eyeShape => 'Форма углов';
+  String get eyeShape => 'Форма глаз';
 
   @override
   String get square => 'Квадрат';
@@ -201,7 +224,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get shareQR => 'Поделиться QR';
 
   @override
-  String get qrSaved => 'QR сохранен';
+  String get qrSaved => 'QR сохранён';
 
   @override
   String get imageNotExists => 'Изображение не существует.';
@@ -222,7 +245,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get contrastTitle => 'Контраст';
 
   @override
-  String get contrastSubtitle => 'Контраст темы';
+  String get contrastSubtitle => 'Контрастность темы';
 
   @override
   String get languageTitle => 'Язык';
@@ -237,40 +260,40 @@ class AppLocalizationsRu extends AppLocalizations {
   String get backupDataTitle => 'Резервное копирование';
 
   @override
-  String get backupDataSubtitle => 'Создайте резервную копию данных на вашем устройстве.';
+  String get backupDataSubtitle => 'Создать резервную копию данных на устройстве.';
 
   @override
-  String get restoreDataTitle => 'Восстановление данных';
+  String get restoreDataTitle => 'Восстановить данные';
 
   @override
-  String get restoreDataSubtitle => 'Восстановите данные из резервной копии на устройстве.';
+  String get restoreDataSubtitle => 'Восстановить данные из резервной копии.';
 
   @override
-  String get restoreDataWarning => 'Этот процесс перезапишет существующие данные. Вы уверены, что хотите продолжить?';
+  String get restoreDataWarning => 'Это перезапишет существующие данные. Продолжить?';
 
   @override
-  String get backupSuccess => 'Резервное копирование успешно';
+  String get backupSuccess => 'Резервное копирование выполнено';
 
   @override
   String get backupFailed => 'Ошибка резервного копирования';
 
   @override
-  String get restoreSuccess => 'Восстановление данных успешно';
+  String get restoreSuccess => 'Восстановление завершено';
 
   @override
-  String get restoreFailed => 'Ошибка восстановления данных';
+  String get restoreFailed => 'Ошибка восстановления';
 
   @override
-  String get backupInvalidFile => 'Пожалуйста, выберите корректный файл резервной копии с расширением .db.';
+  String get backupInvalidFile => 'Выберите действительный файл резервной копии с расширением .db.';
 
   @override
   String get deleteDataTitle => 'Удалить данные';
 
   @override
-  String get deleteDataSubtitle => 'Очистить данные отсканированных элементов.';
+  String get deleteDataSubtitle => 'Удалить все отсканированные данные.';
 
   @override
-  String get deleteDataWarning => 'Вся история будет навсегда удалена из базы данных. Это действие нельзя отменить.';
+  String get deleteDataWarning => 'Вся история будет удалена без возможности восстановления.';
 
   @override
   String get about => 'О приложении';
@@ -285,7 +308,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get licensesTitle => 'Лицензии';
 
   @override
-  String get licensesSubtitle => 'Нажмите здесь, чтобы просмотреть лицензии.';
+  String get licensesSubtitle => 'Нажмите здесь, чтобы посмотреть лицензии.';
 
   @override
   String get reportBugTitle => 'Сообщить об ошибке';
@@ -300,25 +323,25 @@ class AppLocalizationsRu extends AppLocalizations {
   String get reportBugDialogTitle => 'Хотите сообщить об ошибке?';
 
   @override
-  String get reportBugDialogSubtitle => 'Это откроет страницу с проблемами на GitHub, где вы сможете описать обнаруженную проблему.';
+  String get reportBugDialogSubtitle => 'Откроется страница GitHub Issues для описания ошибки.';
 
   @override
-  String get cameraPermissionRequiredTitle => 'Требуется разрешение камеры';
+  String get cameraPermissionRequiredTitle => 'Требуется доступ к камере';
 
   @override
-  String get cameraPermissionRequiredSubtitle => 'Разрешение камеры необходимо для сканирования QR-кодов. Пожалуйста, разрешите доступ.';
+  String get cameraPermissionRequiredSubtitle => 'Необходимо разрешение для использования камеры для сканирования QR-кодов.';
 
   @override
-  String get cameraPermissionDeniedTitle => 'Разрешение камеры навсегда отклонено';
+  String get cameraPermissionDeniedTitle => 'Доступ к камере навсегда отклонён';
 
   @override
-  String get cameraPermissionDeniedSubtitle => 'Разрешение камеры необходимо для сканирования QR-кодов. Пожалуйста, разрешите разрешение в настройках приложения.';
+  String get cameraPermissionDeniedSubtitle => 'Разрешите доступ к камере в настройках приложения.';
 
   @override
   String get openSettings => 'Открыть настройки';
 
   @override
-  String get openSettingsError => 'Не удалось открыть настройки. Пожалуйста, откройте их вручную.';
+  String get openSettingsError => 'Не удалось открыть настройки. Откройте вручную.';
 
   @override
   String get allowPermission => 'Разрешить доступ';

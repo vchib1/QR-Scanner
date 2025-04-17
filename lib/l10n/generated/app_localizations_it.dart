@@ -9,6 +9,12 @@ class AppLocalizationsIt extends AppLocalizations {
   AppLocalizationsIt([String locale = 'it']) : super(locale);
 
   @override
+  String get yes => 'Sì';
+
+  @override
+  String get no => 'No';
+
+  @override
   String get ok => 'OK';
 
   @override
@@ -78,6 +84,17 @@ class AppLocalizationsIt extends AppLocalizations {
   String get yesterday => 'Ieri';
 
   @override
+  String itemCount(Object count) {
+    return '$count elementi';
+  }
+
+  @override
+  String get deleteAllItems => 'Elimina tutti gli elementi';
+
+  @override
+  String get deleteAllItemsWarning => 'Sei sicuro di voler eliminare tutti gli elementi?';
+
+  @override
   String get home => 'Home';
 
   @override
@@ -93,19 +110,19 @@ class AppLocalizationsIt extends AppLocalizations {
   String get scanQRCodeTitle => 'Scansiona QR Code';
 
   @override
-  String get scanQRCodeSubtitle => 'Scansiona un QR Code usando la fotocamera.';
+  String get scanQRCodeSubtitle => 'Utilizza la fotocamera del dispositivo per scansionare un codice QR.';
 
   @override
   String get scanImageTitle => 'Scansiona immagine';
 
   @override
-  String get scanImageSubtitle => 'Trova un QR Code in un\'immagine.';
+  String get scanImageSubtitle => 'Cerca codici QR in un\'immagine.';
 
   @override
   String get qrGeneratorTitle => 'Generatore QR';
 
   @override
-  String get qrGeneratorSubtitle => 'Crea il tuo QR Code personalizzato.';
+  String get qrGeneratorSubtitle => 'Crea il tuo codice QR.';
 
   @override
   String get text => 'Testo';
@@ -144,49 +161,55 @@ class AppLocalizationsIt extends AppLocalizations {
   String get bgColorTitle => 'Colore di sfondo';
 
   @override
-  String get bgColorSubtitle => 'Scegli un colore che contrasta con il motivo per facilitare la scansione.';
+  String get bgColorSubtitle => 'Scegli un colore che contrasta con il motivo per garantire una buona scansione.';
 
   @override
   String get patternColorTitle => 'Colore del motivo';
 
   @override
-  String get patternColorSubtitle => 'Colore per il motivo (punti). Scegli un colore scuro per una scansione migliore.';
+  String get patternColorSubtitle => 'Scegli un colore per il motivo (puntini). Usa un colore scuro per una migliore scansione.';
 
   @override
-  String get eyeColorTitle => 'Colore degli angoli';
+  String get eyeColorTitle => 'Colore degli occhi';
 
   @override
-  String get eyeColorSubtitle => 'Colore per gli angoli del QR Code.';
+  String get eyeColorSubtitle => 'Scegli un colore per gli occhi (indicatori angolari).';
 
   @override
-  String get addLogoTitle => 'Scegli logo';
+  String get addLogoTitle => 'Aggiungi logo';
 
   @override
-  String get addLogoSubtitle => 'Aggiungi un logo personalizzato al centro del QR.';
+  String get addLogoSubtitle => 'Aggiungi il tuo logo personalizzato al centro del QR.';
 
   @override
-  String get addLogoWarning => 'L\'aggiunta di un logo potrebbe causare problemi di scansione.';
+  String get addLogoWarning => 'L\'aggiunta di un logo può causare problemi di leggibilità nella scansione.';
 
   @override
   String get addLogoInvalidError => 'Seleziona un logo valido.';
 
   @override
-  String get exportSizeTitle => 'Dimensione esportazione';
+  String get logoSizeTitle => 'Dimensione del logo';
 
   @override
-  String get exportSizeSubtitle => 'Una dimensione maggiore fornisce una qualità migliore.';
+  String get logoSizeSubtitle => 'Scegli una dimensione per il logo.';
+
+  @override
+  String get exportSizeTitle => 'Dimensione di esportazione';
+
+  @override
+  String get exportSizeSubtitle => 'Una dimensione maggiore garantisce una qualità migliore.';
 
   @override
   String get enableGapTitle => 'Abilita spaziatura';
 
   @override
-  String get enableGapSubtitle => 'Consente uno spazio tra i motivi.';
+  String get enableGapSubtitle => 'Consente uno spazio tra i puntini del motivo.';
 
   @override
   String get patternShape => 'Forma del motivo';
 
   @override
-  String get eyeShape => 'Forma degli angoli';
+  String get eyeShape => 'Forma degli occhi';
 
   @override
   String get square => 'Quadrato';
@@ -207,7 +230,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get imageNotExists => 'L\'immagine non esiste.';
 
   @override
-  String get imagePickFailed => 'Errore durante la selezione dell\'immagine';
+  String get imagePickFailed => 'Selezione immagine fallita';
 
   @override
   String get noQRFound => 'Nessun QR trovato.';
@@ -234,19 +257,19 @@ class AppLocalizationsIt extends AppLocalizations {
   String get data => 'Dati';
 
   @override
-  String get backupDataTitle => 'Backup dati';
+  String get backupDataTitle => 'Backup dei dati';
 
   @override
-  String get backupDataSubtitle => 'Crea un file di backup sul dispositivo.';
+  String get backupDataSubtitle => 'Crea un file di backup sul tuo dispositivo.';
 
   @override
   String get restoreDataTitle => 'Ripristina dati';
 
   @override
-  String get restoreDataSubtitle => 'Ripristina backup dal dispositivo.';
+  String get restoreDataSubtitle => 'Ripristina un backup dal tuo dispositivo.';
 
   @override
-  String get restoreDataWarning => 'Questa operazione sovrascriverà i dati esistenti. Vuoi procedere?';
+  String get restoreDataWarning => 'Questo processo sovrascriverà i dati esistenti. Sei sicuro di voler procedere?';
 
   @override
   String get backupSuccess => 'Backup riuscito';
@@ -261,31 +284,31 @@ class AppLocalizationsIt extends AppLocalizations {
   String get restoreFailed => 'Ripristino fallito';
 
   @override
-  String get backupInvalidFile => 'Seleziona un file di backup valido con estensione .db';
+  String get backupInvalidFile => 'Seleziona un file di backup valido con estensione .db.';
 
   @override
   String get deleteDataTitle => 'Elimina dati';
 
   @override
-  String get deleteDataSubtitle => 'Cancella i dati scansionati.';
+  String get deleteDataSubtitle => 'Elimina tutti i dati scansionati.';
 
   @override
-  String get deleteDataWarning => 'Tutta la cronologia verrà eliminata permanentemente dal database. Questa azione non può essere annullata.';
+  String get deleteDataWarning => 'Tutta la cronologia verrà eliminata dal database. Questa azione è irreversibile.';
 
   @override
   String get about => 'Informazioni';
 
   @override
-  String get privacyPolicyTitle => 'Privacy Policy';
+  String get privacyPolicyTitle => 'Informativa sulla privacy';
 
   @override
-  String get privacyPolicySubtitle => 'Clicca per leggere la nostra informativa sulla privacy.';
+  String get privacyPolicySubtitle => 'Clicca qui per leggere la nostra informativa sulla privacy.';
 
   @override
   String get licensesTitle => 'Licenze';
 
   @override
-  String get licensesSubtitle => 'Clicca per vedere le licenze.';
+  String get licensesSubtitle => 'Clicca qui per visualizzare le licenze.';
 
   @override
   String get reportBugTitle => 'Segnala un bug';
@@ -300,19 +323,19 @@ class AppLocalizationsIt extends AppLocalizations {
   String get reportBugDialogTitle => 'Vuoi segnalare un bug?';
 
   @override
-  String get reportBugDialogSubtitle => 'Verrai reindirizzato alla nostra pagina GitHub dove potrai descrivere il problema.';
+  String get reportBugDialogSubtitle => 'Si aprirà la nostra pagina GitHub Issues dove puoi descrivere il problema riscontrato.';
 
   @override
   String get cameraPermissionRequiredTitle => 'Permesso fotocamera richiesto';
 
   @override
-  String get cameraPermissionRequiredSubtitle => 'Per scansionare i QR Code è necessaria l\'autorizzazione alla fotocamera. Per favore consenti.';
+  String get cameraPermissionRequiredSubtitle => 'È necessario il permesso della fotocamera per scansionare i codici QR. Consenti l\'accesso.';
 
   @override
   String get cameraPermissionDeniedTitle => 'Permesso fotocamera negato in modo permanente';
 
   @override
-  String get cameraPermissionDeniedSubtitle => 'Per scansionare i QR Code è necessaria l\'autorizzazione alla fotocamera. Concedi l\'autorizzazione dalle impostazioni dell\'app.';
+  String get cameraPermissionDeniedSubtitle => 'È necessario il permesso della fotocamera per scansionare i codici QR. Consenti l\'accesso dalle impostazioni dell\'app.';
 
   @override
   String get openSettings => 'Apri impostazioni';
@@ -321,5 +344,5 @@ class AppLocalizationsIt extends AppLocalizations {
   String get openSettingsError => 'Impossibile aprire le impostazioni. Apri manualmente.';
 
   @override
-  String get allowPermission => 'Concedi autorizzazione';
+  String get allowPermission => 'Consenti permesso';
 }

@@ -124,12 +124,34 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
     });
   }
 
-  Future<void> _deleteSelectedItems() async {
-    ref
-        .read(historyAsyncProvider.notifier)
-        .removeSelectedItems(_selectedItems.map((e) => e.id!).toList());
+  Future<void> _deleteAllItemsDialog() async {
+    bool? result = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(context.locale.deleteAllItems),
+          content: Text(context.locale.deleteAllItemsWarning),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(context.locale.cancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(context.locale.delete),
+            ),
+          ],
+        );
+      },
+    );
 
-    _clearSelection();
+    if (result ?? false) {
+      ref
+          .read(historyAsyncProvider.notifier)
+          .removeSelectedItems(_selectedItems.map((e) => e.id!).toList());
+
+      _clearSelection();
+    }
   }
 
   @override
@@ -145,7 +167,20 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text(context.locale.history)),
+        appBar: AppBar(
+          title: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 150),
+            transitionBuilder:
+                (child, anim) => ScaleTransition(scale: anim, child: child),
+            child: SizedBox(
+              key: ValueKey<bool>(selectionMode),
+              child:
+                  selectionMode
+                      ? Text(context.locale.itemCount(_selectedItems.length))
+                      : Text(context.locale.history),
+            ),
+          ),
+        ),
         floatingActionButtonAnimator: FloatingActionButtonAnimator.noAnimation,
         floatingActionButton: ScaleTransition(
           scale: scaleAnimation,
@@ -162,7 +197,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
                 ),
               ),
               FloatingActionButton(
-                onPressed: _deleteSelectedItems,
+                onPressed: _deleteAllItemsDialog,
                 child: const Icon(Icons.delete),
               ),
             ],

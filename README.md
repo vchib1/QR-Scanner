@@ -3,7 +3,7 @@
 ### QR Scanner & Generator App
 
 An open source, fully-featured QR Code Scanner and Generator app with customization, backup,
-theming, and multilingual support follows Material 3 design.
+theming, and multilingual support with Material 3 design.
 
 ## 📜 Features
 
@@ -37,7 +37,7 @@ theming, and multilingual support follows Material 3 design.
 • System-based theme support
 
 ✅ **Multi-Language Support**  
-• Supports 15+ languages (including English, Spanish, French, Hindi, Chinese, and more)
+• Supports 15+ languages (including English, Spanish, French, Hindi, Chinese, Arabic and more)
 
 ## 🛠️ Tech Stack
 
@@ -59,10 +59,10 @@ theming, and multilingual support follows Material 3 design.
 git clone https://github.com/yourusername/qr-scanner-generator-app.git
 ```
 
-- Update Depenencies
+- Update Dependencies
 
 ```bash
-flutter pub get:
+flutter pub get
 ```
 
 - Run the app on your local device or emulator:

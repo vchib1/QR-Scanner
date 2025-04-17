@@ -9,6 +9,12 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get yes => 'Yes';
+
+  @override
+  String get no => 'No';
+
+  @override
   String get ok => 'OK';
 
   @override
@@ -76,6 +82,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get yesterday => 'Yesterday';
+
+  @override
+  String itemCount(Object count) {
+    return '$count items';
+  }
+
+  @override
+  String get deleteAllItems => 'Delete All Items';
+
+  @override
+  String get deleteAllItemsWarning => 'Are you sure you want to delete all items?';
 
   @override
   String get home => 'Home';
@@ -169,6 +186,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addLogoInvalidError => 'Please pick a valid logo.';
+
+  @override
+  String get logoSizeTitle => 'Logo Size';
+
+  @override
+  String get logoSizeSubtitle => 'Pick a size for the logo.';
 
   @override
   String get exportSizeTitle => 'Export Size';

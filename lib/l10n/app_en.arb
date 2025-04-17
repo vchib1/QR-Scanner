@@ -1,4 +1,6 @@
 {
+    "yes": "Yes",
+    "no": "No",
     "ok": "OK",
     "cancel": "Cancel",
     "close": "Close",
@@ -22,6 +24,10 @@
     "app": "App",
     "today": "Today",
     "yesterday": "Yesterday",
+
+    "itemCount": "{count} items",
+    "deleteAllItems": "Delete All Items",
+    "deleteAllItemsWarning": "Are you sure you want to delete all items?",
 
     "home": "Home",
     "history": "History",
@@ -57,6 +63,8 @@
     "addLogoSubtitle": "Add your custom logo in the center of the QR.",
     "addLogoWarning": "Adding a logo could cause readability issues on scan.",
     "addLogoInvalidError": "Please pick a valid logo.",
+    "logoSizeTitle": "Logo Size",
+    "logoSizeSubtitle": "Pick a size for the logo.",
     "exportSizeTitle": "Export Size",
     "exportSizeSubtitle": "Larger size provides better quality.",
     "enableGapTitle": "Enable Gap",
