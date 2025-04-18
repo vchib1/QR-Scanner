@@ -31,13 +31,13 @@ jobs:
         run: flutter pub get
 
       - name: Build APK (Split per ABI)
-        run: flutter build apk --split-per-abi
+        run: flutter build apk --split-per-abi --build-number=${{ github.run_number }}
 
       - name: Create GitHub Release and Upload APKs
         uses: ncipollo/release-action@v1
         with:
-          tag: v1.0.0
-          name: "Release v1.0.0"
+          tag: v1.0.0+${{ github.run_number }}
+          name: "Release v1.0.0+${{ github.run_number }}"
           artifacts: build/app/outputs/flutter-apk/*.apk
           token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true
