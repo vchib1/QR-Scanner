@@ -183,8 +183,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
               alignment: Alignment.center,
               color: Theme.of(context).colorScheme.surface,
               child: SizedBox.square(
-                dimension: 200,
-                child: Center(child: _buildQRView(200)),
+                dimension: state.qrSize.value,
+                child: Center(child: _buildQRView()),
               ),
             ),
 
