@@ -415,10 +415,8 @@ class SettingsPage extends ConsumerWidget {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                // todo: add github repo url
-                // Replace with your GitHub issues URL
                 launchUrl(
-                  Uri.parse("https://github.com/vchib1"),
+                  Uri.parse("https://github.com/vchib1/QR-Scanner/issues"),
                   mode: LaunchMode.externalApplication,
                 );
               },

@@ -9,6 +9,7 @@ import 'loading_dialog.dart';
 
 Future<bool> shareQRImage(
   BuildContext context, {
+  double size = 300,
   required String data,
   Widget? child,
 }) async {
@@ -19,6 +20,7 @@ Future<bool> shareQRImage(
     Uint8List image = await captureQRScreenshot(
       context,
       data: data,
+      size: size,
       child: child,
     );
 
@@ -44,16 +46,18 @@ Future<bool> shareQRImage(
 Future<Uint8List> captureQRScreenshot(
   BuildContext context, {
   Widget? child,
+  required double size,
   required String data,
 }) async {
   final screenshotController = ScreenshotController();
 
   final qrWidget = MediaQuery(
     data: MediaQueryData.fromView(View.of(context)),
-    child: child ?? QrImageView(data: data, backgroundColor: Colors.white),
+    child:
+        child ??
+        QrImageView(data: data, size: size, backgroundColor: Colors.white),
   );
 
-  // Workaround for inverted image in debugMode
   final imageBytes = await screenshotController.captureFromWidget(qrWidget);
 
   return imageBytes;

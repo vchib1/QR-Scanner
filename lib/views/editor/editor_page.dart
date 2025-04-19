@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:async';
+import 'dart:math';
 import 'package:ez_qr/utils/enums/qr_logo_size.dart';
 import 'package:ez_qr/utils/enums/qr_size.dart';
 import 'package:ez_qr/utils/extensions/context_extension.dart';
@@ -37,7 +38,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
       Uint8List image = await captureQRScreenshot(
         context,
         data: widget.qrData,
-        child: _buildQRView(),
+        size: ref.read(qrEditorProvider).qrSize.value,
+        child: _buildQRView(ref.read(qrEditorProvider).qrSize.value),
       );
 
       // create a random file name to save
@@ -170,6 +172,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                 () => shareQRImage(
                   context,
                   data: widget.qrData,
+                  size: state.qrSize.value,
                   child: _buildQRView(),
                 ),
           ),
@@ -213,7 +216,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                         },
                         title: Text(context.locale.bgColorTitle),
                         subtitle: Text(context.locale.bgColorSubtitle),
-                        trailing: _buildColoredBox(context, state.bgColor),
+                        trailing: _buildColoredBox(state.bgColor),
                       ),
 
                       // Pattern Color
@@ -229,7 +232,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                         },
                         title: Text(context.locale.patternColorTitle),
                         subtitle: Text(context.locale.patternColorSubtitle),
-                        trailing: _buildColoredBox(context, state.patternColor),
+                        trailing: _buildColoredBox(state.patternColor),
                       ),
 
                       // Eye Color
@@ -245,7 +248,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                         },
                         title: Text(context.locale.eyeColorTitle),
                         subtitle: Text(context.locale.eyeColorSubtitle),
-                        trailing: _buildColoredBox(context, state.eyeColor),
+                        trailing: _buildColoredBox(state.eyeColor),
                       ),
 
                       // Add Logo
@@ -420,6 +423,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     final logoSize = (size ?? state.qrSize.value) * (state.logoSize.size / 100);
 
     return QrImageView(
+      padding: EdgeInsets.all((size ?? state.qrSize.value) * 0.04),
       data: widget.qrData,
       errorCorrectionLevel: config.errorCorrectionLevel,
       version: config.version,
@@ -437,16 +441,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     );
   }
 
-  Widget _buildColoredBox(BuildContext context, Color color) {
-    return PhysicalModel(
-      color: color,
-      elevation: 1.0,
-      shadowColor: Theme.of(context).colorScheme.shadow,
-      child: ColoredBox(
-        color: color,
-        child: const SizedBox.square(dimension: 32.0),
-      ),
-    );
+  Widget _buildColoredBox(Color color) {
+    return CircleAvatar(radius: 16.0, backgroundColor: color);
   }
 
   // calculate QR Version and Error Correction Level based in QR Data
