@@ -7,6 +7,7 @@ import 'package:ez_qr/utils/helper_functions/share_qr_image.dart';
 import 'package:ez_qr/utils/snackbar.dart';
 import 'package:ez_qr/views/history/provider/provider.dart';
 import 'package:ez_qr/views/settings/provider/language/language_provider.dart';
+import 'package:ez_qr/widgets/text_slide_transition_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,11 +31,15 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
 
   final Set<ScannedItem> _selectedItems = {};
 
+  late int itemCount;
+
   bool get selectionMode => _selectedItems.isNotEmpty;
 
   @override
   void initState() {
     super.initState();
+
+    itemCount = _selectedItems.length;
 
     scaleController = AnimationController(
       vsync: this,
@@ -90,7 +95,10 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
       } else {
         _selectedItems.add(item);
       }
+      if (selectionMode) itemCount = _selectedItems.length;
     });
+
+    HapticFeedback.selectionClick();
 
     selectionMode ? playForwardAnimation() : playReverseAnimation();
   }
@@ -124,40 +132,8 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
     });
   }
 
-  Future<void> _deleteAllItemsDialog() async {
-    bool? result = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(context.locale.deleteAllItems),
-          content: Text(context.locale.deleteAllItemsWarning),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: Text(context.locale.cancel),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: Text(context.locale.delete),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (result ?? false) {
-      ref
-          .read(historyAsyncProvider.notifier)
-          .removeSelectedItems(_selectedItems.map((e) => e.id!).toList());
-
-      _clearSelection();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final history = ref.watch(historyAsyncProvider);
-
     return PopScope(
       canPop: !selectionMode,
       onPopInvokedWithResult: (didPop, result) {
@@ -168,17 +144,10 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
       },
       child: Scaffold(
         appBar: AppBar(
-          title: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 150),
-            transitionBuilder:
-                (child, anim) => ScaleTransition(scale: anim, child: child),
-            child: SizedBox(
-              key: ValueKey<bool>(selectionMode),
-              child:
-                  selectionMode
-                      ? Text(context.locale.itemCount(_selectedItems.length))
-                      : Text(context.locale.history),
-            ),
+          title: TextSlideTransitionWidget(
+            animation: scaleAnimation,
+            text1: context.locale.itemCount(itemCount),
+            text2: context.locale.history,
           ),
         ),
         floatingActionButtonAnimator: FloatingActionButtonAnimator.noAnimation,
@@ -204,115 +173,129 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
           ),
         ),
 
-        body: history.when(
-          data: (history) {
-            final groupedHistory = _groupByDate(context, history);
+        body: ref
+            .watch(historyAsyncProvider)
+            .when(
+              data: (history) {
+                final groupedHistory = _groupByDate(context, history);
 
-            if (groupedHistory.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.history_sharp, size: 48.0),
-                    Text(
-                      context.locale.noHistory,
-                      style: Theme.of(context).textTheme.headlineSmall,
+                if (groupedHistory.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.history_sharp, size: 48.0),
+                        Text(
+                          context.locale.noHistory,
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              );
-            }
+                  );
+                }
 
-            return ListView.builder(
-              itemCount: groupedHistory.length,
-              itemBuilder: (context, index) {
-                final date = groupedHistory.keys.elementAt(index);
-                final items = groupedHistory[date]!;
-                final firstIdx = index == 0;
+                return ListView.builder(
+                  itemCount: groupedHistory.length,
+                  itemBuilder: (context, index) {
+                    final date = groupedHistory.keys.elementAt(index);
+                    final items = groupedHistory[date]!;
+                    final firstIdx = index == 0;
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(8, firstIdx ? 0 : 12, 8, 8),
-                      child: Text(
-                        date,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    ...items.asMap().entries.map((entry) {
-                      final item = entry.value;
-                      final isSelected = _selectedItems.contains(item);
-                      final isFirst = entry.key == 0;
-                      final isLast = entry.key == items.length - 1;
-                      final isSingle = items.length == 1;
-
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: ListTile(
-                          onLongPress: () => _toggleSelection(item),
-                          onTap: () {
-                            if (selectionMode) {
-                              _toggleSelection(item);
-                            } else {
-                              _showOptions(context, ref, item: item);
-                            }
-                          },
-                          selected: isSelected,
-                          selectedTileColor: Theme.of(context)
-                              .colorScheme
-                              .surfaceContainerHighest
-                              .withValues(alpha: 0.85),
-                          leading: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 200),
-                            transitionBuilder:
-                                (child, anim) =>
-                                    ScaleTransition(scale: anim, child: child),
-                            child: CircleAvatar(
-                              key: ValueKey<bool>(isSelected),
-                              child:
-                                  isSelected
-                                      ? const Icon(Icons.check)
-                                      : const Icon(Icons.qr_code_2),
-                            ),
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                            8,
+                            firstIdx ? 0 : 12,
+                            8,
+                            8,
                           ),
-                          title: Text(
-                            QrType.getQrType(item.data).localizedName(context),
-                          ),
-                          subtitle: Text(
-                            item.data,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(
-                                isFirst || isSingle ? 8.0 : 0,
-                              ),
-                              topRight: Radius.circular(
-                                isFirst || isSingle ? 8.0 : 0,
-                              ),
-                              bottomLeft: Radius.circular(
-                                isLast || isSingle ? 8.0 : 0,
-                              ),
-                              bottomRight: Radius.circular(
-                                isLast || isSingle ? 8.0 : 0,
-                              ),
-                            ),
+                          child: Text(
+                            date,
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                         ),
-                      );
-                    }),
-                    const SizedBox(height: 8.0),
-                  ],
+                        ...items.asMap().entries.map((entry) {
+                          final item = entry.value;
+                          final isSelected = _selectedItems.contains(item);
+                          final isFirst = entry.key == 0;
+                          final isLast = entry.key == items.length - 1;
+                          final isSingle = items.length == 1;
+
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,
+                            ),
+                            child: ListTile(
+                              onLongPress: () => _toggleSelection(item),
+                              onTap: () {
+                                if (selectionMode) {
+                                  _toggleSelection(item);
+                                } else {
+                                  _showOptions(context, ref, item: item);
+                                }
+                              },
+                              selected: isSelected,
+                              selectedTileColor: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest
+                                  .withValues(alpha: 0.85),
+                              leading: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 200),
+                                transitionBuilder:
+                                    (child, anim) => ScaleTransition(
+                                      scale: anim,
+                                      child: child,
+                                    ),
+                                child: CircleAvatar(
+                                  key: ValueKey<bool>(isSelected),
+                                  child:
+                                      isSelected
+                                          ? const Icon(Icons.check)
+                                          : const Icon(Icons.qr_code_2),
+                                ),
+                              ),
+                              title: Text(
+                                QrType.getQrType(
+                                  item.data,
+                                ).localizedName(context),
+                              ),
+                              subtitle: Text(
+                                item.data,
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(
+                                    isFirst || isSingle ? 8.0 : 0,
+                                  ),
+                                  topRight: Radius.circular(
+                                    isFirst || isSingle ? 8.0 : 0,
+                                  ),
+                                  bottomLeft: Radius.circular(
+                                    isLast || isSingle ? 8.0 : 0,
+                                  ),
+                                  bottomRight: Radius.circular(
+                                    isLast || isSingle ? 8.0 : 0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                        const SizedBox(height: 8.0),
+                      ],
+                    );
+                  },
                 );
               },
-            );
-          },
-          error: (error, stackTrace) => Center(child: Text(error.toString())),
-          loading: () => const Center(child: CircularProgressIndicator()),
-        ),
+              error:
+                  (error, stackTrace) => Center(child: Text(error.toString())),
+              loading: () => const Center(child: CircularProgressIndicator()),
+            ),
       ),
     );
   }
@@ -404,5 +387,35 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
         );
       },
     );
+  }
+
+  Future<void> _deleteAllItemsDialog() async {
+    bool? result = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(context.locale.deleteAllItems),
+          content: Text(context.locale.deleteAllItemsWarning),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(context.locale.cancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(context.locale.delete),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result ?? false) {
+      ref
+          .read(historyAsyncProvider.notifier)
+          .removeSelectedItems(_selectedItems.map((e) => e.id!).toList());
+
+      _clearSelection();
+    }
   }
 }

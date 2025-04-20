@@ -36,46 +36,30 @@ class HistoryDB {
 
   // add scanned item
   Future<void> addScannedItem(ScannedItem item) async {
-    try {
-      final db = await database;
+    final db = await database;
 
-      await db.insert(history, item.copyWith(id: _uuid.v4()).toMap());
-    } catch (_) {
-      rethrow;
-    }
+    await db.insert(history, item.copyWith(id: _uuid.v4()).toMap());
   }
 
   // remove scanned item
   Future<void> removeScannedItem(ScannedItem item) async {
-    try {
-      final db = await database;
+    final db = await database;
 
-      await db.delete(history, where: "id = ?", whereArgs: [item.id]);
-    } catch (_) {
-      rethrow;
-    }
+    await db.delete(history, where: "id = ?", whereArgs: [item.id]);
   }
 
   // ✅ remove selected scanned items (by id list)
   Future<void> removeSelectedScannedItems(List<String> ids) async {
     if (ids.isEmpty) return;
 
-    try {
-      final db = await database;
-      final placeholders = List.filled(ids.length, '?').join(', ');
-      await db.delete(history, where: 'id IN ($placeholders)', whereArgs: ids);
-    } catch (_) {
-      rethrow;
-    }
+    final db = await database;
+    final placeholders = List.filled(ids.length, '?').join(', ');
+    await db.delete(history, where: 'id IN ($placeholders)', whereArgs: ids);
   }
 
   Future<void> clearHistory() async {
-    try {
-      final db = await database;
+    final db = await database;
 
-      await db.delete(history);
-    } catch (_) {
-      rethrow;
-    }
+    await db.delete(history);
   }
 }
