@@ -125,10 +125,9 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
   Widget build(BuildContext context) {
     return PopScope(
       canPop: !selectionMode,
-      onPopInvokedWithResult: (didPop, result) {
+      onPopInvokedWithResult: (didPop, _) {
         if (!didPop) {
           _clearSelection();
-          return;
         }
       },
       child: Scaffold(

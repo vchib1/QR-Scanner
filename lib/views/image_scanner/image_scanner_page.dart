@@ -43,37 +43,32 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
   Future<String?> pickImage() async {
     showLoadingDialog(context);
 
-    FilePickerResult? result;
-
     try {
-      result = await FilePicker.platform.pickFiles(type: FileType.image);
+      final result = await FilePicker.platform.pickFiles(type: FileType.image);
+      final imagePath = result?.files.first.path;
+
+      if (imagePath == null && mounted) {
+        throw context.locale.imageNotExists;
+      }
+
+      return imagePath;
     } catch (e) {
-      if (mounted) throw "${context.locale.imagePickFailed}: ${e.toString()}";
+      if (mounted) throw "${context.locale.imagePickFailed}: $e";
     } finally {
-      // pop loading
       if (mounted) Navigator.pop(context);
     }
-
-    final imagePath = result?.files.first.path;
-
-    if (imagePath == null && mounted) {
-      throw context.locale.imageNotExists;
-    }
-
-    return imagePath;
+    return null;
   }
 
   Future<void> onDetect(BarcodeCapture capture) async {
     final data = capture.barcodes.first.rawValue;
 
     if (data != null) {
-      final scannedItem = ScannedItem(data: data);
+      await ref
+          .read(historyAsyncProvider.notifier)
+          .addItem(ScannedItem(data: data));
 
-      await ref.read(historyAsyncProvider.notifier).addItem(scannedItem);
-
-      if (mounted) {
-        await showQRDataDialog(context, data: data);
-      }
+      if (mounted) await showQRDataDialog(context, data: data);
     }
   }
 
@@ -89,11 +84,10 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
   void cropImage() => cropController.crop();
 
   Future<void> handleCropSuccess(CropSuccess result) async {
-    final newData = result.croppedImage;
-
-    setState(() => croppedData = newData);
-
     try {
+      final newData = result.croppedImage;
+
+      setState(() => croppedData = newData);
       showLoadingDialog(context);
 
       File file = await uint8ListToFile(newData, "qrTemp.png");
@@ -106,7 +100,7 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
         if (mounted) throw context.locale.noQRFound;
       }
     } catch (e) {
-      if (mounted) SnackBarUtils.showErrorBar(e.toString());
+      SnackBarUtils.showErrorBar(e.toString());
     } finally {
       if (mounted) Navigator.pop(context);
     }
