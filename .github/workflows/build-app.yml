@@ -48,8 +48,8 @@ jobs:
       - name: Create GitHub Release and Upload APKs
         uses: ncipollo/release-action@v1
         with:
-          tag: v1.0.0+${{ github.run_number }}
-          name: "Release v1.0.0+${{ github.run_number }}"
+          tag: v1.0.1+${{ github.run_number }}
+          name: "Release v1.0.1+${{ github.run_number }}"
           artifacts: build/app/outputs/flutter-apk/*.apk
           token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true

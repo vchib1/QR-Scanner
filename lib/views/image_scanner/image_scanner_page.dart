@@ -22,11 +22,16 @@ class ImageScannerPage extends ConsumerStatefulWidget {
 
 class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
   late final MobileScannerController controller;
+  late final CropController cropController;
+
+  Uint8List? selectedData;
+  Uint8List? croppedData;
 
   @override
   void initState() {
     super.initState();
     controller = MobileScannerController();
+    cropController = CropController();
   }
 
   @override
@@ -35,107 +40,41 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
     controller.dispose();
   }
 
-  Future<void> pickImage() async {
+  Future<String?> pickImage() async {
+    showLoadingDialog(context);
+
+    FilePickerResult? result;
+
     try {
-      showLoadingDialog(context);
-
-      FilePickerResult? result;
-
-      try {
-        result = await FilePicker.platform.pickFiles(type: FileType.image);
-      } catch (e) {
-        if (mounted) throw "${context.locale.imagePickFailed}: ${e.toString()}";
-      } finally {
-        // pop loading
-        if (mounted) Navigator.pop(context);
-      }
-
-      if (result == null) return;
-
-      final imagePath = result.files.first.path;
-
-      if (imagePath == null && mounted) {
-        throw context.locale.imageNotExists;
-      }
-
-      final croppedImgFile = await cropImage(imagePath!);
-
-      if (croppedImgFile == null && mounted) {
-        throw context.locale.noQRFound;
-      }
-
-      final data = await controller.analyzeImage(
-        croppedImgFile!.path,
-        formats: [BarcodeFormat.all],
-      );
-
-      if ((data == null || data.barcodes.isEmpty) && mounted) {
-        throw context.locale.noQRFound;
-      }
-
-      await onDetect(data!);
+      result = await FilePicker.platform.pickFiles(type: FileType.image);
     } catch (e) {
-      SnackBarUtils.showSnackBar(e.toString());
+      if (mounted) throw "${context.locale.imagePickFailed}: ${e.toString()}";
+    } finally {
+      // pop loading
+      if (mounted) Navigator.pop(context);
     }
+
+    final imagePath = result?.files.first.path;
+
+    if (imagePath == null && mounted) {
+      throw context.locale.imageNotExists;
+    }
+
+    return imagePath;
   }
 
   Future<void> onDetect(BarcodeCapture capture) async {
-    try {
-      final data = capture.barcodes.first.rawValue;
+    final data = capture.barcodes.first.rawValue;
 
-      if (data != null) {
-        await controller.pause();
-        final scannedItem = ScannedItem(data: data);
+    if (data != null) {
+      final scannedItem = ScannedItem(data: data);
 
-        await ref.read(historyAsyncProvider.notifier).addItem(scannedItem);
+      await ref.read(historyAsyncProvider.notifier).addItem(scannedItem);
 
-        if (mounted) {
-          await showQRDataDialog(context, data: data);
-        }
+      if (mounted) {
+        await showQRDataDialog(context, data: data);
       }
-    } catch (e, s) {
-      debugPrintStack(label: e.toString(), stackTrace: s);
     }
-  }
-
-  Future<File?> cropImage(String imagePath) async {
-    final imgFile = File(imagePath);
-
-    final cropController = CropController();
-
-    final image = await imgFile.readAsBytes();
-
-    if (!mounted) return null;
-
-    Uint8List? croppedData = await showDialog<Uint8List?>(
-      context: context,
-      builder: (context) {
-        return IntrinsicHeight(
-          child: Dialog(
-            clipBehavior: Clip.hardEdge,
-            child: SizedBox(
-              height: 300,
-              child: Crop(
-                controller: cropController,
-                image: image,
-                onCropped: (result) {
-                  switch (result) {
-                    case CropSuccess():
-                      Navigator.pop(context, result.croppedImage);
-                    case CropFailure():
-                      Navigator.pop(context);
-                  }
-                },
-              ),
-            ),
-          ),
-        );
-      },
-    );
-
-    if (croppedData == null) return null;
-
-    return await uint8ListToFile(croppedData, "cropTemp.png");
   }
 
   Future<File> uint8ListToFile(Uint8List data, String fileName) async {
@@ -147,33 +86,103 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
     return file;
   }
 
+  void cropImage() => cropController.crop();
+
+  Future<void> handleCropSuccess(CropSuccess result) async {
+    final newData = result.croppedImage;
+
+    setState(() => croppedData = newData);
+
+    try {
+      showLoadingDialog(context);
+
+      File file = await uint8ListToFile(newData, "qrTemp.png");
+
+      BarcodeCapture? res = await controller.analyzeImage(file.path);
+
+      if (res != null) {
+        await onDetect(res);
+      } else {
+        if (mounted) throw context.locale.noQRFound;
+      }
+    } catch (e) {
+      if (mounted) SnackBarUtils.showErrorBar(e.toString());
+    } finally {
+      if (mounted) Navigator.pop(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final iconColor = Theme.of(context).colorScheme.onSurface;
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.locale.scanImageTitle)),
-      body: Center(
-        child: MaterialButton(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-          onPressed: pickImage,
-          color: Theme.of(context).colorScheme.surfaceContainer,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
+      appBar: AppBar(
+        title: Text(context.locale.scanImageTitle),
+        actions: [
+          Visibility(
+            visible: (selectedData != null),
+            child: IconButton(
+              tooltip: context.locale.delete,
+              icon: const Icon(Icons.delete),
+              onPressed: () => setState(() => selectedData = null),
+            ),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            spacing: 10,
-            children: [
-              Icon(Icons.image, color: iconColor),
-              Text(
-                context.locale.pickFromGallery,
-                style: TextStyle(color: iconColor),
-              ),
-            ],
-          ),
-        ),
+        ],
       ),
+      floatingActionButton:
+          (selectedData != null)
+              ? FloatingActionButton(
+                onPressed: cropImage,
+                child: const Icon(Icons.check),
+              )
+              : null,
+      body:
+          (selectedData == null)
+              ? Center(
+                child: MaterialButton(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 12.0,
+                  ),
+                  onPressed: () async {
+                    final imagePath = await pickImage();
+
+                    if (imagePath == null) return;
+
+                    setState(() {
+                      selectedData = File(imagePath).readAsBytesSync();
+                    });
+                  },
+                  color: Theme.of(context).colorScheme.surfaceContainer,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    spacing: 10,
+                    children: [
+                      Icon(Icons.image, color: iconColor),
+                      Text(
+                        context.locale.pickFromGallery,
+                        style: TextStyle(color: iconColor),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+              : Crop(
+                baseColor: Theme.of(context).colorScheme.surface,
+                controller: cropController,
+                image: selectedData!,
+                onCropped: (result) async {
+                  switch (result) {
+                    case CropSuccess():
+                      handleCropSuccess(result);
+                    case CropFailure():
+                  }
+                },
+              ),
     );
   }
 }
