@@ -1,10 +1,14 @@
+import 'dart:io';
+import 'package:crop_your_image/crop_your_image.dart';
 import 'package:ez_qr/utils/extensions/context_extension.dart';
 import 'package:ez_qr/utils/helper_functions/loading_dialog.dart';
 import 'package:ez_qr/utils/helper_functions/qr_data_dialog.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../model/scanned_item_model.dart';
 import '../../utils/snackbar.dart';
 import '../history/provider/provider.dart';
@@ -49,12 +53,19 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
       if (result == null) return;
 
       final imagePath = result.files.first.path;
+
       if (imagePath == null && mounted) {
         throw context.locale.imageNotExists;
       }
 
+      final croppedImgFile = await cropImage(imagePath!);
+
+      if (croppedImgFile == null && mounted) {
+        throw context.locale.noQRFound;
+      }
+
       final data = await controller.analyzeImage(
-        imagePath!,
+        croppedImgFile!.path,
         formats: [BarcodeFormat.all],
       );
 
@@ -85,6 +96,55 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
     } catch (e, s) {
       debugPrintStack(label: e.toString(), stackTrace: s);
     }
+  }
+
+  Future<File?> cropImage(String imagePath) async {
+    final imgFile = File(imagePath);
+
+    final cropController = CropController();
+
+    final image = await imgFile.readAsBytes();
+
+    if (!mounted) return null;
+
+    Uint8List? croppedData = await showDialog<Uint8List?>(
+      context: context,
+      builder: (context) {
+        return IntrinsicHeight(
+          child: Dialog(
+            clipBehavior: Clip.hardEdge,
+            child: SizedBox(
+              height: 300,
+              child: Crop(
+                controller: cropController,
+                image: image,
+                onCropped: (result) {
+                  switch (result) {
+                    case CropSuccess():
+                      Navigator.pop(context, result.croppedImage);
+                    case CropFailure():
+                      Navigator.pop(context);
+                  }
+                },
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    if (croppedData == null) return null;
+
+    return await uint8ListToFile(croppedData, "cropTemp.png");
+  }
+
+  Future<File> uint8ListToFile(Uint8List data, String fileName) async {
+    final directory = await getTemporaryDirectory();
+    final filePath = '${directory.path}/$fileName';
+
+    final file = await File(filePath).writeAsBytes(data);
+
+    return file;
   }
 
   @override

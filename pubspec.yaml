@@ -54,6 +54,7 @@ dependencies:
   collection: ^1.19.1
   path: ^1.9.1
   flutter_html: ^3.0.0
+  crop_your_image: ^2.0.0
 
 dev_dependencies:
   flutter_test:

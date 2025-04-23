@@ -53,63 +53,61 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
 
   @override
   Widget build(BuildContext context) {
-    return ScaffoldMessenger(
-      child: Builder(
-        builder: (context) {
-          return GestureDetector(
-            onTap: unFocusKeyboard,
-            child: Scaffold(
-              appBar: AppBar(title: Text(context.locale.qrGeneratorTitle)),
-              floatingActionButton: FloatingActionButton(
-                onPressed: navigateToEditor,
-                tooltip: context.locale.next,
-                child: const Icon(Icons.arrow_forward),
-              ),
-              body: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 10,
-                    children: [
-                      Wrap(
-                        spacing: 8.0,
-                        runSpacing: 8.0,
-                        children: [
-                          for (final option in QrType.values)
-                            ChoiceChip(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(32.0),
-                              ),
-                              showCheckmark: false,
-                              selected: selectedOption == option,
-                              label: Text(option.localizedName(context)),
-                              onSelected: (selected) {
-                                setState(() {
-                                  selectedOption =
-                                      selected ? option : selectedOption;
-                                });
-                              },
-                            ),
-                        ],
-                      ),
+    bool dataEmpty = qrData.isEmpty;
 
-                      const SizedBox(height: 10),
-
-                      switch (selectedOption) {
-                        QrType.text => QRText(onChanged: onChanged),
-                        QrType.sms => QRSms(onChanged: onChanged),
-                        QrType.phone => QRPhone(onChanged: onChanged),
-                        QrType.url => QRUrl(onChanged: onChanged),
-                        QrType.mail => QRMail(onChanged: onChanged),
-                      },
-                    ],
-                  ),
+    return GestureDetector(
+      onTap: unFocusKeyboard,
+      child: Scaffold(
+        appBar: AppBar(title: Text(context.locale.qrGeneratorTitle)),
+        floatingActionButton:
+            dataEmpty
+                ? null
+                : FloatingActionButton(
+                  onPressed: navigateToEditor,
+                  tooltip: context.locale.next,
+                  child: const Icon(Icons.arrow_forward),
                 ),
-              ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 10,
+              children: [
+                Wrap(
+                  spacing: 8.0,
+                  runSpacing: 8.0,
+                  children: [
+                    for (final option in QrType.values)
+                      ChoiceChip(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(32.0),
+                        ),
+                        showCheckmark: false,
+                        selected: selectedOption == option,
+                        label: Text(option.localizedName(context)),
+                        onSelected: (selected) {
+                          setState(() {
+                            selectedOption = selected ? option : selectedOption;
+                          });
+                        },
+                      ),
+                  ],
+                ),
+
+                const SizedBox(height: 10),
+
+                switch (selectedOption) {
+                  QrType.text => QRText(onChanged: onChanged),
+                  QrType.sms => QRSms(onChanged: onChanged),
+                  QrType.phone => QRPhone(onChanged: onChanged),
+                  QrType.url => QRUrl(onChanged: onChanged),
+                  QrType.mail => QRMail(onChanged: onChanged),
+                },
+              ],
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }

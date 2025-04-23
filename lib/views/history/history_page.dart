@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import "package:collection/collection.dart";
 
 class HistoryPage extends ConsumerStatefulWidget {
   const HistoryPage({super.key});
@@ -22,41 +21,36 @@ class HistoryPage extends ConsumerStatefulWidget {
 }
 
 class _HistoryPageState extends ConsumerState<HistoryPage>
-    with TickerProviderStateMixin {
-  //
-  late AnimationController scaleController;
-  late AnimationController slideController;
+    with SingleTickerProviderStateMixin {
+  // Animation
+  late AnimationController animationController;
   late Animation<double> scaleAnimation;
   late Animation<Offset> slideUpAnimation;
 
-  final Set<ScannedItem> _selectedItems = {};
-
+  // Selection Mode
   late int itemCount;
+  final Set<ScannedItem> selectedItems = {};
 
-  bool get selectionMode => _selectedItems.isNotEmpty;
+  bool get selectionMode => selectedItems.isNotEmpty;
 
   @override
   void initState() {
     super.initState();
 
-    itemCount = _selectedItems.length;
+    itemCount = selectedItems.length;
 
-    scaleController = AnimationController(
+    animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 150),
-      reverseDuration: const Duration(milliseconds: 150),
+      duration: const Duration(milliseconds: 300),
+      reverseDuration: const Duration(milliseconds: 300),
     );
 
-    slideController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 150),
-      reverseDuration: const Duration(milliseconds: 150),
-    );
-
-    scaleAnimation = CurvedAnimation(
-      parent: scaleController,
-      curve: Curves.easeIn,
-      reverseCurve: Curves.easeOut,
+    scaleAnimation = Tween(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: animationController,
+        curve: const Interval(0.0, 0.5),
+        reverseCurve: const Interval(0.0, 0.5),
+      ),
     );
 
     slideUpAnimation = Tween(
@@ -64,72 +58,67 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
       end: const Offset(0, 0),
     ).animate(
       CurvedAnimation(
-        parent: slideController,
-        curve: Curves.easeIn,
-        reverseCurve: Curves.easeOut,
+        parent: animationController,
+        curve: const Interval(0.5, 1.0),
+        reverseCurve: const Interval(0.5, 1.0),
       ),
     );
   }
 
   @override
   void dispose() {
-    scaleController.dispose();
-    slideController.dispose();
+    animationController.dispose();
     super.dispose();
   }
 
-  Future<void> playForwardAnimation() async {
-    await scaleController.forward();
-    await slideController.forward();
-  }
+  Future<void> playForwardAnimation() => animationController.forward();
 
-  Future<void> playReverseAnimation() async {
-    await slideController.reverse();
-    await scaleController.reverse();
-  }
+  Future<void> playReverseAnimation() => animationController.reverse();
 
+  // Toggle selection and play animation
   void _toggleSelection(ScannedItem item) {
+    // update state
     setState(() {
-      if (_selectedItems.contains(item)) {
-        _selectedItems.remove(item);
+      if (selectedItems.contains(item)) {
+        selectedItems.remove(item);
       } else {
-        _selectedItems.add(item);
+        selectedItems.add(item);
       }
-      if (selectionMode) itemCount = _selectedItems.length;
+
+      // update item count for text slide animation
+      if (selectionMode) itemCount = selectedItems.length;
     });
 
-    HapticFeedback.selectionClick();
-
-    selectionMode ? playForwardAnimation() : playReverseAnimation();
+    if (selectionMode) {
+      playForwardAnimation();
+    } else {
+      playReverseAnimation();
+    }
   }
 
+  // Clear selection and play reverse animation
   void _clearSelection() {
-    setState(() => _selectedItems.clear());
+    setState(() => selectedItems.clear());
     playReverseAnimation();
   }
 
-  Map<String, List<ScannedItem>> _groupByDate(
-    BuildContext context,
-    List<ScannedItem> items,
-  ) {
+  // Group items by date
+  String _getDayName(DateTime date) {
+    final itemDate = DateTime(date.year, date.month, date.day);
+
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(const Duration(days: 1));
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
 
-    final locale = ref.watch(languageNotifierProvider);
+    final locale = ref.read(languageNotifierProvider);
 
-    return groupBy(items, (ScannedItem item) {
-      final date = item.createdAt;
-      final itemDate = DateTime(date.year, date.month, date.day);
-
-      if (itemDate == today) {
-        return context.locale.today;
-      } else if (itemDate == yesterday) {
-        return context.locale.yesterday;
-      } else {
-        return DateFormat("MMM d, yyyy", locale.code).format(itemDate);
-      }
-    });
+    if (itemDate == today) {
+      return context.locale.today;
+    } else if (itemDate == yesterday) {
+      return context.locale.yesterday;
+    } else {
+      return DateFormat("MMM d, yyyy", locale.code).format(itemDate);
+    }
   }
 
   @override
@@ -151,34 +140,11 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
           ),
         ),
         floatingActionButtonAnimator: FloatingActionButtonAnimator.noAnimation,
-        floatingActionButton: ScaleTransition(
-          scale: scaleAnimation,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SlideTransition(
-                position: slideUpAnimation,
-                child: FloatingActionButton(
-                  mini: true,
-                  onPressed: _clearSelection,
-                  child: const Icon(Icons.clear),
-                ),
-              ),
-              FloatingActionButton(
-                onPressed: _deleteAllItemsDialog,
-                child: const Icon(Icons.delete),
-              ),
-            ],
-          ),
-        ),
-
+        floatingActionButton: _buildFAB(),
         body: ref
             .watch(historyAsyncProvider)
             .when(
-              data: (history) {
-                final groupedHistory = _groupByDate(context, history);
-
+              data: (groupedHistory) {
                 if (groupedHistory.isEmpty) {
                   return Center(
                     child: Column(
@@ -212,14 +178,14 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
                             8,
                           ),
                           child: Text(
-                            date,
+                            _getDayName(date),
                             style: Theme.of(context).textTheme.titleMedium
                                 ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                         ),
                         ...items.asMap().entries.map((entry) {
                           final item = entry.value;
-                          final isSelected = _selectedItems.contains(item);
+                          final isSelected = selectedItems.contains(item);
                           final isFirst = entry.key == 0;
                           final isLast = entry.key == items.length - 1;
                           final isSingle = items.length == 1;
@@ -296,6 +262,30 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
                   (error, stackTrace) => Center(child: Text(error.toString())),
               loading: () => const Center(child: CircularProgressIndicator()),
             ),
+      ),
+    );
+  }
+
+  ScaleTransition _buildFAB() {
+    return ScaleTransition(
+      scale: scaleAnimation,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SlideTransition(
+            position: slideUpAnimation,
+            child: FloatingActionButton(
+              mini: true,
+              onPressed: _clearSelection,
+              child: const Icon(Icons.clear),
+            ),
+          ),
+          FloatingActionButton(
+            onPressed: _deleteAllItemsDialog,
+            child: const Icon(Icons.delete),
+          ),
+        ],
       ),
     );
   }
@@ -413,7 +403,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
     if (result ?? false) {
       ref
           .read(historyAsyncProvider.notifier)
-          .removeSelectedItems(_selectedItems.map((e) => e.id!).toList());
+          .removeSelectedItems(selectedItems.map((e) => e.id!).toList());
 
       _clearSelection();
     }

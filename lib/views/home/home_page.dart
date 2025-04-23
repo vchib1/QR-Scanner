@@ -14,36 +14,38 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(title: Text(context.locale.home)),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: kToolbarHeight),
-            const Icon(Icons.qr_code_2_rounded, size: 200.0),
-            ListTile(
-              shape: topRoundedBorder(),
-              onTap: () async => await requestCameraPermission(context),
-              leading: const Icon(Icons.qr_code_scanner, size: iconSize),
-              title: Text(context.locale.scanQRCodeTitle),
-              subtitle: Text(context.locale.scanQRCodeSubtitle),
-            ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: kToolbarHeight),
+              const Icon(Icons.qr_code_2_rounded, size: 200.0),
+              ListTile(
+                shape: topRoundedBorder(),
+                onTap: () async => await requestCameraPermission(context),
+                leading: const Icon(Icons.qr_code_scanner, size: iconSize),
+                title: Text(context.locale.scanQRCodeTitle),
+                subtitle: Text(context.locale.scanQRCodeSubtitle),
+              ),
 
-            ListTile(
-              shape: noneBorder(),
-              onTap: () => Navigator.pushNamed(context, "/image_scanner"),
-              leading: const Icon(Icons.image_search, size: iconSize),
-              title: Text(context.locale.scanImageTitle),
-              subtitle: Text(context.locale.scanImageSubtitle),
-            ),
+              ListTile(
+                shape: noneBorder(),
+                onTap: () => Navigator.pushNamed(context, "/image_scanner"),
+                leading: const Icon(Icons.image_search, size: iconSize),
+                title: Text(context.locale.scanImageTitle),
+                subtitle: Text(context.locale.scanImageSubtitle),
+              ),
 
-            ListTile(
-              shape: bottomRoundedBorder(),
-              onTap: () => Navigator.pushNamed(context, "/generate"),
-              leading: const Icon(Icons.qr_code_2_outlined, size: iconSize),
-              title: Text(context.locale.qrGeneratorTitle),
-              subtitle: Text(context.locale.qrGeneratorSubtitle),
-            ),
-          ],
+              ListTile(
+                shape: bottomRoundedBorder(),
+                onTap: () => Navigator.pushNamed(context, "/generate"),
+                leading: const Icon(Icons.qr_code_2_outlined, size: iconSize),
+                title: Text(context.locale.qrGeneratorTitle),
+                subtitle: Text(context.locale.qrGeneratorSubtitle),
+              ),
+            ],
+          ),
         ),
       ),
     );

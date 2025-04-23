@@ -1,17 +1,20 @@
+import 'dart:core';
 import 'package:ez_qr/model/scanned_item_model.dart';
 import 'package:ez_qr/repository/history_repo.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:collection/collection.dart';
 
-final historyAsyncProvider =
-    AsyncNotifierProvider<HistoryAsyncProvider, List<ScannedItem>>(
-      HistoryAsyncProvider.new,
-    );
+final historyAsyncProvider = AsyncNotifierProvider<
+  HistoryAsyncProvider,
+  Map<DateTime, List<ScannedItem>>
+>(HistoryAsyncProvider.new);
 
-class HistoryAsyncProvider extends AsyncNotifier<List<ScannedItem>> {
+class HistoryAsyncProvider
+    extends AsyncNotifier<Map<DateTime, List<ScannedItem>>> {
   late HistoryRepo _historyRepo;
 
   @override
-  Future<List<ScannedItem>> build() async {
+  Future<Map<DateTime, List<ScannedItem>>> build() async {
     _historyRepo = ref.watch(historyRepoProvider);
 
     return init();
@@ -28,9 +31,9 @@ class HistoryAsyncProvider extends AsyncNotifier<List<ScannedItem>> {
   }
 
   // initialize history
-  Future<List<ScannedItem>> init() async {
+  Future<Map<DateTime, List<ScannedItem>>> init() async {
     final items = await _historyRepo.getScannedItems();
-    return items;
+    return _groupByDate(items);
   }
 
   Future<void> refresh() async {
@@ -51,5 +54,15 @@ class HistoryAsyncProvider extends AsyncNotifier<List<ScannedItem>> {
   Future<void> removeSelectedItems(List<String> ids) async {
     await _historyRepo.removeSelectedScannedItems(ids);
     await refresh();
+  }
+
+  // Group items by date
+  Map<DateTime, List<ScannedItem>> _groupByDate(List<ScannedItem> items) {
+    return groupBy(items, (ScannedItem item) {
+      final date = item.createdAt;
+      final itemDate = DateTime(date.year, date.month, date.day);
+
+      return itemDate;
+    });
   }
 }
