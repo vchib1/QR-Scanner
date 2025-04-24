@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:ez_qr/utils/constants.dart';
 import 'package:ez_qr/utils/enums/app_language.dart';
 import 'package:ez_qr/utils/enums/theme_contrast.dart';
 import 'package:ez_qr/utils/extensions/context_extension.dart';
@@ -21,236 +22,250 @@ class SettingsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(title: Text(context.locale.settings)),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTitle(context, context.locale.app),
-              const SizedBox(height: 8.0),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            expandedHeight: sliverAppBarHeight,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(context.locale.settings),
+              expandedTitleScale: sliverAppBarTitleScale,
+              titlePadding: sliverAppBarTitlePadding,
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: bodyPaddingHorizontal,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildTitle(context, context.locale.app),
+                  const SizedBox(height: 8.0),
 
-              Consumer(
-                builder: (context, ref, child) {
-                  final state = ref.watch(themeProvider);
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final state = ref.watch(themeProvider);
 
-                  return Column(
-                    children: [
-                      // Theme Mode
-                      ListTile(
-                        shape: topRoundedBorder(),
-                        leading: const Icon(Icons.brightness_6_outlined),
-                        title: Text(context.locale.themeTitle),
-                        subtitle: Text(context.locale.themeSubtitle),
-                        trailing: SegmentedButton(
-                          selected: {state.themeMode},
-                          onSelectionChanged: (data) {
-                            ref
-                                .read(themeProvider.notifier)
-                                .updateState(
-                                  state.copyWith(themeMode: data.first),
-                                );
-                          },
-                          showSelectedIcon: false,
-                          style: const ButtonStyle(
-                            padding: WidgetStatePropertyAll(
-                              EdgeInsets.symmetric(horizontal: 0.0),
+                      return Column(
+                        children: [
+                          // Theme Mode
+                          ListTile(
+                            shape: topRoundedBorder(),
+                            leading: const Icon(Icons.brightness_6_outlined),
+                            title: Text(context.locale.themeTitle),
+                            subtitle: Text(context.locale.themeSubtitle),
+                            trailing: SegmentedButton(
+                              selected: {state.themeMode},
+                              onSelectionChanged: (data) {
+                                ref
+                                    .read(themeProvider.notifier)
+                                    .updateState(
+                                      state.copyWith(themeMode: data.first),
+                                    );
+                              },
+                              showSelectedIcon: false,
+                              style: const ButtonStyle(
+                                padding: WidgetStatePropertyAll(
+                                  EdgeInsets.symmetric(horizontal: 0.0),
+                                ),
+                                iconSize: WidgetStatePropertyAll(16.0),
+                                maximumSize: WidgetStatePropertyAll(
+                                  Size.square(16.0),
+                                ),
+                                visualDensity: VisualDensity(horizontal: -4),
+                                enableFeedback: true,
+                              ),
+                              segments: [
+                                ButtonSegment(
+                                  tooltip: context.locale.system,
+                                  value: ThemeMode.system,
+                                  icon: const Icon(Icons.brightness_auto),
+                                ),
+                                ButtonSegment(
+                                  tooltip: context.locale.light,
+                                  value: ThemeMode.light,
+                                  icon: const Icon(
+                                    Icons.brightness_high_rounded,
+                                  ),
+                                ),
+                                ButtonSegment(
+                                  tooltip: context.locale.dark,
+                                  value: ThemeMode.dark,
+                                  icon: const Icon(Icons.dark_mode),
+                                ),
+                              ],
                             ),
-                            iconSize: WidgetStatePropertyAll(16.0),
-                            maximumSize: WidgetStatePropertyAll(
-                              Size.square(16.0),
-                            ),
-                            visualDensity: VisualDensity(horizontal: -4),
-                            enableFeedback: true,
                           ),
-                          segments: [
-                            ButtonSegment(
-                              tooltip: context.locale.system,
-                              value: ThemeMode.system,
-                              icon: const Icon(Icons.brightness_auto),
+
+                          // Theme Contrast Mode
+                          ListTile(
+                            shape: noneBorder(),
+                            leading: const Icon(Icons.contrast),
+                            title: Text(context.locale.contrastTitle),
+                            subtitle: Text(context.locale.contrastSubtitle),
+                            trailing: SegmentedButton(
+                              selected: {state.contrastMode},
+                              onSelectionChanged: (data) {
+                                ref
+                                    .read(themeProvider.notifier)
+                                    .updateState(
+                                      state.copyWith(contrastMode: data.first),
+                                    );
+                              },
+                              showSelectedIcon: false,
+                              style: const ButtonStyle(
+                                padding: WidgetStatePropertyAll(
+                                  EdgeInsets.symmetric(horizontal: 0.0),
+                                ),
+                                iconSize: WidgetStatePropertyAll(16.0),
+                                maximumSize: WidgetStatePropertyAll(
+                                  Size.square(16.0),
+                                ),
+                                visualDensity: VisualDensity(horizontal: -4),
+                                enableFeedback: true,
+                              ),
+                              segments: [
+                                ButtonSegment(
+                                  tooltip: context.locale.low,
+                                  value: ThemeContrastMode.light,
+                                  label: const Text("L"),
+                                ),
+                                ButtonSegment(
+                                  tooltip: context.locale.medium,
+                                  value: ThemeContrastMode.medium,
+                                  label: const Text("M"),
+                                ),
+                                ButtonSegment(
+                                  tooltip: context.locale.high,
+                                  value: ThemeContrastMode.high,
+                                  label: const Text("H"),
+                                ),
+                              ],
                             ),
-                            ButtonSegment(
-                              tooltip: context.locale.light,
-                              value: ThemeMode.light,
-                              icon: const Icon(Icons.brightness_high_rounded),
-                            ),
-                            ButtonSegment(
-                              tooltip: context.locale.dark,
-                              value: ThemeMode.dark,
-                              icon: const Icon(Icons.dark_mode),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // Theme Contrast Mode
-                      ListTile(
-                        shape: noneBorder(),
-                        leading: const Icon(Icons.contrast),
-                        title: Text(context.locale.contrastTitle),
-                        subtitle: Text(context.locale.contrastSubtitle),
-                        trailing: SegmentedButton(
-                          selected: {state.contrastMode},
-                          onSelectionChanged: (data) {
-                            ref
-                                .read(themeProvider.notifier)
-                                .updateState(
-                                  state.copyWith(contrastMode: data.first),
-                                );
-                          },
-                          showSelectedIcon: false,
-                          style: const ButtonStyle(
-                            padding: WidgetStatePropertyAll(
-                              EdgeInsets.symmetric(horizontal: 0.0),
-                            ),
-                            iconSize: WidgetStatePropertyAll(16.0),
-                            maximumSize: WidgetStatePropertyAll(
-                              Size.square(16.0),
-                            ),
-                            visualDensity: VisualDensity(horizontal: -4),
-                            enableFeedback: true,
-                          ),
-                          segments: [
-                            ButtonSegment(
-                              tooltip: context.locale.low,
-                              value: ThemeContrastMode.light,
-                              label: const Text("L"),
-                            ),
-                            ButtonSegment(
-                              tooltip: context.locale.medium,
-                              value: ThemeContrastMode.medium,
-                              label: const Text("M"),
-                            ),
-                            ButtonSegment(
-                              tooltip: context.locale.high,
-                              value: ThemeContrastMode.high,
-                              label: const Text("H"),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-
-              // Language
-              Consumer(
-                builder: (context, ref, child) {
-                  final lang = ref.watch(languageNotifierProvider);
-
-                  return ListTile(
-                    onTap: () => _showLanguageDialog(context, ref),
-                    shape: bottomRoundedBorder(),
-                    leading: const Icon(Icons.language_sharp),
-                    title: Text(context.locale.languageTitle),
-                    subtitle: Text(context.locale.languageSubtitle),
-                    trailing: Text(lang.code.toUpperCase()),
-                  );
-                },
-              ),
-
-              const SizedBox(height: 16.0),
-
-              _buildTitle(context, context.locale.data),
-              const SizedBox(height: 8.0),
-
-              // Backup Data
-              ListTile(
-                shape: topRoundedBorder(),
-                onTap: () => _backupDatabase(context, ref),
-                leading: const Icon(Icons.backup_table),
-                title: Text(context.locale.backupDataTitle),
-                subtitle: Text(context.locale.backupDataSubtitle),
-              ),
-
-              // Restore Data
-              ListTile(
-                shape: noneBorder(),
-                onTap: () => _showRestoreDBDialog(context, ref),
-                leading: const Icon(Icons.restore),
-                title: Text(context.locale.restoreDataTitle),
-                subtitle: Text(context.locale.restoreDataSubtitle),
-              ),
-
-              // Delete Data
-              ListTile(
-                shape: bottomRoundedBorder(),
-                onTap: () => _showDeleteDBDialog(context, ref),
-                leading: const Icon(Icons.delete_rounded),
-                title: Text(context.locale.deleteDataTitle),
-                subtitle: Text(context.locale.deleteDataSubtitle),
-              ),
-
-              const SizedBox(height: 16.0),
-              _buildTitle(context, context.locale.about),
-              const SizedBox(height: 8.0),
-
-              // Privacy Policy
-              ListTile(
-                shape: topRoundedBorder(),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        content: SizedBox(
-                          height: MediaQuery.sizeOf(context).height * .75,
-                          width: MediaQuery.sizeOf(context).width * .75,
-                          child: const PrivacyPolicyScreen(),
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text(context.locale.close),
                           ),
                         ],
                       );
                     },
-                  );
-                },
-                leading: const Icon(Icons.policy),
-                title: Text(context.locale.privacyPolicyTitle),
-                subtitle: Text(context.locale.privacyPolicySubtitle),
-              ),
+                  ),
 
-              // Licenses
-              ListTile(
-                shape: noneBorder(),
-                onTap:
-                    () => showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return Theme(
-                          data: Theme.of(
-                            context,
-                          ).copyWith(listTileTheme: const ListTileThemeData()),
-                          child: AboutDialog(
-                            applicationIcon: const Icon(Icons.code),
-                            applicationLegalese: '© ${DateTime.now().year}',
-                            applicationName: context.locale.licensesTitle,
-                            applicationVersion: '1.0',
-                          ),
-                        );
-                      },
-                    ),
-                leading: const Icon(Icons.library_books),
-                title: Text(context.locale.licensesTitle),
-                subtitle: Text(context.locale.licensesSubtitle),
-              ),
+                  // Language
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final lang = ref.watch(languageNotifierProvider);
 
-              // Bug Report
-              ListTile(
-                shape: bottomRoundedBorder(),
-                onTap: () => _reportBugDialog(context),
-                leading: const Icon(Icons.pest_control_sharp),
-                title: Text(context.locale.reportBugTitle),
-                subtitle: Text(context.locale.reportBugSubtitle),
+                      return ListTile(
+                        onTap: () => _showLanguageDialog(context, ref),
+                        shape: bottomRoundedBorder(),
+                        leading: const Icon(Icons.language_sharp),
+                        title: Text(context.locale.languageTitle),
+                        subtitle: Text(context.locale.languageSubtitle),
+                        trailing: Text(lang.code.toUpperCase()),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 16.0),
+
+                  _buildTitle(context, context.locale.data),
+                  const SizedBox(height: 8.0),
+
+                  // Backup Data
+                  ListTile(
+                    shape: topRoundedBorder(),
+                    onTap: () => _backupDatabase(context, ref),
+                    leading: const Icon(Icons.backup_table),
+                    title: Text(context.locale.backupDataTitle),
+                    subtitle: Text(context.locale.backupDataSubtitle),
+                  ),
+
+                  // Restore Data
+                  ListTile(
+                    shape: noneBorder(),
+                    onTap: () => _showRestoreDBDialog(context, ref),
+                    leading: const Icon(Icons.restore),
+                    title: Text(context.locale.restoreDataTitle),
+                    subtitle: Text(context.locale.restoreDataSubtitle),
+                  ),
+
+                  // Delete Data
+                  ListTile(
+                    shape: bottomRoundedBorder(),
+                    onTap: () => _showDeleteDBDialog(context, ref),
+                    leading: const Icon(Icons.delete_rounded),
+                    title: Text(context.locale.deleteDataTitle),
+                    subtitle: Text(context.locale.deleteDataSubtitle),
+                  ),
+
+                  const SizedBox(height: 16.0),
+                  _buildTitle(context, context.locale.about),
+                  const SizedBox(height: 8.0),
+
+                  // Privacy Policy
+                  ListTile(
+                    shape: topRoundedBorder(),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            content: SizedBox(
+                              height: MediaQuery.sizeOf(context).height * .75,
+                              width: MediaQuery.sizeOf(context).width * .75,
+                              child: const PrivacyPolicyScreen(),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text(context.locale.close),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    leading: const Icon(Icons.policy),
+                    title: Text(context.locale.privacyPolicyTitle),
+                    subtitle: Text(context.locale.privacyPolicySubtitle),
+                  ),
+
+                  // Licenses
+                  ListTile(
+                    shape: noneBorder(),
+                    onTap:
+                        () => showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Theme(
+                              data: Theme.of(context).copyWith(
+                                listTileTheme: const ListTileThemeData(),
+                              ),
+                              child: AboutDialog(
+                                applicationIcon: const Icon(Icons.code),
+                                applicationLegalese: '© ${DateTime.now().year}',
+                                applicationName: context.locale.licensesTitle,
+                                applicationVersion: '1.0',
+                              ),
+                            );
+                          },
+                        ),
+                    leading: const Icon(Icons.library_books),
+                    title: Text(context.locale.licensesTitle),
+                    subtitle: Text(context.locale.licensesSubtitle),
+                  ),
+
+                  // Bug Report
+                  ListTile(
+                    shape: bottomRoundedBorder(),
+                    onTap: () => _reportBugDialog(context),
+                    leading: const Icon(Icons.pest_control_sharp),
+                    title: Text(context.locale.reportBugTitle),
+                    subtitle: Text(context.locale.reportBugSubtitle),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:async';
-import 'dart:math';
 import 'package:ez_qr/utils/enums/qr_logo_size.dart';
 import 'package:ez_qr/utils/enums/qr_size.dart';
 import 'package:ez_qr/utils/extensions/context_extension.dart';

@@ -1,4 +1,5 @@
 import 'package:ez_qr/model/scanned_item_model.dart';
+import 'package:ez_qr/utils/constants.dart';
 import 'package:ez_qr/utils/enums/qr_type.dart';
 import 'package:ez_qr/utils/extensions/context_extension.dart';
 import 'package:ez_qr/utils/extensions/qr_type_extension.dart';
@@ -123,6 +124,11 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
 
   @override
   Widget build(BuildContext context) {
+    final bodyHeight =
+        MediaQuery.sizeOf(context).height -
+        sliverAppBarHeight -
+        MediaQuery.of(context).viewPadding.top;
+
     return PopScope(
       canPop: !selectionMode,
       onPopInvokedWithResult: (didPop, _) {
@@ -131,136 +137,187 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: TextSlideTransitionWidget(
-            animation: scaleAnimation,
-            text1: context.locale.itemCount(itemCount),
-            text2: context.locale.history,
-          ),
-        ),
         floatingActionButtonAnimator: FloatingActionButtonAnimator.noAnimation,
         floatingActionButton: _buildFAB(),
-        body: ref
-            .watch(historyAsyncProvider)
-            .when(
-              data: (groupedHistory) {
-                if (groupedHistory.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.history_sharp, size: 48.0),
-                        Text(
-                          context.locale.noHistory,
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                      ],
-                    ),
-                  );
-                }
+        body: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            // APP BAR.
+            SliverAppBar(
+              pinned: true,
+              expandedHeight: sliverAppBarHeight,
+              flexibleSpace: FlexibleSpaceBar(
+                title: TextSlideTransitionWidget(
+                  animation: scaleAnimation,
+                  text1: context.locale.itemCount(itemCount),
+                  text2: context.locale.history,
+                ),
+                expandedTitleScale: sliverAppBarTitleScale,
+                titlePadding: sliverAppBarTitlePadding,
+              ),
+            ),
 
-                return ListView.builder(
-                  itemCount: groupedHistory.length,
-                  itemBuilder: (context, index) {
-                    final date = groupedHistory.keys.elementAt(index);
-                    final items = groupedHistory[date]!;
-                    final firstIdx = index == 0;
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(
-                            8,
-                            firstIdx ? 0 : 12,
-                            8,
-                            8,
+            // BODY
+            ref
+                .watch(historyAsyncProvider)
+                .when(
+                  data: (groupedHistory) {
+                    if (groupedHistory.isEmpty) {
+                      // Empty State
+                      return SliverToBoxAdapter(
+                        child: SizedBox(
+                          height:
+                              MediaQuery.sizeOf(context).height -
+                              sliverAppBarHeight -
+                              MediaQuery.of(context).viewPadding.top,
+                          width: double.infinity,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            spacing: 8.0,
+                            children: [
+                              const Icon(Icons.history_sharp, size: 48.0),
+                              Text(
+                                context.locale.noHistory,
+                                style:
+                                    Theme.of(context).textTheme.headlineSmall,
+                              ),
+                            ],
                           ),
-                          child: Text(
-                            _getDayName(date),
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
                         ),
-                        ...items.asMap().entries.map((entry) {
-                          final item = entry.value;
-                          final isSelected = selectedItems.contains(item);
-                          final isFirst = entry.key == 0;
-                          final isLast = entry.key == items.length - 1;
-                          final isSingle = items.length == 1;
+                      );
+                    }
 
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0,
+                    return SliverList.builder(
+                      itemCount: groupedHistory.length,
+                      itemBuilder: (context, index) {
+                        final date = groupedHistory.keys.elementAt(index);
+                        final items = groupedHistory[date]!;
+                        final firstIdx = index == 0;
+
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                16,
+                                firstIdx ? 0 : 12,
+                                16,
+                                8,
+                              ),
+                              child: Text(
+                                _getDayName(date),
+                                style: Theme.of(context).textTheme.titleMedium
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                              ),
                             ),
-                            child: ListTile(
-                              onLongPress: () => _toggleSelection(item),
-                              onTap: () {
-                                if (selectionMode) {
-                                  _toggleSelection(item);
-                                } else {
-                                  _showOptions(context, ref, item: item);
-                                }
-                              },
-                              selected: isSelected,
-                              selectedTileColor: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainerHighest
-                                  .withValues(alpha: 0.85),
-                              leading: AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 200),
-                                transitionBuilder:
-                                    (child, anim) => ScaleTransition(
-                                      scale: anim,
-                                      child: child,
+                            ...items.asMap().entries.map((entry) {
+                              final item = entry.value;
+                              final isSelected = selectedItems.contains(item);
+                              final isFirst = entry.key == 0;
+                              final isLast = entry.key == items.length - 1;
+                              final isSingle = items.length == 1;
+
+                              return Padding(
+                                padding: bodyPaddingHorizontal,
+                                child: ListTile(
+                                  onLongPress: () => _toggleSelection(item),
+                                  onTap: () {
+                                    if (selectionMode) {
+                                      _toggleSelection(item);
+                                    } else {
+                                      _showOptions(context, ref, item: item);
+                                    }
+                                  },
+                                  selected: isSelected,
+                                  selectedTileColor: Theme.of(context)
+                                      .colorScheme
+                                      .surfaceContainerHighest
+                                      .withValues(alpha: 0.85),
+                                  leading: AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 200),
+                                    transitionBuilder:
+                                        (child, anim) => ScaleTransition(
+                                          scale: anim,
+                                          child: child,
+                                        ),
+                                    child: CircleAvatar(
+                                      key: ValueKey<bool>(isSelected),
+                                      child:
+                                          isSelected
+                                              ? const Icon(Icons.check)
+                                              : const Icon(Icons.qr_code_2),
                                     ),
-                                child: CircleAvatar(
-                                  key: ValueKey<bool>(isSelected),
-                                  child:
-                                      isSelected
-                                          ? const Icon(Icons.check)
-                                          : const Icon(Icons.qr_code_2),
-                                ),
-                              ),
-                              title: Text(
-                                QrType.getQrType(
-                                  item.data,
-                                ).localizedName(context),
-                              ),
-                              subtitle: Text(
-                                item.data,
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(
-                                    isFirst || isSingle ? 8.0 : 0,
                                   ),
-                                  topRight: Radius.circular(
-                                    isFirst || isSingle ? 8.0 : 0,
+                                  title: Text(
+                                    QrType.getQrType(
+                                      item.data,
+                                    ).localizedName(context),
                                   ),
-                                  bottomLeft: Radius.circular(
-                                    isLast || isSingle ? 8.0 : 0,
+                                  subtitle: Text(
+                                    item.data,
+                                    maxLines: 3,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  bottomRight: Radius.circular(
-                                    isLast || isSingle ? 8.0 : 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(
+                                        isFirst || isSingle ? 8.0 : 0,
+                                      ),
+                                      topRight: Radius.circular(
+                                        isFirst || isSingle ? 8.0 : 0,
+                                      ),
+                                      bottomLeft: Radius.circular(
+                                        isLast || isSingle ? 8.0 : 0,
+                                      ),
+                                      bottomRight: Radius.circular(
+                                        isLast || isSingle ? 8.0 : 0,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          );
-                        }),
-                        const SizedBox(height: 8.0),
-                      ],
+                              );
+                            }),
+                            const SizedBox(height: 8.0),
+                          ],
+                        );
+                      },
                     );
                   },
-                );
-              },
-              error:
-                  (error, stackTrace) => Center(child: Text(error.toString())),
-              loading: () => const Center(child: CircularProgressIndicator()),
-            ),
+                  error: (error, _) {
+                    return SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: bodyHeight,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          spacing: 8.0,
+                          children: [
+                            Icon(
+                              Icons.error,
+                              size: 100.0,
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                            Text(
+                              error.toString(),
+                              style: Theme.of(context).textTheme.headlineSmall,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  loading:
+                      () => SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: bodyHeight,
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                      ),
+                ),
+          ],
+        ),
       ),
     );
   }
