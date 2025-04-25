@@ -1,6 +1,7 @@
 import 'dart:core';
 import 'package:ez_qr/model/scanned_item_model.dart';
 import 'package:ez_qr/repository/history_repo.dart';
+import 'package:ez_qr/utils/enums/sort.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:collection/collection.dart';
 
@@ -34,6 +35,25 @@ class HistoryAsyncProvider
   Future<Map<DateTime, List<ScannedItem>>> init() async {
     final items = await _historyRepo.getScannedItems();
     return _groupByDate(items);
+  }
+
+  // get filter items
+  Future<void> getFilteredScannedItems({
+    Sort sort = Sort.desc,
+    DateTime? from,
+    DateTime? to,
+  }) async {
+    try {
+      state = const AsyncLoading();
+      final items = await _historyRepo.getFilteredScannedItems(
+        sortBy: sort,
+        from: from,
+        to: to,
+      );
+      state = AsyncValue.data(_groupByDate(items));
+    } catch (e, s) {
+      state = AsyncValue.error(e, s);
+    }
   }
 
   Future<void> refresh() async {

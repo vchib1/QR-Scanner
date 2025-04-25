@@ -1,5 +1,6 @@
 import 'package:ez_qr/utils/extensions/context_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class QRPhone extends StatefulWidget {
   final ValueChanged<String> onChanged;
@@ -41,9 +42,9 @@ class _QRPhoneState extends State<QRPhone> {
       controller: phoneController,
       keyboardType: TextInputType.phone,
       onChanged: onChanged,
-      decoration: InputDecoration(
-        hintText: context.locale.phone,
-      ),
+      textInputAction: TextInputAction.done,
+      decoration: InputDecoration(hintText: context.locale.phone),
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:ez_qr/utils/enums/sort.dart';
 import 'package:uuid/uuid.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:ez_qr/model/scanned_item_model.dart';
@@ -21,19 +22,6 @@ class HistoryDB {
 
   Future<Database> get database => _db.database;
 
-  // get scanned Items
-  Future<List<Map<String, Object?>>> getScannedItems() async {
-    try {
-      final db = await database;
-
-      final res = await db.query(history, orderBy: "createdAt DESC");
-
-      return res;
-    } catch (_) {
-      return [];
-    }
-  }
-
   // add scanned item
   Future<void> addScannedItem(ScannedItem item) async {
     final db = await database;
@@ -48,7 +36,7 @@ class HistoryDB {
     await db.delete(history, where: "id = ?", whereArgs: [item.id]);
   }
 
-  // ✅ remove selected scanned items (by id list)
+  // remove selected scanned items (by id list)
   Future<void> removeSelectedScannedItems(List<String> ids) async {
     if (ids.isEmpty) return;
 
@@ -57,6 +45,60 @@ class HistoryDB {
     await db.delete(history, where: 'id IN ($placeholders)', whereArgs: ids);
   }
 
+  // get scanned Items
+  Future<List<Map<String, Object?>>> getScannedItems() async {
+    try {
+      final db = await database;
+
+      final res = await db.query(history, orderBy: "createdAt DESC");
+
+      return res;
+    } catch (_) {
+      return [];
+    }
+  }
+
+  // get scanned Items
+  Future<List<Map<String, Object?>>> getFilteredScannedItems({
+    Sort sortBy = Sort.asc,
+    DateTime? from,
+    DateTime? to,
+  }) async {
+    try {
+      final db = await database;
+
+      List<Map<String, Object?>> result = [];
+
+      final whereClause = <String>[];
+      final whereArgs = <Object?>[];
+
+      if (from != null) {
+        whereClause.add("createdAt >= ?");
+        whereArgs.add(from.millisecondsSinceEpoch);
+      }
+
+      if (to != null) {
+        whereClause.add("createdAt <= ?");
+        whereArgs.add(to.millisecondsSinceEpoch);
+      }
+
+      String? whereString =
+          whereClause.isNotEmpty ? whereClause.join(" AND ") : null;
+
+      result = await db.query(
+        history,
+        where: whereString,
+        whereArgs: whereArgs,
+        orderBy: "createdAt ${sortBy.name.toUpperCase()}",
+      );
+
+      return result;
+    } catch (_) {
+      return [];
+    }
+  }
+
+  // clear history
   Future<void> clearHistory() async {
     final db = await database;
 

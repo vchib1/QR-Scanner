@@ -6,6 +6,7 @@ import 'package:ez_qr/utils/extensions/qr_type_extension.dart';
 import 'package:ez_qr/utils/helper_functions/qr_data_dialog.dart';
 import 'package:ez_qr/utils/helper_functions/share_qr_image.dart';
 import 'package:ez_qr/utils/snackbar.dart';
+import 'package:ez_qr/utils/tile_shapes.dart';
 import 'package:ez_qr/views/history/provider/provider.dart';
 import 'package:ez_qr/views/settings/provider/language/language_provider.dart';
 import 'package:ez_qr/widgets/text_slide_transition_widget.dart';
@@ -200,9 +201,9 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
                           children: [
                             Padding(
                               padding: EdgeInsets.fromLTRB(
-                                16,
-                                firstIdx ? 0 : 12,
-                                16,
+                                8,
+                                firstIdx ? 0 : 8,
+                                8,
                                 8,
                               ),
                               child: Text(
@@ -226,7 +227,11 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
                                     if (selectionMode) {
                                       _toggleSelection(item);
                                     } else {
-                                      _showOptions(context, ref, item: item);
+                                      _showOptionsModal(
+                                        context,
+                                        ref,
+                                        item: item,
+                                      );
                                     }
                                   },
                                   selected: isSelected,
@@ -256,24 +261,13 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
                                   ),
                                   subtitle: Text(
                                     item.data,
-                                    maxLines: 3,
+                                    maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(
-                                        isFirst || isSingle ? 8.0 : 0,
-                                      ),
-                                      topRight: Radius.circular(
-                                        isFirst || isSingle ? 8.0 : 0,
-                                      ),
-                                      bottomLeft: Radius.circular(
-                                        isLast || isSingle ? 8.0 : 0,
-                                      ),
-                                      bottomRight: Radius.circular(
-                                        isLast || isSingle ? 8.0 : 0,
-                                      ),
-                                    ),
+                                  shape: getListTileShape(
+                                    isSingle,
+                                    isFirst,
+                                    isLast,
                                   ),
                                 ),
                               );
@@ -333,11 +327,13 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
             position: slideUpAnimation,
             child: FloatingActionButton(
               mini: true,
+              tooltip: context.locale.cancel,
               onPressed: _clearSelection,
               child: const Icon(Icons.clear),
             ),
           ),
           FloatingActionButton(
+            tooltip: context.locale.delete,
             onPressed: _deleteAllItemsDialog,
             child: const Icon(Icons.delete),
           ),
@@ -346,60 +342,73 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
     );
   }
 
-  void _showOptions(
+  RoundedRectangleBorder getListTileShape(
+    bool isSingle,
+    bool isFirst,
+    bool isLast,
+  ) {
+    if (isSingle) return roundedBorder();
+
+    if (isFirst) return topRoundedBorder();
+
+    if (isLast) return bottomRoundedBorder();
+
+    return noneBorder();
+  }
+
+  void _showOptionsModal(
     BuildContext context,
     WidgetRef ref, {
     required ScannedItem item,
   }) {
-    showDialog(
+    showModalBottomSheet(
       context: context,
+      clipBehavior: Clip.hardEdge,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
       builder: (context) {
-        return Dialog(
-          clipBehavior: Clip.antiAlias,
-          backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: Text(context.locale.open),
-                leading: const Icon(Icons.remove_red_eye_outlined),
-                onTap: () {
-                  Navigator.pop(context);
-                  showQRDataDialog(context, data: item.data);
-                },
-              ),
-              ListTile(
-                title: Text(context.locale.copy),
-                leading: const Icon(Icons.copy_rounded),
-                onTap: () async {
-                  await Clipboard.setData(ClipboardData(text: item.data));
-                  if (!context.mounted) return;
-                  SnackBarUtils.showSnackBar(context.locale.copied);
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: Text(context.locale.share),
-                leading: const Icon(Icons.share_outlined),
-                onTap: () async {
-                  await shareQRImage(context, data: item.data);
-                  if (!context.mounted) return;
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: Text(context.locale.delete),
-                leading: const Icon(Icons.delete),
-                onTap: () {
-                  Navigator.pop(context);
-                  _deleteItemDialog(context, ref, item);
-                },
-              ),
-            ],
-          ),
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              shape: noneBorder(),
+              title: Text(context.locale.open),
+              leading: const Icon(Icons.remove_red_eye_outlined),
+              onTap: () {
+                Navigator.pop(context);
+                showQRDataDialog(context, data: item.data);
+              },
+            ),
+            ListTile(
+              shape: noneBorder(),
+              title: Text(context.locale.copy),
+              leading: const Icon(Icons.copy_rounded),
+              onTap: () async {
+                await Clipboard.setData(ClipboardData(text: item.data));
+                if (!context.mounted) return;
+                SnackBarUtils.showSnackBar(context.locale.copied);
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              shape: noneBorder(),
+              title: Text(context.locale.share),
+              leading: const Icon(Icons.share_outlined),
+              onTap: () async {
+                await shareQRImage(context, data: item.data);
+                if (!context.mounted) return;
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              shape: noneBorder(),
+              title: Text(context.locale.delete),
+              leading: const Icon(Icons.delete),
+              onTap: () {
+                Navigator.pop(context);
+                _deleteItemDialog(context, ref, item);
+              },
+            ),
+          ],
         );
       },
     );

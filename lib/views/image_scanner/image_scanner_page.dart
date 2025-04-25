@@ -81,14 +81,16 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
     return file;
   }
 
-  void cropImage() => cropController.crop();
+  void cropImage() {
+    showLoadingDialog(context);
+    cropController.crop();
+  }
 
   Future<void> handleCropSuccess(CropSuccess result) async {
     try {
       final newData = result.croppedImage;
 
       setState(() => croppedData = newData);
-      showLoadingDialog(context);
 
       File file = await uint8ListToFile(newData, "qrTemp.png");
 
@@ -150,7 +152,12 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
                   },
                   color: Theme.of(context).colorScheme.surfaceContainer,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(24.0),
+                    side: BorderSide(
+                      color:
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
+                      width: 1.25,
+                    ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -174,6 +181,8 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
                     case CropSuccess():
                       handleCropSuccess(result);
                     case CropFailure():
+                    // pop loading dialog called before calling crop method
+                      if (mounted) Navigator.pop(context);
                   }
                 },
               ),

@@ -1,5 +1,6 @@
 import 'package:ez_qr/utils/extensions/context_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class QRSms extends StatefulWidget {
   final ValueChanged<String> onChanged;
@@ -45,7 +46,9 @@ class _QRSmsState extends State<QRSms> {
           keyboardType: TextInputType.phone,
           onChanged: onChanged,
           maxLines: 1,
+          textInputAction: TextInputAction.next,
           decoration: InputDecoration(hintText: context.locale.phone),
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         ),
         SizedBox(
           height: 5 * 24.0,
@@ -53,6 +56,7 @@ class _QRSmsState extends State<QRSms> {
             controller: msgController,
             onChanged: onChanged,
             maxLines: 10,
+            textInputAction: TextInputAction.newline,
             decoration: InputDecoration(hintText: context.locale.message),
           ),
         ),

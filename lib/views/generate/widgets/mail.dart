@@ -52,12 +52,14 @@ class _QRMailState extends State<QRMail> {
           controller: emailController,
           onChanged: onChanged,
           maxLines: 1,
+          textInputAction: TextInputAction.next,
           decoration: InputDecoration(hintText: context.locale.to),
         ),
         TextField(
           controller: subjectController,
           onChanged: onChanged,
           maxLines: 1,
+          textInputAction: TextInputAction.next,
           decoration: InputDecoration(hintText: context.locale.subject),
         ),
         SizedBox(

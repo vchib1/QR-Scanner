@@ -31,6 +31,7 @@ class SnackBarUtils {
       ),
       backgroundColor: theme.colorScheme.primary,
       behavior: SnackBarBehavior.floating,
+      showCloseIcon: true,
       duration: const Duration(seconds: 3),
     );
 

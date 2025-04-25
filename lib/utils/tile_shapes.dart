@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 RoundedRectangleBorder topRoundedBorder() => const RoundedRectangleBorder(
   borderRadius: BorderRadius.only(
-    topLeft: Radius.circular(12.0),
+    topLeft: Radius.circular(16.0),
     topRight: Radius.circular(12.0),
   ),
 );

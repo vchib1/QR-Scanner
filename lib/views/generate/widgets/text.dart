@@ -35,9 +35,8 @@ class _QRTextState extends State<QRText> {
         controller: textController,
         onChanged: onChanged,
         maxLines: 10,
-        decoration: InputDecoration(
-          hintText: context.locale.text,
-        ),
+        textInputAction: TextInputAction.newline,
+        decoration: InputDecoration(hintText: context.locale.text),
       ),
     );
   }
