@@ -26,7 +26,8 @@ class QRScannerFrame extends StatelessWidget {
           height: size,
           child: CustomPaint(
             painter: QRScannerFramePainter(
-              borderColor: color ?? Colors.white,
+              borderColor: color,
+              lineColor: Theme.of(context).colorScheme.primary,
               animation: animation,
             ),
           ),
@@ -38,13 +39,15 @@ class QRScannerFrame extends StatelessWidget {
 
 class QRScannerFramePainter extends CustomPainter {
   final Animation<double> animation;
-  final Color borderColor;
+  final Color? borderColor;
+  final Color? lineColor;
   final double strokeWidth;
   final double cornerLength;
 
   QRScannerFramePainter({
     required this.animation,
     this.borderColor = Colors.white,
+    this.lineColor = Colors.white,
     this.strokeWidth = 3.0,
     this.cornerLength = 20.0,
   }) : super(repaint: animation);
@@ -53,7 +56,7 @@ class QRScannerFramePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint =
         Paint()
-          ..color = borderColor
+          ..color = borderColor!
           ..strokeWidth = strokeWidth
           ..strokeCap = StrokeCap.round
           ..style = PaintingStyle.stroke;
@@ -81,7 +84,11 @@ class QRScannerFramePainter extends CustomPainter {
 
     // center line
     final dy = lerpDouble(0, height, animation.value) ?? 0.0;
-    canvas.drawLine(Offset(0, dy), Offset(width, dy), paint);
+    canvas.drawLine(
+      Offset(0, dy),
+      Offset(width, dy),
+      paint..color = lineColor!,
+    );
   }
 
   @override

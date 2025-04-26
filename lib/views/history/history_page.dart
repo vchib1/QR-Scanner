@@ -366,8 +366,8 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
       clipBehavior: Clip.hardEdge,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
       builder: (context) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
+        return ListView(
+          shrinkWrap: true,
           children: [
             ListTile(
               shape: noneBorder(),

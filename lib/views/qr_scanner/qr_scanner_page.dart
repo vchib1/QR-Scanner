@@ -3,6 +3,7 @@ import 'package:ez_qr/utils/helper_functions/qr_data_dialog.dart';
 import 'package:ez_qr/views/history/provider/provider.dart';
 import 'package:ez_qr/views/qr_scanner/provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'widgets/qr_frame.dart';
@@ -35,6 +36,11 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
 
     animationController.repeat(reverse: true);
 
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
     WidgetsBinding.instance.addPostFrameCallback((_) => setScanWindow());
   }
 
@@ -42,6 +48,10 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
   void dispose() {
     controller.dispose();
     animationController.dispose();
+
+    SystemChrome.setPreferredOrientations(
+      DeviceOrientation.values.map((e) => e).toList(),
+    );
     super.dispose();
   }
 
@@ -142,7 +152,6 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
         child: Stack(
           children: [
             MobileScanner(controller: controller, onDetect: onDetect),
-
             Center(
               child: Column(
                 spacing: 10,
@@ -160,8 +169,8 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
             ),
 
             Positioned(
-              left: 0,
-              bottom: 50,
+              bottom: 24,
+              right: 0,
               child: SizedBox(
                 width: size.width,
                 child: Padding(
@@ -176,13 +185,14 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
 
                           return Flexible(
                             child: Slider(
+                              onChanged: changeZoomLevel,
                               value: zoomLevel,
                               min: 0.0,
                               max: 1.0,
                               thumbColor: iconColor,
-                              activeColor: iconColor,
+                              activeColor:
+                                  Theme.of(context).colorScheme.primary,
                               inactiveColor: Colors.grey.shade700,
-                              onChanged: changeZoomLevel,
                             ),
                           );
                         },

@@ -25,8 +25,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
+    // DeviceOrientation.portraitUp,
+    // DeviceOrientation.portraitDown,
   ]);
 
   final sharedPref = await SharedPreferences.getInstance();

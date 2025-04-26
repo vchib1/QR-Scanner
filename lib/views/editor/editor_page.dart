@@ -153,6 +153,9 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     final state = ref.watch(qrEditorProvider);
     final provider = ref.watch(qrEditorProvider.notifier);
 
+    bool allowPinning =
+        MediaQuery.orientationOf(context) == Orientation.portrait;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
@@ -184,9 +187,9 @@ class _EditorPageState extends ConsumerState<EditorPage> {
         child: CustomScrollView(
           slivers: [
             SliverPersistentHeader(
-              pinned: true,
+              pinned: allowPinning,
               delegate: QRSliverView(
-                height: state.qrSize.value + 50,
+                height: state.qrSize.value + 12.0,
                 child: Container(
                   width: double.infinity,
                   alignment: Alignment.center,
