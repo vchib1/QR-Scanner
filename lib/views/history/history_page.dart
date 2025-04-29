@@ -5,13 +5,11 @@ import 'package:ez_qr/utils/extensions/context_extension.dart';
 import 'package:ez_qr/utils/extensions/qr_type_extension.dart';
 import 'package:ez_qr/utils/helper_functions/qr_data_dialog.dart';
 import 'package:ez_qr/utils/helper_functions/share_qr_image.dart';
-import 'package:ez_qr/utils/snackbar.dart';
 import 'package:ez_qr/utils/tile_shapes.dart';
 import 'package:ez_qr/views/history/provider/provider.dart';
 import 'package:ez_qr/views/settings/provider/language/language_provider.dart';
 import 'package:ez_qr/widgets/text_slide_transition_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -222,15 +220,19 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
                               return Padding(
                                 padding: bodyPaddingHorizontal,
                                 child: ListTile(
+                                  shape: getListTileShape(
+                                    isSingle,
+                                    isFirst,
+                                    isLast,
+                                  ),
                                   onLongPress: () => _toggleSelection(item),
                                   onTap: () {
                                     if (selectionMode) {
                                       _toggleSelection(item);
                                     } else {
-                                      _showOptionsModal(
+                                      showQRDataDialog(
                                         context,
-                                        ref,
-                                        item: item,
+                                        data: item.data,
                                       );
                                     }
                                   },
@@ -264,10 +266,51 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  shape: getListTileShape(
-                                    isSingle,
-                                    isFirst,
-                                    isLast,
+                                  trailing: PopupMenuButton(
+                                    enabled: !selectionMode,
+                                    icon: const Icon(Icons.more_vert_outlined),
+                                    onSelected: (value) {
+                                      switch (value) {
+                                        case 1:
+                                          showQRDataDialog(
+                                            context,
+                                            data: item.data,
+                                          );
+                                          break;
+                                        case 2:
+                                          copyText(context, item.data);
+                                          break;
+                                        case 3:
+                                          shareQRImage(
+                                            context,
+                                            data: item.data,
+                                          );
+                                          break;
+                                        case 4:
+                                          _deleteItemDialog(context, ref, item);
+                                          break;
+                                      }
+                                    },
+                                    itemBuilder: (context) {
+                                      return [
+                                        PopupMenuItem<int>(
+                                          value: 1,
+                                          child: Text(context.locale.open),
+                                        ),
+                                        PopupMenuItem<int>(
+                                          value: 2,
+                                          child: Text(context.locale.copy),
+                                        ),
+                                        PopupMenuItem<int>(
+                                          value: 3,
+                                          child: Text(context.locale.share),
+                                        ),
+                                        PopupMenuItem<int>(
+                                          value: 4,
+                                          child: Text(context.locale.delete),
+                                        ),
+                                      ];
+                                    },
                                   ),
                                 ),
                               );
@@ -354,64 +397,6 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
     if (isLast) return bottomRoundedBorder();
 
     return noneBorder();
-  }
-
-  void _showOptionsModal(
-    BuildContext context,
-    WidgetRef ref, {
-    required ScannedItem item,
-  }) {
-    showModalBottomSheet(
-      context: context,
-      clipBehavior: Clip.hardEdge,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
-      builder: (context) {
-        return ListView(
-          shrinkWrap: true,
-          children: [
-            ListTile(
-              shape: noneBorder(),
-              title: Text(context.locale.open),
-              leading: const Icon(Icons.remove_red_eye_outlined),
-              onTap: () {
-                Navigator.pop(context);
-                showQRDataDialog(context, data: item.data);
-              },
-            ),
-            ListTile(
-              shape: noneBorder(),
-              title: Text(context.locale.copy),
-              leading: const Icon(Icons.copy_rounded),
-              onTap: () async {
-                await Clipboard.setData(ClipboardData(text: item.data));
-                if (!context.mounted) return;
-                SnackBarUtils.showSnackBar(context.locale.copied);
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              shape: noneBorder(),
-              title: Text(context.locale.share),
-              leading: const Icon(Icons.share_outlined),
-              onTap: () async {
-                await shareQRImage(context, data: item.data);
-                if (!context.mounted) return;
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              shape: noneBorder(),
-              title: Text(context.locale.delete),
-              leading: const Icon(Icons.delete),
-              onTap: () {
-                Navigator.pop(context);
-                _deleteItemDialog(context, ref, item);
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   Future<bool?> _deleteItemDialog(

@@ -146,19 +146,24 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
         },
         child:
             (selectionIsNotNull)
-                ? Crop(
-                  baseColor: Theme.of(context).colorScheme.surface,
-                  controller: cropController,
-                  image: selectedImageData!,
-                  onCropped: (result) async {
-                    switch (result) {
-                      case CropSuccess():
-                        handleCropSuccess(result);
-                      case CropFailure():
-                        // pop loading dialog called before calling crop method
-                        if (mounted) Navigator.pop(context);
-                    }
-                  },
+                ? Center(
+                  child: Crop(
+                    image: selectedImageData!,
+                    controller: cropController,
+                    maskColor: Theme.of(
+                      context,
+                    ).colorScheme.surface.withValues(alpha: 0.5),
+                    baseColor: Theme.of(context).colorScheme.surface,
+                    onCropped: (result) async {
+                      switch (result) {
+                        case CropSuccess():
+                          handleCropSuccess(result);
+                        case CropFailure():
+                          // pop loading dialog called before calling crop method
+                          if (mounted) Navigator.pop(context);
+                      }
+                    },
+                  ),
                 )
                 : Center(
                   child: MaterialButton(

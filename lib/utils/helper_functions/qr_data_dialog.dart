@@ -25,12 +25,7 @@ Future<T?> showQRDataDialog<T>(BuildContext context, {required String data}) {
             ),
             IconButton(
               tooltip: context.locale.copy,
-              onPressed: () async {
-                await Clipboard.setData(ClipboardData(text: data));
-                if (context.mounted) {
-                  SnackBarUtils.showSnackBar(context.locale.copied);
-                }
-              },
+              onPressed: () => copyText(context, data),
               icon: const Icon(Icons.copy),
             ),
             IconButton(
@@ -76,4 +71,11 @@ Future<T?> showQRDataDialog<T>(BuildContext context, {required String data}) {
       );
     },
   );
+}
+
+Future<void> copyText(BuildContext context, String text) async {
+  await Clipboard.setData(ClipboardData(text: text));
+  if (context.mounted) {
+    SnackBarUtils.showSnackBar(context.locale.copied);
+  }
 }
