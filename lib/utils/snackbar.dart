@@ -72,13 +72,35 @@ class SnackBarUtils {
   }
 
   static void showErrorBar(String message, {BuildContext? context}) {
+    final contextExist = (context ?? snackBarKey.currentState?.context) != null;
+
     final snackBar = SnackBar(
-      content: Text(message, style: const TextStyle(color: Colors.white)),
-      backgroundColor: Colors.red,
+      content: Text(
+        message,
+        style: TextStyle(
+          color:
+              contextExist
+                  ? Theme.of(
+                    snackBarKey.currentState!.context,
+                  ).colorScheme.onErrorContainer
+                  : Colors.white,
+        ),
+      ),
+      backgroundColor:
+          contextExist
+              ? Theme.of(
+                snackBarKey.currentState!.context,
+              ).colorScheme.errorContainer
+              : Colors.redAccent,
       behavior: SnackBarBehavior.floating,
       duration: const Duration(seconds: 3),
       showCloseIcon: true,
-      closeIconColor: Colors.white,
+      closeIconColor:
+          contextExist
+              ? Theme.of(
+                snackBarKey.currentState!.context,
+              ).colorScheme.onErrorContainer
+              : Colors.white,
     );
 
     if (context != null && context.mounted) {

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:ez_qr/utils/snackbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -35,10 +36,11 @@ Future<bool> shareQRImage(
     ], text: "QR Code");
 
     return (res.status == ShareResultStatus.success);
+  } catch (e) {
+    SnackBarUtils.showErrorBar(e.toString());
+    return false;
   } finally {
-    if (context.mounted) {
-      Navigator.pop(context);
-    }
+    if (context.mounted) Navigator.pop(context);
   }
 }
 

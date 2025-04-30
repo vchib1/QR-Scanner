@@ -313,45 +313,43 @@ class SettingsPage extends ConsumerWidget {
   }
 
   Future<void> _showRestoreDBDialog(BuildContext context, WidgetRef ref) async {
-    bool? proceed = await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Wrap(
-            spacing: 8.0,
-            runSpacing: 8.0,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              const Icon(Icons.settings_backup_restore),
-              Text(context.locale.restoreDataTitle),
-            ],
-          ),
-          content: Text(context.locale.restoreDataWarning),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: Text(context.locale.cancel),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: Text(context.locale.proceed),
-            ),
-          ],
-        );
-      },
-    );
+    bool success =
+        await showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  const Icon(Icons.settings_backup_restore),
+                  Text(context.locale.restoreDataTitle),
+                ],
+              ),
+              content: Text(context.locale.restoreDataWarning),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: Text(context.locale.cancel),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: Text(context.locale.proceed),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
 
-    if (!(proceed ?? true)) return;
+    if (!success || !context.mounted) return;
 
     try {
-      if (!context.mounted) return;
       showLoadingDialog(context);
       await _restoreBackupDatabase(context, ref);
     } finally {
-      // pop loading dialog
-      if (context.mounted) {
-        Navigator.pop(context);
-      }
+      if (context.mounted) Navigator.pop(context);
     }
   }
 

@@ -272,21 +272,15 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
                                     onSelected: (value) {
                                       switch (value) {
                                         case 1:
-                                          showQRDataDialog(
-                                            context,
-                                            data: item.data,
-                                          );
-                                          break;
-                                        case 2:
                                           copyText(context, item.data);
                                           break;
-                                        case 3:
+                                        case 2:
                                           shareQRImage(
                                             context,
                                             data: item.data,
                                           );
                                           break;
-                                        case 4:
+                                        case 3:
                                           _deleteItemDialog(context, ref, item);
                                           break;
                                       }
@@ -295,18 +289,14 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
                                       return [
                                         PopupMenuItem<int>(
                                           value: 1,
-                                          child: Text(context.locale.open),
-                                        ),
-                                        PopupMenuItem<int>(
-                                          value: 2,
                                           child: Text(context.locale.copy),
                                         ),
                                         PopupMenuItem<int>(
-                                          value: 3,
+                                          value: 2,
                                           child: Text(context.locale.share),
                                         ),
                                         PopupMenuItem<int>(
-                                          value: 4,
+                                          value: 3,
                                           child: Text(context.locale.delete),
                                         ),
                                       ];

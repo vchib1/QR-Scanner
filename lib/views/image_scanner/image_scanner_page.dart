@@ -144,15 +144,12 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
         transitionBuilder: (child, animation) {
           return FadeTransition(opacity: animation, child: child);
         },
-        child:
-            (selectionIsNotNull)
-                ? Center(
-                  child: Crop(
+        child: Center(
+          child:
+              (selectionIsNotNull)
+                  ? Crop(
                     image: selectedImageData!,
                     controller: cropController,
-                    maskColor: Theme.of(
-                      context,
-                    ).colorScheme.surface.withValues(alpha: 0.5),
                     baseColor: Theme.of(context).colorScheme.surface,
                     onCropped: (result) async {
                       switch (result) {
@@ -163,10 +160,8 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
                           if (mounted) Navigator.pop(context);
                       }
                     },
-                  ),
-                )
-                : Center(
-                  child: MaterialButton(
+                  )
+                  : MaterialButton(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16.0,
                       vertical: 12.0,
@@ -203,7 +198,7 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
                       ],
                     ),
                   ),
-                ),
+        ),
       ),
     );
   }
