@@ -49,10 +49,15 @@ theming, and multilingual support with Material 3 design.
 
 ## 📸 Screenshots
 
-![Screenshot_2025-04-19-23-10-35-56_4c3b670077a98ee88659a4cc6010558c](https://github.com/user-attachments/assets/dc7028d5-c930-4d62-bded-43cf90c9f5e7)
-![Screenshot_2025-04-19-23-10-40-56_4c3b670077a98ee88659a4cc6010558c](https://github.com/user-attachments/assets/31b7f251-7854-4177-be79-ba817bbc5865)
-![Screenshot_2025-04-19-23-10-43-04_4c3b670077a98ee88659a4cc6010558c](https://github.com/user-attachments/assets/ad7e7e31-fada-465a-be7b-78e16da2fcb0)
-![Screenshot_2025-04-19-23-10-51-18_4c3b670077a98ee88659a4cc6010558c](https://github.com/user-attachments/assets/2c0efb1c-3b9f-47fb-82e4-9de7ba263aff)
+![Screenshot_2025-05-01-17-39-07-08_4c3b670077a98ee88659a4cc6010558c](https://github.com/user-attachments/assets/d8136414-cb02-43fb-973f-01620a0c0efc)
+![Screenshot_2025-05-01-17-39-13-38_4c3b670077a98ee88659a4cc6010558c](https://github.com/user-attachments/assets/50261d94-7344-49df-9734-3f8797c1c59b)
+![Screenshot_2025-05-01-17-39-25-54_4c3b670077a98ee88659a4cc6010558c](https://github.com/user-attachments/assets/8179b7d8-eed1-41f4-8e40-44bfb4d8aa47)
+![Screenshot_2025-05-01-17-39-48-65_4c3b670077a98ee88659a4cc6010558c](https://github.com/user-attachments/assets/f3a7dabb-0938-4535-b0ca-56bacdf2dc31)
+![Screenshot_2025-05-01-17-40-04-04_4c3b670077a98ee88659a4cc6010558c](https://github.com/user-attachments/assets/cc721e5d-fee0-49f9-8060-ae7dbfc7a524)
+![Screenshot_2025-05-01-17-40-14-90_4c3b670077a98ee88659a4cc6010558c](https://github.com/user-attachments/assets/7c88f2c8-81a6-49c2-ac6e-4a2eb0adba71)
+![Screenshot_2025-05-01-17-40-26-88_4c3b670077a98ee88659a4cc6010558c](https://github.com/user-attachments/assets/e4211d7a-fd82-4f82-bb5c-b7def9956b51)
+![Screenshot_2025-05-01-17-40-52-89_4c3b670077a98ee88659a4cc6010558c](https://github.com/user-attachments/assets/f077cbcb-29e2-4488-b5f6-b44cc17a86bd)
+![Screenshot_2025-05-01-17-40-57-85_4c3b670077a98ee88659a4cc6010558c](https://github.com/user-attachments/assets/db53c935-173f-4d0b-9373-426f521dcfe6)
 
 ## ⬇️ Installation
 
