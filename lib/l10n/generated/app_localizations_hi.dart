@@ -33,6 +33,15 @@ class AppLocalizationsHi extends AppLocalizations {
   String get share => 'साझा करें';
 
   @override
+  String get reset => 'Reset';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get loading => 'Loading';
+
+  @override
   String get copy => 'कॉपी करें';
 
   @override

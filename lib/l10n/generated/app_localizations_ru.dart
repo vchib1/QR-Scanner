@@ -33,6 +33,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get share => 'Поделиться';
 
   @override
+  String get reset => 'Reset';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get loading => 'Loading';
+
+  @override
   String get copy => 'Копировать';
 
   @override

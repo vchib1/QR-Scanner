@@ -151,6 +151,9 @@ class _ImageScannerPageState extends ConsumerState<ImageScannerPage> {
                     image: selectedImageData!,
                     controller: cropController,
                     baseColor: Theme.of(context).colorScheme.surface,
+                    maskColor: Theme.of(
+                      context,
+                    ).colorScheme.surface.withAlpha(100),
                     onCropped: (result) async {
                       switch (result) {
                         case CropSuccess():

@@ -4,6 +4,7 @@ import 'package:ez_qr/utils/enums/theme_contrast.dart';
 import 'package:ez_qr/utils/snackbar.dart';
 import 'package:ez_qr/utils/theme/theme.dart';
 import 'package:ez_qr/views/editor/editor_page.dart';
+import 'package:ez_qr/views/fullscreen_qr/fullscreen_qr_page.dart';
 import 'package:ez_qr/views/generate/qr_generate_page.dart';
 import 'package:ez_qr/views/history/history_page.dart';
 import 'package:ez_qr/views/history/provider/provider.dart';
@@ -102,6 +103,18 @@ class MyApp extends ConsumerWidget {
 
             return MaterialPageRoute(
               builder: (context) => EditorPage(qrData: qrData),
+            );
+          }
+
+          if (settings.name == "/fullscreen_qr") {
+            final args = settings.arguments as Map;
+
+            return MaterialPageRoute(
+              builder:
+                  (context) => FullscreenQrPage(
+                    qrData: args["qrData"] as String,
+                    child: args["child"] as Widget?,
+                  ),
             );
           }
 

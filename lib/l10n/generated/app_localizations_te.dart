@@ -33,6 +33,15 @@ class AppLocalizationsTe extends AppLocalizations {
   String get share => 'పంచుకో';
 
   @override
+  String get reset => 'Reset';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get loading => 'Loading';
+
+  @override
   String get copy => 'కాపీ చేయి';
 
   @override

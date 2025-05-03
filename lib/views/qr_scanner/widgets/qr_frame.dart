@@ -25,11 +25,7 @@ class QRScannerFrame extends StatelessWidget {
           width: size,
           height: size,
           child: CustomPaint(
-            painter: QRScannerFramePainter(
-              borderColor: color,
-              lineColor: Theme.of(context).colorScheme.primary,
-              animation: animation,
-            ),
+            painter: QRScannerFramePainter(animation: animation),
           ),
         );
       },
@@ -39,38 +35,52 @@ class QRScannerFrame extends StatelessWidget {
 
 class QRScannerFramePainter extends CustomPainter {
   final Animation<double> animation;
-  final Color? borderColor;
-  final Color? lineColor;
-  final double strokeWidth;
+  final Color borderColor;
+  final Color lineColor;
+  final double borderStrokeWidth;
+  final double lineStrokeWidth;
   final double cornerLength;
 
   QRScannerFramePainter({
     required this.animation,
-    this.borderColor = Colors.white,
-    this.lineColor = Colors.white,
-    this.strokeWidth = 3.0,
-    this.cornerLength = 20.0,
-  }) : super(repaint: animation);
+    Color? borderColor = Colors.white,
+    Color? lineColor = Colors.white,
+    this.borderStrokeWidth = 3.5,
+    this.lineStrokeWidth = 3.5,
+    this.cornerLength = 50.0,
+  }) : borderColor = borderColor!,
+       lineColor = lineColor!,
+       super(repaint: animation);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint =
+    final borderPaint =
         Paint()
-          ..color = borderColor!
-          ..strokeWidth = strokeWidth
+          ..color = borderColor
+          ..strokeWidth = borderStrokeWidth
           ..strokeCap = StrokeCap.round
+          ..style = PaintingStyle.stroke;
+
+    final linePaint =
+        Paint()
+          ..color = lineColor
+          ..strokeWidth = lineStrokeWidth
           ..style = PaintingStyle.stroke;
 
     final double width = size.width;
     final double height = size.height;
+
+    // animated center line
+    final dy = lerpDouble(0, height, animation.value) ?? 0.0;
+    canvas.drawLine(Offset(0, dy), Offset(width, dy), linePaint);
 
     // Draw corners
     void drawCorner(double x, double y, bool isRight, bool isBottom) {
       final double offsetX = isRight ? -cornerLength : cornerLength;
       final double offsetY = isBottom ? -cornerLength : cornerLength;
 
-      canvas.drawLine(Offset(x, y), Offset(x + offsetX, y), paint);
-      canvas.drawLine(Offset(x, y), Offset(x, y + offsetY), paint);
+      canvas.drawLine(Offset(x, y), Offset(x + offsetX, y), borderPaint);
+      canvas.drawLine(Offset(x, y), Offset(x, y + offsetY), borderPaint);
     }
 
     // Top-left corner
@@ -81,14 +91,6 @@ class QRScannerFramePainter extends CustomPainter {
     drawCorner(0, height, false, true);
     // Bottom-right corner
     drawCorner(width, height, true, true);
-
-    // center line
-    final dy = lerpDouble(0, height, animation.value) ?? 0.0;
-    canvas.drawLine(
-      Offset(0, dy),
-      Offset(width, dy),
-      paint..color = lineColor!,
-    );
   }
 
   @override

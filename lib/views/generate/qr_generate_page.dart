@@ -1,3 +1,4 @@
+import 'package:ez_qr/utils/constants.dart';
 import 'package:ez_qr/utils/enums/qr_type.dart';
 import 'package:ez_qr/utils/extensions/context_extension.dart';
 import 'package:ez_qr/utils/extensions/qr_type_extension.dart';
@@ -18,7 +19,6 @@ class QrGeneratePage extends ConsumerStatefulWidget {
 }
 
 class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
-  late final TextEditingController controller;
   late final ScreenshotController screenshotController;
 
   String qrData = "";
@@ -28,20 +28,11 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
   @override
   void initState() {
     super.initState();
-    controller = TextEditingController();
     screenshotController = ScreenshotController();
   }
 
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
   void onChanged(String value) {
-    setState(() {
-      qrData = value;
-    });
+    setState(() => qrData = value);
   }
 
   void unFocusKeyboard() => FocusManager.instance.primaryFocus?.unfocus();
@@ -53,26 +44,26 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
 
   @override
   Widget build(BuildContext context) {
-    bool dataEmpty = qrData.isEmpty;
+    bool qrDataNotEmpty = qrData.isNotEmpty;
 
     return GestureDetector(
       onTap: unFocusKeyboard,
       child: Scaffold(
         appBar: AppBar(title: Text(context.locale.qrGeneratorTitle)),
         floatingActionButton:
-            dataEmpty
-                ? null
-                : FloatingActionButton(
+            qrDataNotEmpty
+                ? FloatingActionButton(
                   onPressed: navigateToEditor,
                   tooltip: context.locale.next,
                   child: const Icon(Icons.arrow_forward),
-                ),
+                )
+                : null,
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          padding: bodyPaddingHorizontal,
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 10,
+              spacing: 8,
               children: [
                 Wrap(
                   spacing: 8.0,
@@ -81,9 +72,8 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
                     for (final option in QrType.values)
                       ChoiceChip(
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(32.0),
+                          borderRadius: BorderRadius.circular(16.0),
                         ),
-                        showCheckmark: false,
                         selected: selectedOption == option,
                         label: Text(option.localizedName(context)),
                         onSelected: (selected) {
@@ -95,7 +85,7 @@ class _QrGeneratePageState extends ConsumerState<QrGeneratePage> {
                   ],
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 8),
 
                 switch (selectedOption) {
                   QrType.text => QRText(onChanged: onChanged),

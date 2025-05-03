@@ -33,6 +33,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get share => '分享';
 
   @override
+  String get reset => 'Reset';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get loading => 'Loading';
+
+  @override
   String get copy => '复制';
 
   @override

@@ -33,6 +33,15 @@ class AppLocalizationsUr extends AppLocalizations {
   String get share => 'شیئر کریں';
 
   @override
+  String get reset => 'Reset';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get loading => 'Loading';
+
+  @override
   String get copy => 'نقل کریں';
 
   @override

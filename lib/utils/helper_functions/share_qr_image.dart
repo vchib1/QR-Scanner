@@ -1,8 +1,6 @@
-import 'dart:io';
 import 'package:ez_qr/utils/snackbar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
@@ -14,10 +12,13 @@ Future<bool> shareQRImage(
   required String data,
   Widget? child,
 }) async {
+  bool dialogShown = false;
+
   try {
     showLoadingDialog(context);
+    dialogShown = true;
 
-    // get QR code screenshot image
+    // Capture QR image
     Uint8List image = await captureQRScreenshot(
       context,
       data: data,
@@ -25,26 +26,29 @@ Future<bool> shareQRImage(
       child: child,
     );
 
-    Directory tempDir = await getTemporaryDirectory();
+    // Dismiss dialog before showing share sheet
+    if (dialogShown && context.mounted) {
+      Navigator.of(context).pop();
+      dialogShown = false;
+    }
 
-    File file = File("${tempDir.path}/qr.png");
-
-    File result = await file.writeAsBytes(image);
-
-    ShareResult? res = await Share.shareXFiles([
-      XFile(result.path),
-    ], text: "QR Code");
+    // Share the image
+    ShareResult? res = await SharePlus.instance.share(
+      ShareParams(
+        title: "qr.png",
+        files: [XFile.fromData(image, mimeType: "image/png")],
+      ),
+    );
 
     return (res.status == ShareResultStatus.success);
   } catch (e) {
-    SnackBarUtils.showErrorBar(e.toString());
+    if (context.mounted) SnackBarUtils.showErrorBar(e.toString());
     return false;
   } finally {
-    if (context.mounted) Navigator.pop(context);
+    if (dialogShown && context.mounted) Navigator.of(context).pop();
   }
 }
 
-/// Capture QR code screenshot and return as Uint8List
 Future<Uint8List> captureQRScreenshot(
   BuildContext context, {
   Widget? child,

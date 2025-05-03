@@ -131,9 +131,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
     return PopScope(
       canPop: !selectionMode,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) {
-          _clearSelection();
-        }
+        if (!didPop) _clearSelection();
       },
       child: Scaffold(
         floatingActionButtonAnimator: FloatingActionButtonAnimator.noAnimation,
@@ -246,13 +244,16 @@ class _HistoryPageState extends ConsumerState<HistoryPage>
                                     transitionBuilder:
                                         (child, anim) => ScaleTransition(
                                           scale: anim,
-                                          child: child,
+                                          child: FadeTransition(
+                                            opacity: anim,
+                                            child: child,
+                                          ),
                                         ),
                                     child: CircleAvatar(
                                       key: ValueKey<bool>(isSelected),
                                       child:
                                           isSelected
-                                              ? const Icon(Icons.check)
+                                              ? const Icon(Icons.check_sharp)
                                               : const Icon(Icons.qr_code_2),
                                     ),
                                   ),

@@ -17,21 +17,29 @@ class QrScannerPage extends ConsumerStatefulWidget {
 
 class _QrScannerPageState extends ConsumerState<QrScannerPage>
     with SingleTickerProviderStateMixin {
-  late MobileScannerController controller;
+  late MobileScannerController mobileScannerController;
 
   late AnimationController animationController;
+  late Animation<double> scannerAnimation;
 
   Rect scanWindow = Rect.zero;
+  static const Color iconColor = Colors.white;
 
   @override
   void initState() {
     super.initState();
 
-    controller = MobileScannerController(detectionTimeoutMs: 1500);
+    mobileScannerController = MobileScannerController(detectionTimeoutMs: 1500);
 
     animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 1),
+      duration: const Duration(milliseconds: 1500),
+      reverseDuration: const Duration(milliseconds: 1500),
+    );
+
+    scannerAnimation = CurvedAnimation(
+      curve: Curves.easeInOut,
+      parent: animationController,
     );
 
     animationController.repeat(reverse: true);
@@ -46,7 +54,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
 
   @override
   void dispose() {
-    controller.dispose();
+    mobileScannerController.dispose();
     animationController.dispose();
 
     SystemChrome.setPreferredOrientations(
@@ -57,28 +65,28 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
 
   void setScanWindow() {
     final size = MediaQuery.of(context).size;
-    final scannerSize = size.width * 0.70;
+    final scannerSize = size.width * 0.60;
 
     final left = (size.width - scannerSize) / 2;
     final top = (size.height - scannerSize - kToolbarHeight) / 2;
 
     scanWindow = Rect.fromLTWH(left, top, scannerSize, scannerSize);
-    controller.updateScanWindow(scanWindow);
+    mobileScannerController.updateScanWindow(scanWindow);
     setState(() {});
   }
 
   Future<void> onDetect(BarcodeCapture capture) async {
     final resultFound = ref.read(qrScannerNotifierProvider).resultFound;
 
-    try {
-      if (resultFound) return;
+    if (resultFound) return;
 
+    try {
       ref.read(qrScannerNotifierProvider.notifier).setResultFound(true);
 
       final data = capture.barcodes.first.rawValue;
 
       if (data != null) {
-        await controller.pause();
+        await mobileScannerController.pause();
         final scannedItem = ScannedItem(data: data);
 
         await ref.read(historyAsyncProvider.notifier).addItem(scannedItem);
@@ -88,8 +96,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
         }
 
         ref.read(qrScannerNotifierProvider.notifier).setResultFound(false);
-        await controller.start();
-        //if (mounted) Navigator.popUntil(context, (ModalRoute.withName('/')));
+        await mobileScannerController.start();
       }
     } catch (e, s) {
       debugPrintStack(label: e.toString(), stackTrace: s);
@@ -97,23 +104,22 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
   }
 
   Future<void> toggleFlash() async {
-    await controller.toggleTorch();
+    await mobileScannerController.toggleTorch();
     ref.read(qrScannerNotifierProvider.notifier).toggleFlash();
   }
 
   Future<void> changeZoomLevel(double zoomLevel) async {
-    await controller.setZoomScale(zoomLevel);
+    await mobileScannerController.setZoomScale(zoomLevel);
     ref.read(qrScannerNotifierProvider.notifier).setZoom(zoomLevel);
   }
 
   Future<void> switchCamera() async {
-    await controller.switchCamera();
+    await mobileScannerController.switchCamera();
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    const iconColor = Colors.white;
 
     final scannerHeight = size.width * .60;
 
@@ -151,7 +157,11 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
         width: size.width,
         child: Stack(
           children: [
-            MobileScanner(controller: controller, onDetect: onDetect),
+            MobileScanner(
+              controller: mobileScannerController,
+              onDetect: onDetect,
+              scanWindow: scanWindow,
+            ),
             Center(
               child: Column(
                 spacing: 10,
@@ -160,7 +170,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
                   QRScannerFrame(
                     size: scannerHeight,
                     color: iconColor,
-                    animation: animationController,
+                    animation: scannerAnimation,
                   ),
 
                   const SizedBox(height: 50),
@@ -209,7 +219,7 @@ class _QrScannerPageState extends ConsumerState<QrScannerPage>
             //     rect: scanWindow,
             //     child: Container(
             //       decoration: BoxDecoration(
-            //         border: Border.all(color: Colors.white, width: 1),
+            //         border: Border.all(color: Colors.green, width: 3),
             //         // Red border
             //         color: Colors.transparent,
             //       ),

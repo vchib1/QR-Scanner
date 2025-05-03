@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SnackBarUtils {
-  static GlobalKey<ScaffoldMessengerState> snackBarKey =
-      GlobalKey<ScaffoldMessengerState>();
+  static final snackBarKey = GlobalKey<ScaffoldMessengerState>();
 
   static void clearSnackBars({BuildContext? context}) {
     if (context != null && context.mounted) {
@@ -30,7 +29,6 @@ class SnackBarUtils {
         style: TextStyle(color: theme.colorScheme.onPrimary),
       ),
       backgroundColor: theme.colorScheme.primary,
-      behavior: SnackBarBehavior.floating,
       showCloseIcon: true,
       duration: const Duration(seconds: 3),
     );
@@ -40,7 +38,6 @@ class SnackBarUtils {
       return;
     }
 
-    // Fallback to global key if no context is provided
     if (snackBarKey.currentState != null) {
       snackBarKey.currentState!.showSnackBar(snackBar);
     } else {
@@ -52,7 +49,6 @@ class SnackBarUtils {
     final snackBar = SnackBar(
       content: Text(message, style: const TextStyle(color: Colors.white)),
       backgroundColor: Colors.green,
-      behavior: SnackBarBehavior.floating,
       duration: const Duration(seconds: 3),
       showCloseIcon: true,
       closeIconColor: Colors.white,
@@ -63,7 +59,6 @@ class SnackBarUtils {
       return;
     }
 
-    // Fallback to global key if no context is provided
     if (snackBarKey.currentState != null) {
       snackBarKey.currentState!.showSnackBar(snackBar);
     } else {
@@ -75,6 +70,8 @@ class SnackBarUtils {
     final contextExist = (context ?? snackBarKey.currentState?.context) != null;
 
     final snackBar = SnackBar(
+      duration: const Duration(seconds: 3),
+      showCloseIcon: true,
       content: Text(
         message,
         style: TextStyle(
@@ -92,9 +89,6 @@ class SnackBarUtils {
                 snackBarKey.currentState!.context,
               ).colorScheme.errorContainer
               : Colors.redAccent,
-      behavior: SnackBarBehavior.floating,
-      duration: const Duration(seconds: 3),
-      showCloseIcon: true,
       closeIconColor:
           contextExist
               ? Theme.of(
@@ -108,7 +102,6 @@ class SnackBarUtils {
       return;
     }
 
-    // Fallback to global key if no context is provided
     if (snackBarKey.currentState != null) {
       snackBarKey.currentState!.showSnackBar(snackBar);
     } else {

@@ -1,5 +1,5 @@
 synthetic-package: false
 arb-dir: lib/l10n
 output-dir: lib/l10n/generated/
-template-localization-file: lib/l10n/generated/app_localizations_hi.dart
+template-localization-file: lib/l10n/generated/app_localizations_en.dart
 output-localization-file: app_localizations.dart

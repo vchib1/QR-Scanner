@@ -20,6 +20,26 @@ class _NavPageState extends State<NavPage> {
 
   late PageController pageController;
 
+  bool _canPopNow = false;
+  DateTime? _currentBackPressTime;
+
+  void tapBackAgainToCloseApp() {
+    DateTime now = DateTime.now();
+    if (_currentBackPressTime == null ||
+        now.difference(_currentBackPressTime!) > const Duration(seconds: 3)) {
+      _currentBackPressTime = now;
+      setState(() {
+        _canPopNow = true;
+      });
+      Future.delayed(const Duration(seconds: 3), () {
+        setState(() {
+          _canPopNow = false;
+          _currentBackPressTime = null;
+        });
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -72,34 +92,42 @@ class _NavPageState extends State<NavPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView(
-        controller: pageController,
-        onPageChanged: updatePageIndex,
-        children: pages,
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
-        enableFeedback: true,
-        onTap: (index) {
-          updatePageIndex(index);
-          pageController.jumpToPage(index);
-        },
-        selectedItemColor: Theme.of(context).colorScheme.primary,
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.home_filled),
-            label: context.locale.home,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.history),
-            label: context.locale.history,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.settings),
-            label: context.locale.settings,
-          ),
-        ],
+    return PopScope(
+      canPop: _canPopNow,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          tapBackAgainToCloseApp();
+        }
+      },
+      child: Scaffold(
+        body: PageView(
+          controller: pageController,
+          onPageChanged: updatePageIndex,
+          children: pages,
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: currentIndex,
+          enableFeedback: true,
+          onTap: (index) {
+            updatePageIndex(index);
+            pageController.jumpToPage(index);
+          },
+          selectedItemColor: Theme.of(context).colorScheme.primary,
+          items: [
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.home_filled),
+              label: context.locale.home,
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.history),
+              label: context.locale.history,
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.settings),
+              label: context.locale.settings,
+            ),
+          ],
+        ),
       ),
     );
   }

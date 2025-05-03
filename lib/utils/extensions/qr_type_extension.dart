@@ -1,11 +1,11 @@
 import 'package:ez_qr/utils/enums/qr_type.dart';
+import 'package:ez_qr/utils/extensions/context_extension.dart';
 import 'package:flutter/material.dart';
 
-import '../../l10n/generated/app_localizations.dart';
-
 extension QrTypeExtension on QrType {
+  /// Returns the localised name of the [QrType].
   String localizedName(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = context.locale;
     switch (this) {
       case QrType.text:
         return l10n.text;

@@ -33,6 +33,15 @@ class AppLocalizationsMr extends AppLocalizations {
   String get share => 'शेअर करा';
 
   @override
+  String get reset => 'Reset';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get loading => 'Loading';
+
+  @override
   String get copy => 'कॉपी करा';
 
   @override

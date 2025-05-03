@@ -33,6 +33,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get share => '공유';
 
   @override
+  String get reset => 'Reset';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get loading => 'Loading';
+
+  @override
   String get copy => '복사';
 
   @override

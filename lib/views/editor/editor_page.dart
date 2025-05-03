@@ -6,7 +6,7 @@ import 'package:ez_qr/utils/extensions/context_extension.dart';
 import 'package:ez_qr/utils/extensions/eye_shape_extension.dart';
 import 'package:ez_qr/utils/extensions/pattern_shape_extension.dart';
 import 'package:ez_qr/utils/helper_functions/colorpicker_dialog.dart';
-import 'package:ez_qr/utils/helper_functions/loading_dialog.dart';
+import 'package:ez_qr/utils/helper_functions/save_qr_image.dart';
 import 'package:ez_qr/utils/snackbar.dart';
 import 'package:ez_qr/utils/tile_shapes.dart';
 import 'package:ez_qr/views/editor/provider/provider.dart';
@@ -28,43 +28,6 @@ class EditorPage extends ConsumerStatefulWidget {
 }
 
 class _EditorPageState extends ConsumerState<EditorPage> {
-  /// Save QR code image to device
-  Future<bool> saveQRImage() async {
-    try {
-      showLoadingDialog(context);
-
-      // get QR code screenshot image
-      Uint8List image = await captureQRScreenshot(
-        context,
-        data: widget.qrData,
-        size: ref.read(qrEditorProvider).qrSize.value,
-        child: _buildQRView(ref.read(qrEditorProvider).qrSize.value),
-      );
-
-      // create a random file name to save
-      String uid = ref.read(uuidProvider).v4().split("-").last;
-
-      // save image to device
-      String? result = await FilePicker.platform.saveFile(
-        fileName: "$uid.png",
-        type: FileType.image,
-        bytes: image,
-      );
-
-      final fileSaved = result != null;
-
-      if (fileSaved && mounted) {
-        SnackBarUtils.showSuccessBar(context.locale.qrSaved);
-      }
-
-      return fileSaved;
-    } finally {
-      if (mounted) {
-        Navigator.pop(context);
-      }
-    }
-  }
-
   Future<void> processLogo() async {
     Map<String, dynamic>? result = await showLogoPickerModal();
 
@@ -162,24 +125,57 @@ class _EditorPageState extends ConsumerState<EditorPage> {
         scrolledUnderElevation: 0.0,
         title: Text(context.locale.qrEditor),
         actions: [
-          // Share
-          IconButton(
-            tooltip: context.locale.shareQR,
-            icon: const Icon(Icons.share_outlined),
-            onPressed:
-                () => shareQRImage(
-                  context,
-                  data: widget.qrData,
-                  size: state.qrSize.value,
-                  child: _buildQRView(),
+          PopupMenuButton(
+            icon: const Icon(Icons.more_vert_outlined),
+            onSelected: (value) {
+              switch (value) {
+                case 1:
+                  saveQRImage(
+                    context,
+                    qrData: widget.qrData,
+                    child: _buildQRView(state.qrSize.value),
+                    size: state.qrSize.value,
+                    fileName: ref.read(uuidProvider).v4().split("-").first,
+                  );
+                  break;
+                case 2:
+                  shareQRImage(
+                    context,
+                    data: widget.qrData,
+                    size: state.qrSize.value,
+                    child: _buildQRView(),
+                  );
+                  break;
+                case 3:
+                  provider.reset();
+                  break;
+              }
+            },
+            itemBuilder: (context) {
+              return [
+                PopupMenuItem<int>(
+                  value: 1,
+                  child: ListTile(
+                    title: Text(context.locale.save),
+                    leading: const Icon(Icons.save_outlined),
+                  ),
                 ),
-          ),
-
-          // Save
-          IconButton(
-            tooltip: context.locale.saveQR,
-            icon: const Icon(Icons.save),
-            onPressed: () => saveQRImage(),
+                PopupMenuItem<int>(
+                  value: 2,
+                  child: ListTile(
+                    title: Text(context.locale.share),
+                    leading: const Icon(Icons.share_outlined),
+                  ),
+                ),
+                PopupMenuItem<int>(
+                  value: 3,
+                  child: ListTile(
+                    title: Text(context.locale.reset),
+                    leading: const Icon(Icons.restart_alt),
+                  ),
+                ),
+              ];
+            },
           ),
         ],
       ),
@@ -189,14 +185,29 @@ class _EditorPageState extends ConsumerState<EditorPage> {
             SliverPersistentHeader(
               pinned: allowPinning,
               delegate: QRSliverView(
-                height: state.qrSize.value + 12.0,
+                height: state.qrSize.value + 32.0,
                 child: Container(
                   width: double.infinity,
                   alignment: Alignment.center,
                   color: Theme.of(context).colorScheme.surface,
-                  child: SizedBox.square(
-                    dimension: state.qrSize.value,
-                    child: Center(child: _buildQRView()),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        "/fullscreen_qr",
+                        arguments: {
+                          "qrData": widget.qrData,
+                          "child": _buildQRView(),
+                        },
+                      );
+                    },
+                    child: Hero(
+                      tag: widget.qrData,
+                      child: SizedBox.square(
+                        dimension: state.qrSize.value,
+                        child: Center(child: _buildQRView()),
+                      ),
+                    ),
                   ),
                 ),
               ),

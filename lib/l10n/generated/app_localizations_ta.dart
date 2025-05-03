@@ -33,6 +33,15 @@ class AppLocalizationsTa extends AppLocalizations {
   String get share => 'பகிர்';
 
   @override
+  String get reset => 'Reset';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get loading => 'Loading';
+
+  @override
   String get copy => 'நகலெடு';
 
   @override

@@ -33,6 +33,15 @@ class AppLocalizationsBn extends AppLocalizations {
   String get share => 'শেয়ার করুন';
 
   @override
+  String get reset => 'Reset';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get loading => 'Loading';
+
+  @override
   String get copy => 'কপি করুন';
 
   @override
