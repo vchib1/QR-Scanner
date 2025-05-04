@@ -238,7 +238,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                       },
                       title: Text(context.locale.bgColorTitle),
                       subtitle: Text(context.locale.bgColorSubtitle),
-                      trailing: _buildColoredBox(state.bgColor),
+                      trailing: _buildPickColor(state.bgColor),
                     ),
 
                     // Pattern Color
@@ -254,7 +254,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                       },
                       title: Text(context.locale.patternColorTitle),
                       subtitle: Text(context.locale.patternColorSubtitle),
-                      trailing: _buildColoredBox(state.patternColor),
+                      trailing: _buildPickColor(state.patternColor),
                     ),
 
                     // Eye Color
@@ -270,7 +270,7 @@ class _EditorPageState extends ConsumerState<EditorPage> {
                       },
                       title: Text(context.locale.eyeColorTitle),
                       subtitle: Text(context.locale.eyeColorSubtitle),
-                      trailing: _buildColoredBox(state.eyeColor),
+                      trailing: _buildPickColor(state.eyeColor),
                     ),
 
                     // Add Logo
@@ -436,18 +436,19 @@ class _EditorPageState extends ConsumerState<EditorPage> {
   Widget _buildQRView([double? size]) {
     final state = ref.read(qrEditorProvider);
 
-    final config = calculateQRConfig(
-      data: widget.qrData,
-      withLogo: state.selectedLogo != null,
-    );
+    final padding = EdgeInsets.all((size ?? state.qrSize.value) * 0.04);
+
+    final errorCorrectionLevel =
+        state.selectedLogo != null
+            ? QrErrorCorrectLevel.H
+            : QrErrorCorrectLevel.M;
 
     final logoSize = (size ?? state.qrSize.value) * (state.logoSize.size / 100);
 
     return QrImageView(
-      padding: EdgeInsets.all((size ?? state.qrSize.value) * 0.04),
+      padding: padding,
       data: widget.qrData,
-      errorCorrectionLevel: config.errorCorrectionLevel,
-      version: config.version,
+      errorCorrectionLevel: errorCorrectionLevel,
       size: size ?? state.qrSize.value,
       gapless: !state.allowGap,
       backgroundColor: state.bgColor,
@@ -462,9 +463,8 @@ class _EditorPageState extends ConsumerState<EditorPage> {
     );
   }
 
-  Widget _buildColoredBox(Color color) {
-    return CircleAvatar(radius: 16.0, backgroundColor: color);
-  }
+  Widget _buildPickColor(Color color) =>
+      CircleAvatar(radius: 16.0, backgroundColor: color);
 
   // calculate QR Version and Error Correction Level based in QR Data
   ({int version, int errorCorrectionLevel}) calculateQRConfig({

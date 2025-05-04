@@ -44,7 +44,7 @@ class SettingsPage extends ConsumerWidget {
 
                   Consumer(
                     builder: (context, ref, child) {
-                      final state = ref.watch(themeProvider);
+                      final state = ref.watch(themeNotifierProvider);
 
                       return Column(
                         children: [
@@ -58,7 +58,7 @@ class SettingsPage extends ConsumerWidget {
                               selected: {state.themeMode},
                               onSelectionChanged: (data) {
                                 ref
-                                    .read(themeProvider.notifier)
+                                    .read(themeNotifierProvider.notifier)
                                     .updateState(
                                       state.copyWith(themeMode: data.first),
                                     );
@@ -107,7 +107,7 @@ class SettingsPage extends ConsumerWidget {
                               selected: {state.contrastMode},
                               onSelectionChanged: (data) {
                                 ref
-                                    .read(themeProvider.notifier)
+                                    .read(themeNotifierProvider.notifier)
                                     .updateState(
                                       state.copyWith(contrastMode: data.first),
                                     );

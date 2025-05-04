@@ -1,3 +1,4 @@
+import "package:ez_qr/utils/enums/theme_contrast.dart";
 import "package:flutter/material.dart";
 
 class MaterialTheme {
@@ -361,4 +362,21 @@ class MaterialTheme {
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)),
     ),
   );
+
+  ThemeData getLightThemeData(ThemeContrastMode contrast) {
+    return switch (contrast) {
+      ThemeContrastMode.light => MaterialTheme(textTheme).light(),
+      ThemeContrastMode.medium =>
+        MaterialTheme(textTheme).lightMediumContrast(),
+      ThemeContrastMode.high => MaterialTheme(textTheme).lightHighContrast(),
+    };
+  }
+
+  ThemeData getDarkThemeData(ThemeContrastMode contrast) {
+    return switch (contrast) {
+      ThemeContrastMode.light => MaterialTheme(textTheme).dark(),
+      ThemeContrastMode.medium => MaterialTheme(textTheme).darkMediumContrast(),
+      ThemeContrastMode.high => MaterialTheme(textTheme).darkHighContrast(),
+    };
+  }
 }

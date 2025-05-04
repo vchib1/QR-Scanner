@@ -4,7 +4,7 @@ import 'package:ez_qr/services/shared_pref.dart';
 import 'package:ez_qr/views/settings/provider/theme/state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final themeProvider = NotifierProvider<ThemeProvider, ThemeState>(
+final themeNotifierProvider = NotifierProvider<ThemeProvider, ThemeState>(
   ThemeProvider.new,
 );
 
